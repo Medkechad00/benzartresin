@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Benzart - Bespoke Handcrafted Furniture
 
-## Getting Started
+Benzart is a premium, high-end e-commerce and portfolio website for a bespoke furniture atelier specializing in solid wood and epoxy resin dining tables. The site is designed with a strictly editorial, architectural aesthetic, featuring fluid micro-animations, cinematic scroll parallax, and a luxurious minimalist layout.
 
-First, run the development server:
+## 🛠 Tech Stack & Languages
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The project is built using modern web development standards with a focus on performance, SEO, and high-end animations.
+
+- **Framework:** [Next.js](https://nextjs.org/) (App Router) v16.2.11
+- **UI Library:** [React](https://react.dev/) v19.2.4
+- **Language:** TypeScript
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) v4
+- **Animations:** [Motion](https://motion.dev/) (Framer Motion) v12.42
+- **Icons:** Phosphor Icons (`@phosphor-icons/react`)
+- **Backend/API:** Node.js with `nodemailer` (for processing commission inquiries)
+- **Utilities:** `clsx` and `tailwind-merge` (for dynamic class name merging)
+
+## 📂 Project Structure
+
+The codebase follows a modular and scalable structure inside the `/site` directory:
+
+```text
+site/
+├── app/                      # Next.js App Router (Pages & Routing)
+│   ├── api/                  # Backend API Routes (e.g., /api/inquiry for form submissions)
+│   ├── about/                # Studio & About Us page
+│   ├── blog/                 # Journal & Articles (Dynamic routing with [slug])
+│   ├── contact/              # Contact Information page
+│   ├── craftsmanship/        # Atelier & Process page
+│   ├── faq/                  # Frequently Asked Questions
+│   ├── inquiry/              # Multi-step Custom Commission form
+│   ├── tables/               # Collection & Gallery page
+│   ├── layout.tsx            # Root HTML layout and metadata
+│   └── page.tsx              # Homepage assembling all sections
+│
+├── components/               # Reusable React Components
+│   ├── layout/               # Global layout components (Navbar, Footer, PageLayout)
+│   ├── sections/             # Major page sections (HeroSection, FeaturedTablesSection, etc.)
+│   └── ui/                   # Micro-components (AnimatedSeparator, Buttons, etc.)
+│
+├── lib/                      # Utility Functions
+│   └── utils.ts              # Tailwind class merging utility (cn)
+│
+├── public/                   # Static Assets
+│   └── images/               # High-resolution product and atelier photography
+│
+├── package.json              # Project dependencies and scripts
+├── tailwind.config.ts        # Tailwind styling tokens (if applicable, using v4)
+└── tsconfig.json             # TypeScript configuration
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features & Design Philosophy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Aesthetic:** "Expensive UI." Flush-left typography, asymmetrical balance, pure white architectural backgrounds, and a signature gold accent (`#DFAB2E`).
+2. **Cinematic Animations:** Uses `motion/react` extensively for scroll-linked animations, vertical parallax effects on images, and elegant reveal sequences using highly tuned custom easing curves (`[0.23, 1, 0.32, 1]`).
+3. **Multi-step Inquiry Flow:** A highly customized, animated multi-step form built for lead generation (Bespoke Commissions).
+4. **Responsive:** Fully optimized for mobile, tablet, and ultra-wide desktop displays using fluid typography and CSS grid.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Getting Started
 
-## Learn More
+To run the development server locally:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.

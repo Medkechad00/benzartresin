@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but the template must be committed, or nobody knows which variables to set
+# in the Vercel dashboard. It contains names only, never values.
+!.env.example
 
 # vercel
 .vercel

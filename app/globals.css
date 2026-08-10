@@ -32,6 +32,56 @@
   font-display: swap;
 }
 
+/*
+  Arabic display face.
+
+  `Modern Romance` is a Latin-only display font — it has no Arabic glyphs, so
+  every Arabic heading was silently falling back to whatever the browser
+  happened to pick. That is why /ar headings did not match the brand.
+
+  `unicode-range` restricts this face to the Arabic blocks (0600–06FF plus the
+  presentation-forms ranges), so Latin text inside an Arabic page — a slug, a
+  dimension like "240cm", an email address — still renders in the brand faces
+  rather than in Arghavan.
+*/
+@font-face {
+  font-family: 'Arghavan';
+  src: url('/fonts/a_arghavan_bold.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+/*
+  Arabic body face.
+
+  Arghavan is a heavy display face. It is right for headings and wrong for
+  running text: before this was added, `--font-sans` on Arabic pages fell
+  through to Arghavan for every Arabic codepoint (because Louis George Cafe has
+  no Arabic glyphs), so entire paragraphs were being set in the bold display
+  face.
+
+  Noto Sans Arabic is a neutral, high-legibility text face with full coverage.
+  Self-hosted to match the other five faces here and to avoid a build-time
+  network dependency. Variable weight 400-700, so one file covers body,
+  medium, and bold.
+*/
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  /*
+    Plain `format('woff2')`, not `format('woff2-variations')`. The latter is a
+    legacy value; a browser that does not recognise the format token discards
+    the whole `src`, which would drop the face entirely. Every browser that can
+    render a variable font accepts a variable woff2 declared as `woff2`.
+  */
+  src: url('/fonts/NotoSansArabic-Variable.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
 @theme {
   --color-black: #000000;
   --color-white: #FFFFFF;
@@ -71,6 +121,58 @@ h1, h2, h3, h4, h5, h6 {
 ::selection {
   background-color: var(--color-gold);
   color: var(--color-black);
+}
+
+/*
+  Arabic typography.
+
+  Two faces, cleanly separated:
+    display (titles only) -> Arghavan, the brand Arabic face
+    sans (body)           -> Noto Sans Arabic, a plain text face
+
+  Arghavan is deliberately absent from the sans stack. It is a heavy display
+  face, and leaving it there meant every Arabic paragraph inherited it, since
+  Louis George Cafe carries no Arabic glyphs and Arabic codepoints fell straight
+  through to it.
+
+  Louis George Cafe stays first in the stack so Latin inside an Arabic page (a
+  dimension like "240cm", an email address) still renders in the brand face.
+  The `unicode-range` declarations above are what make that split work.
+
+  Scoped on [lang="ar"] rather than [dir="rtl"] so it keys off language, which
+  is what actually determines the script.
+*/
+html[lang="ar"] {
+  --font-display: 'Arghavan', 'Modern Romance', serif;
+  --font-sans: 'Louis George Cafe', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+}
+
+/*
+  No per-element font rules here on purpose.
+
+  Redefining `--font-sans` above is enough: custom properties inherit, `body`
+  already resolves `font-family: var(--font-sans)`, and every descendant
+  inherits from it. An element-level rule such as
+  `html[lang="ar"] p { font-family: var(--font-sans) }` would be redundant AND
+  actively harmful, because its specificity (0,1,1) beats a Tailwind
+  `font-display` utility (0,1,0). That would silently reset the five places
+  that deliberately set the display face on a <p> or <blockquote>
+  (MdxContent blockquote, contact, faq, inquiry, tables detail).
+*/
+
+/*
+  Arabic script sits lower and denser in the em box than Latin. Without a small
+  line-height bump, descenders and diacritics collide with the line below,
+  especially at the large display sizes used across this site.
+*/
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3 {
+  line-height: 1.25;
+}
+
+html[lang="ar"] body {
+  line-height: 1.9;
 }
 
 /* Utilities for hiding scrollbar when needed */
