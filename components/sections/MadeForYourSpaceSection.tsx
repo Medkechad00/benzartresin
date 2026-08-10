@@ -68,11 +68,21 @@ export function MadeForYourSpaceSection() {
   return (
     <section className="relative bg-white overflow-x-clip">
       {/*
-        Hairline top rule at the container edge, not full-bleed: it aligns the
-        section opening with the grid the rest of the page uses.
+        Container matches the Navbar exactly, and the nesting order is the whole
+        point: the Navbar puts its padding on the full-width element and the
+        `max-w-7xl` cap INSIDE it. This block had the two inverted
+        (`max-w-7xl mx-auto px-6 md:px-12`), which caps the box at 1280px first
+        and then eats 48px of padding out of it — so its content sat 48px inside
+        the nav's edge on any viewport wide enough for the cap to bind
+        (≥1376px). Same tokens in the same order as the Navbar and Footer is the
+        only way these stay aligned.
       */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="border-t border-black/10 pt-20 md:pt-28 lg:pt-32">
+      <div className="w-full px-6 md:px-12">
+        {/*
+          Hairline top rule at the container edge, not full-bleed: it aligns the
+          section opening with the grid the rest of the page uses.
+        */}
+        <div className="max-w-7xl mx-auto border-t border-black/10 pt-20 md:pt-28 lg:pt-32">
 
           {/* Header */}
           <motion.div
@@ -83,9 +93,6 @@ export function MadeForYourSpaceSection() {
             className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-20 md:mb-28"
           >
             <div className="max-w-2xl">
-              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-6">
-                {t("eyebrow")}
-              </p>
               {/*
                 The slab sits on an inner span so the background hugs the words
                 rather than spanning the column. `box-decoration-clone` keeps the

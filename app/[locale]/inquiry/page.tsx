@@ -8,8 +8,25 @@ import { useLocale, useTranslations } from "next-intl";
 import { getTextDirection } from "@/lib/i18n/direction";
 import { slideOffset } from "@/lib/i18n/motion";
 import { getTableBySlug, type TableData } from "@/content/tables/tables";
+import {
+  BUDGET_OPTIONS,
+  OTHER_OPTION_ID,
+  OTHER_TEXT_FIELDS,
+  RESIN_OPTIONS,
+  SHAPE_OPTIONS,
+  SPACE_OPTIONS,
+  WOOD_OPTIONS,
+  type InquiryOption,
+  type OtherSelectField,
+} from "@/lib/inquiry-schema";
 
-/** Maps a piece's resin colour onto the closest select option, or 'custom'. */
+/**
+ * Maps a piece's resin colour onto the closest select option.
+ *
+ * Returns a schema `id`, never a free-form string: the value goes straight into
+ * a controlled <select>, and an id that is not in RESIN_OPTIONS would silently
+ * render as no selection at all.
+ */
 function resinOptionFor(resinColor: string): string {
   const c = resinColor.toLowerCase();
   if (c.includes("black") || c.includes("obsidian")) return "obsidian";
@@ -25,6 +42,18 @@ function woodOptionFor(wood: string): string {
   if (w.includes("maple")) return "maple";
   if (w.includes("olive")) return "olive";
   return "open";
+}
+
+/**
+ * Maps a piece's shape onto a select option.
+ *
+ * `TableData.shape` is typed 'rectangular' | 'organic' | 'round', which are
+ * already schema ids, but this guards the mapping explicitly so a new shape in
+ * the content file cannot quietly prefill an id the select does not offer.
+ */
+function shapeOptionFor(shape: string): string {
+  const match = SHAPE_OPTIONS.find((option) => option.id === shape);
+  return match ? match.id : "";
 }
 
 /**
@@ -54,21 +83,14 @@ const FIELD_CLASS =
 const LABEL_CLASS = "font-sans text-xs uppercase tracking-widest text-black";
 
 /**
- * The four selects that support a free-text "Other".
+ * The selects that support a free-text "Other", and the field each one reveals.
  *
- * Each maps the select's own field name to the companion text field that
- * appears when "other" is chosen. Keeping this as data rather than four
- * copy-pasted conditionals means the reveal, the required flag, and the
- * clearing behaviour stay identical across all four.
+ * Imported from the schema rather than redeclared here, so the form, the
+ * payload type, and the server all read the same list.
  */
-const OTHER_FIELDS = {
-  wood: 'woodOther',
-  resin: 'resinOther',
-  shape: 'shapeOther',
-  spaceType: 'spaceTypeOther',
-} as const;
+const OTHER_FIELDS = OTHER_TEXT_FIELDS;
 
-type OtherSelectName = keyof typeof OTHER_FIELDS;
+type OtherSelectName = OtherSelectField;
 
 function InquiryForm() {
   const locale = useLocale();
@@ -117,7 +139,7 @@ function InquiryForm() {
       wood: prev.wood || woodOptionFor(piece.wood),
       resin: prev.resin || resinOptionFor(piece.resinColor),
       dimensions: prev.dimensions || piece.dimensions,
-      shape: prev.shape || piece.shape,
+      shape: prev.shape || shapeOptionFor(piece.shape),
     }));
   }, []);
 
@@ -132,16 +154,30 @@ function InquiryForm() {
       // Moving a select off "other" clears its companion text field, so a
       // stale free-text answer can never be submitted alongside a different
       // selection.
-      if (name in OTHER_FIELDS && value !== 'other') {
+      if (name in OTHER_FIELDS && value !== OTHER_OPTION_ID) {
         next[OTHER_FIELDS[name as OtherSelectName]] = '';
       }
       return next;
     });
   };
 
+  /**
+   * Renders a select's options from the schema.
+   *
+   * The `id` is both the submitted value and the translation key, so the two
+   * cannot drift the way the old hardcoded `<option value="private-dining">`
+   * lists did against their `spaceOptions.privateDining` labels.
+   */
+  const renderOptions = (options: InquiryOption[], group: string) =>
+    options.map((option) => (
+      <option key={option.id} value={option.id}>
+        {t(`${group}.${option.id}`)}
+      </option>
+    ));
+
   /** Renders the conditional free-text field for a select set to "other". */
   const otherInput = (name: OtherSelectName) => {
-    if (formData[name] !== 'other') return null;
+    if (formData[name] !== OTHER_OPTION_ID) return null;
     const field = OTHER_FIELDS[name];
     return (
       <motion.div
@@ -161,7 +197,7 @@ function InquiryForm() {
           value={formData[field]}
           onChange={handleChange}
           className={FIELD_CLASS}
-          placeholder={t('fields.otherPlaceholder')}
+          placeholder={t('placeholders.otherSpecify')}
           autoFocus
         />
       </motion.div>
@@ -384,24 +420,16 @@ function InquiryForm() {
                         <div className="flex flex-col gap-2">
                           <label htmlFor="wood" className={LABEL_CLASS}>{t("fields.wood")}</label>
                           <select id="wood" name="wood" value={formData.wood} onChange={handleChange} className={`${FIELD_CLASS} appearance-none`}>
-                            <option value="">{t("fields.selectOption")}</option>
-                            <option value="walnut">{t("woodOptions.walnut")}</option>
-                            <option value="maple">{t("woodOptions.maple")}</option>
-                            <option value="olive">{t("woodOptions.olive")}</option>
-                            <option value="open">{t("woodOptions.open")}</option>
-                            <option value="other">{t("woodOptions.other")}</option>
+                            <option value="">{t("placeholders.selectOption")}</option>
+                            {renderOptions(WOOD_OPTIONS, "woodOptions")}
                           </select>
                         </div>
                         {otherInput("wood")}
                         <div className="flex flex-col gap-2">
                           <label htmlFor="resin" className={LABEL_CLASS}>{t("fields.resin")}</label>
                           <select id="resin" name="resin" value={formData.resin} onChange={handleChange} className={`${FIELD_CLASS} appearance-none`}>
-                            <option value="">{t("fields.selectOption")}</option>
-                            <option value="clear">{t("resinOptions.clear")}</option>
-                            <option value="obsidian">{t("resinOptions.obsidian")}</option>
-                            <option value="amber">{t("resinOptions.amber")}</option>
-                            <option value="custom">{t("resinOptions.custom")}</option>
-                            <option value="other">{t("resinOptions.other")}</option>
+                            <option value="">{t("placeholders.selectOption")}</option>
+                            {renderOptions(RESIN_OPTIONS, "resinOptions")}
                           </select>
                         </div>
                         {otherInput("resin")}
@@ -412,12 +440,8 @@ function InquiryForm() {
                         <div className="flex flex-col gap-2">
                           <label htmlFor="shape" className={LABEL_CLASS}>{t("fields.shape")}</label>
                           <select id="shape" name="shape" value={formData.shape} onChange={handleChange} className={`${FIELD_CLASS} appearance-none`}>
-                            <option value="">{t("fields.selectShape")}</option>
-                            <option value="rectangular">{t("shapeOptions.rectangular")}</option>
-                            <option value="organic">{t("shapeOptions.organic")}</option>
-                            <option value="round">{t("shapeOptions.round")}</option>
-                            <option value="conference">{t("shapeOptions.conference")}</option>
-                            <option value="other">{t("shapeOptions.other")}</option>
+                            <option value="">{t("placeholders.selectShape")}</option>
+                            {renderOptions(SHAPE_OPTIONS, "shapeOptions")}
                           </select>
                         </div>
                         {otherInput("shape")}
@@ -436,19 +460,12 @@ function InquiryForm() {
                         <div className="flex flex-col gap-2">
                           <label htmlFor="spaceType" className={LABEL_CLASS}>{t("fields.spaceType")}</label>
                           {/*
-                            "Covered outdoor" was removed as an option. UV ambers
-                            resin and humidity swings stress the wood/resin joint,
-                            so the FAQ states plainly that we decline outdoor work.
-                            Offering it here contradicted that and would have
-                            generated enquiries we intend to turn down.
+                            "Covered outdoor" is absent by design — see the note
+                            on SPACE_OPTIONS in lib/inquiry-schema.ts.
                           */}
                           <select id="spaceType" name="spaceType" value={formData.spaceType} onChange={handleChange} className={`${FIELD_CLASS} appearance-none`}>
-                            <option value="">{t("fields.selectOption")}</option>
-                            <option value="private-dining">{t("spaceOptions.privateDining")}</option>
-                            <option value="restaurant">{t("spaceOptions.restaurant")}</option>
-                            <option value="office">{t("spaceOptions.office")}</option>
-                            <option value="reception">{t("spaceOptions.reception")}</option>
-                            <option value="other">{t("spaceOptions.other")}</option>
+                            <option value="">{t("placeholders.selectOption")}</option>
+                            {renderOptions(SPACE_OPTIONS, "spaceOptions")}
                           </select>
                         </div>
                         {otherInput("spaceType")}
@@ -459,12 +476,8 @@ function InquiryForm() {
                         <div className="flex flex-col gap-2">
                           <label htmlFor="budget" className={LABEL_CLASS}>{t("fields.budget")}</label>
                           <select id="budget" name="budget" value={formData.budget} onChange={handleChange} className={`${FIELD_CLASS} appearance-none`}>
-                            <option value="">{t("fields.selectRange")}</option>
-                            <option value="under-3000">{t("budgetOptions.under3000")}</option>
-                            <option value="3000-5000">{t("budgetOptions.3000to5000")}</option>
-                            <option value="5000-8000">{t("budgetOptions.5000to8000")}</option>
-                            <option value="8000-15000">{t("budgetOptions.8000to15000")}</option>
-                            <option value="15000+">{t("budgetOptions.over15000")}</option>
+                            <option value="">{t("placeholders.selectRange")}</option>
+                            {renderOptions(BUDGET_OPTIONS, "budgetOptions")}
                           </select>
                         </div>
                         <div className="flex flex-col gap-2">

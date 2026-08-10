@@ -1,10 +1,10 @@
 "use client";
 
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
-import { ArrowRight, InstagramLogo, PinterestLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
+import { useRef, useState } from "react";
+import { ArrowRight, CircleNotch, InstagramLogo, PinterestLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { SITE } from "@/lib/site-config";
 import { Logo } from "@/components/layout/Logo";
 
@@ -13,6 +13,8 @@ const SOCIAL_ICONS: Record<string, PhosphorIcon | undefined> = {
   Instagram: InstagramLogo,
   Pinterest: PinterestLogo,
 };
+
+type SubscribeStatus = "idle" | "submitting" | "success" | "error";
 
 export function Footer() {
   const containerRef = useRef<HTMLElement>(null);
@@ -23,10 +25,57 @@ export function Footer() {
   
   const navT = useTranslations("Navbar");
   const footerT = useTranslations("Footer");
+  const locale = useLocale();
 
   const textScale = useTransform(scrollYProgress, [0.5, 1], [0.9, 1]);
   const textOpacity = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
   const textBlur = useTransform(scrollYProgress, [0.5, 1], ["blur(10px)", "blur(0px)"]);
+
+  /**
+   * Newsletter sign-up.
+   *
+   * This form used to be `onSubmit={(e) => e.preventDefault()}` and nothing
+   * else: the address was read from the DOM by no one, sent nowhere, and the UI
+   * gave no feedback, so it looked like it had worked. It now posts to
+   * /api/subscribe, which emails the studio inbox.
+   */
+  const [email, setEmail] = useState("");
+  /** Honeypot. Hidden from users; anything in it marks the sender as a bot. */
+  const [website, setWebsite] = useState("");
+  const [status, setStatus] = useState<SubscribeStatus>("idle");
+  const [feedback, setFeedback] = useState("");
+
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (status === "submitting") return;
+
+    setStatus("submitting");
+    setFeedback("");
+
+    try {
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, locale, website }),
+      });
+
+      const result = await response.json().catch(() => null);
+
+      if (response.ok && result?.success) {
+        setStatus("success");
+        setFeedback(footerT("newsletterSuccess"));
+        setEmail("");
+      } else {
+        // Surface the server's reason where it has one — a 503 from
+        // unconfigured SMTP has to read differently from a rejected address.
+        setStatus("error");
+        setFeedback(result?.message ?? footerT("newsletterError"));
+      }
+    } catch {
+      setStatus("error");
+      setFeedback(footerT("newsletterError"));
+    }
+  };
 
   return (
     <footer ref={containerRef} className="bg-black text-white pt-24 md:pt-32 pb-8 px-6 md:px-12 relative overflow-hidden">
@@ -44,18 +93,78 @@ export function Footer() {
           
           <div className="mt-auto">
             <h4 className="font-sans text-white text-sm font-bold uppercase tracking-widest mb-4">{footerT('newsletter')}</h4>
-            <form className="flex items-end border-b border-white/20 pb-2 max-w-sm group" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder={footerT('newsletterPlaceholder')}
-                aria-label={footerT('newsletterPlaceholder')}
-                className="bg-transparent border-none outline-none text-white placeholder:text-gray-600 font-sans text-sm w-full focus:ring-0 px-0"
-              />
-              <button type="submit" className="text-gray-400 group-hover:text-[#DFAB2E] transition-colors pb-1" aria-label={footerT('newsletterCta')}>
-                {/* rtl:-scale-x-100 mirrors the arrow so it points toward the
-                    reading direction rather than back into the input. */}
-                <ArrowRight size={20} className="rtl:-scale-x-100" />
-              </button>
+            <form className="max-w-sm" onSubmit={handleSubscribe} noValidate>
+              <div className="flex items-end border-b border-white/20 pb-2 group focus-within:border-white/50 transition-colors">
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    // Clear a stale result the moment the visitor edits, so the
+                    // message always refers to what is currently in the field.
+                    if (status !== "idle") {
+                      setStatus("idle");
+                      setFeedback("");
+                    }
+                  }}
+                  disabled={status === "submitting"}
+                  placeholder={footerT('newsletterPlaceholder')}
+                  aria-label={footerT('newsletterPlaceholder')}
+                  aria-describedby="newsletter-feedback"
+                  aria-invalid={status === "error" || undefined}
+                  className="bg-transparent border-none outline-none text-white placeholder:text-gray-600 font-sans text-sm w-full focus:ring-0 px-0 disabled:opacity-50"
+                />
+
+                {/*
+                  Honeypot. Off-screen rather than `display:none`, because some
+                  bots skip fields that are not rendered. `tabIndex={-1}` and
+                  `aria-hidden` keep it away from keyboard and screen-reader
+                  users, and `autoComplete="off"` stops browsers filling it.
+                */}
+                <input
+                  type="text"
+                  name="website"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] w-px h-px opacity-0"
+                />
+
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="text-gray-400 group-hover:text-[#DFAB2E] transition-colors pb-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label={footerT('newsletterCta')}
+                >
+                  {status === "submitting" ? (
+                    <CircleNotch size={20} className="animate-spin" />
+                  ) : (
+                    /* rtl:-scale-x-100 mirrors the arrow so it points toward the
+                       reading direction rather than back into the input. */
+                    <ArrowRight size={20} className="rtl:-scale-x-100" />
+                  )}
+                </button>
+              </div>
+
+              {/*
+                `aria-live` so the result is announced rather than only shown.
+                The node is always present — swapping an empty container in and
+                out is unreliable in several screen readers.
+              */}
+              <p
+                id="newsletter-feedback"
+                role="status"
+                aria-live="polite"
+                className={`font-sans text-xs mt-3 min-h-[1rem] ${
+                  status === "error" ? "text-red-400" : "text-[#DFAB2E]"
+                }`}
+              >
+                {feedback}
+              </p>
             </form>
           </div>
         </div>

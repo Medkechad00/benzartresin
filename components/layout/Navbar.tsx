@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { getTextDirection } from "@/lib/i18n/direction";
 import { SITE } from "@/lib/site-config";
 import { Logo } from "@/components/layout/Logo";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { cn } from "@/lib/utils";
 
 /**
@@ -19,8 +20,6 @@ const navLinkKeys = [
   { key: "ourCraft", href: "/our-craft" },
   { key: "journal", href: "/blog" },
 ];
-
-const LOCALES = ['en', 'fr', 'ar'] as const;
 
 interface NavbarProps {
   theme?: "light" | "dark";
@@ -147,25 +146,11 @@ export function Navbar({ theme = "light" }: NavbarProps) {
             </Link>
 
             {/* Locale Switcher */}
-            <div className="hidden md:flex items-center gap-1">
-              {LOCALES.map((loc) => (
-                <button
-                  key={loc}
-                  onClick={() => switchLocale(loc)}
-                  disabled={isPending}
-                  lang={loc}
-                  aria-current={locale === loc ? 'true' : undefined}
-                  className={cn(
-                    "text-[10px] uppercase tracking-widest font-bold px-2 py-1 transition-colors duration-300 disabled:opacity-50",
-                    locale === loc
-                      ? "text-[#DFAB2E]"
-                      : (isDarkText ? "text-black/40 hover:text-black" : "text-white/40 hover:text-white")
-                  )}
-                >
-                  {loc}
-                </button>
-              ))}
-            </div>
+            <LanguageSwitcher
+              isDarkText={isDarkText}
+              isPending={isPending}
+              onSelect={switchLocale}
+            />
 
             {/* Mobile Menu Toggle - Creative Animated Hamburger */}
             <button
@@ -287,26 +272,14 @@ export function Navbar({ theme = "light" }: NavbarProps) {
               
               <div className="flex flex-col gap-3 text-end">
                 <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-gray-500">{t('language')}</p>
-                <div className="flex gap-4 justify-end">
-                  {LOCALES.map((loc) => (
-                    <button
-                      key={loc}
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        switchLocale(loc);
-                      }}
-                      disabled={isPending}
-                      lang={loc}
-                      aria-current={locale === loc ? 'true' : undefined}
-                      className={cn(
-                        "text-[11px] uppercase tracking-[0.2em] font-bold transition-colors disabled:opacity-50",
-                        locale === loc ? "text-[#DFAB2E]" : "text-black/40 hover:text-black"
-                      )}
-                    >
-                      {loc}
-                    </button>
-                  ))}
-                </div>
+                <LanguageSwitcher
+                  isDarkText={true}
+                  isPending={isPending}
+                  onSelect={(loc) => {
+                    setIsMobileMenuOpen(false);
+                    switchLocale(loc);
+                  }}
+                />
               </div>
             </motion.div>
 

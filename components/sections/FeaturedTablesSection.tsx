@@ -126,25 +126,53 @@ function ParallaxImage({
   );
 }
 
+/**
+ * How many pieces the homepage shows.
+ *
+ * Six, not "all of them". The grid rhythm below runs in pairs, so an odd count
+ * always ends on a half-empty row — with seven tables the last card sat alone
+ * against dead space. Six is also a full two cycles of the four-step rhythm's
+ * pairing, so the section closes on a complete row at every breakpoint.
+ *
+ * The gallery at /tables remains the complete catalogue; this is a curated
+ * front door to it, which is what the "View full gallery" link is for.
+ */
+const HOMEPAGE_LIMIT = 6;
+
 export function FeaturedTablesSection() {
   const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("Featured");
   const tTables = useTranslations("Tables");
   const tCard = useTranslations("TableCard");
-  const localized = tables.map((table) => localizeTable(table, tTables));
+  const localized = tables
+    .slice(0, HOMEPAGE_LIMIT)
+    .map((table) => localizeTable(table, tTables));
   const isRtl = getTextDirection(locale) === "rtl";
 
   return (
     <section className="relative bg-white overflow-x-clip">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-28 lg:py-32">
+      {/*
+        Container matches the Navbar exactly, and the nesting order is the whole
+        point: the Navbar puts its padding on the full-width element and the
+        `max-w-7xl` cap INSIDE it. This block had the two inverted
+        (`max-w-7xl mx-auto px-6 md:px-12`), which caps the box at 1280px first
+        and then eats 48px of padding out of it — so its content sat 48px inside
+        the nav's edge on any viewport wide enough for the cap to bind
+        (≥1376px). Same tokens in the same order as the Navbar and Footer is the
+        only way these stay aligned.
+      */}
+      <div className="w-full px-6 md:px-12">
+        <div className="max-w-7xl mx-auto py-20 md:py-28 lg:py-32">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20 md:mb-28">
           <div className="max-w-xl">
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-6">
-              {t("eyebrow")}
-            </p>
+            {/*
+              The "Signature pieces" eyebrow is gone. It repeated the h2
+              directly beneath it word for word, so the section announced
+              itself twice before saying anything.
+            */}
             {/*
               Same slab treatment as every other homepage h2: inner span so the
               gold hugs the words, `box-decoration-clone` to keep padding on
@@ -265,6 +293,7 @@ export function FeaturedTablesSection() {
               </motion.article>
             );
           })}
+        </div>
         </div>
       </div>
     </section>

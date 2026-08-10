@@ -2,7 +2,6 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { FeaturedTablesSection } from "@/components/sections/FeaturedTablesSection";
-import { CraftsmanshipSection } from "@/components/sections/CraftsmanshipSection";
 import { MadeForYourSpaceSection } from "@/components/sections/MadeForYourSpaceSection";
 import { InquiryCTASection } from "@/components/sections/InquiryCTASection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
@@ -66,12 +65,15 @@ export default async function Home({ params }: Props) {
       <AnimatedSeparator />
       {/*
         Carries the core differentiator — "you choose the actual slab" — which
-        the sales strategy identifies as the participation pillar. The component
-        existed and was fully written but was never rendered anywhere.
+        the sales strategy identifies as the participation pillar.
+
+        This is the only process block on the homepage. A second one
+        ("The making of a modern heirloom.") used to sit directly below it and
+        told the same three-stage story in the same order, so the page said
+        everything twice. The long-form version of that story lives on
+        /our-craft, which is where a visitor who wants the detail goes.
       */}
       <MadeForYourSpaceSection />
-      <AnimatedSeparator />
-      <CraftsmanshipSection />
       <AnimatedSeparator />
       <InquiryCTASection />
       <AnimatedSeparator />

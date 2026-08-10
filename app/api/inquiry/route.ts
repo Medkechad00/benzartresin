@@ -1,5 +1,18 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import {
+  clientKey,
+  createRateLimiter,
+  createTransport,
+  escapeHtml,
+  getSmtpConfig,
+  headerSafe,
+  isValidEmail,
+} from "@/lib/mail";
+import {
+  OTHER_OPTION_ID,
+  optionLabel,
+  type InquiryOptionField,
+} from "@/lib/inquiry-schema";
 
 /**
  * Commission inquiry handler.
@@ -9,8 +22,8 @@ import nodemailer from "nodemailer";
  * of silently discarding leads. (An earlier version of this file had the whole
  * mail block commented out and returned `{ success: true }` unconditionally.)
  *
- * Required env vars — see `.env.example`:
- *   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, CONTACT_EMAIL
+ * SMTP setup, sanitising, and rate limiting live in `lib/mail.ts`, shared with
+ * the newsletter route so the two can never drift apart.
  */
 
 export const runtime = "nodejs";
@@ -58,79 +71,28 @@ type InquiryPayload = {
 
 /* ────────────────────────────── rate limiting ───────────────────────────── */
 
-const WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const MAX_PER_WINDOW = 5;
-/** Bounds memory use if a single host is flooded with unique spoofed IPs. */
-const MAX_TRACKED_IPS = 5000;
-
-/**
- * In-memory fixed-window limiter.
- *
- * Deliberately simple, and worth understanding its limits: state is per server
- * instance, so on a multi-instance or serverless deployment the effective limit
- * is MAX_PER_WINDOW × instances, and it resets on cold start. That is adequate
- * for a low-volume studio site whose real goal is blunting bots, but if this
- * ever needs to be strict, move it to Redis / Upstash rather than trusting this.
- */
-const hits = new Map<string, { count: number; resetAt: number }>();
-
-function rateLimit(key: string): { ok: boolean; retryAfter: number } {
-  const now = Date.now();
-  const entry = hits.get(key);
-
-  if (!entry || now > entry.resetAt) {
-    if (hits.size >= MAX_TRACKED_IPS) {
-      for (const [k, v] of hits) if (now > v.resetAt) hits.delete(k);
-      if (hits.size >= MAX_TRACKED_IPS) hits.clear();
-    }
-    hits.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return { ok: true, retryAfter: 0 };
-  }
-
-  entry.count += 1;
-  if (entry.count > MAX_PER_WINDOW) {
-    return { ok: false, retryAfter: Math.ceil((entry.resetAt - now) / 1000) };
-  }
-  return { ok: true, retryAfter: 0 };
-}
-
-/**
- * Client IP.
- *
- * `x-forwarded-for` is client-supplied and trivially spoofed, so this is only
- * meaningful behind a proxy that overwrites it (Vercel, Cloudflare, nginx with
- * real_ip). Without such a proxy the limiter is best-effort; the honeypot and
- * field validation are the defences that do not depend on network trust.
- */
-function clientKey(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]!.trim();
-  return req.headers.get("x-real-ip") ?? "unknown";
-}
+const rateLimit = createRateLimiter({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+});
 
 /* ─────────────────────────────── formatting ─────────────────────────────── */
 
-/** Strips CR/LF so user input cannot inject extra SMTP headers. */
-function headerSafe(value: string): string {
-  return value.replace(/[\r\n]+/g, " ").trim();
-}
-
-function escapeHtml(value: unknown): string {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
 /**
- * Merges a select value with its free-text "Other" answer so the email reads
- * "Other — reclaimed cedar" instead of a bare "other".
+ * Renders a select answer for the notification email.
+ *
+ * Two jobs: turn the submitted id into a readable English label, and fold in
+ * the free-text answer when the visitor chose "Other". Without the lookup the
+ * studio received raw ids — "privateDining", "5000to8000" — which are fine as
+ * data and poor as something a human reads over morning coffee.
  */
-function withOther(value: string | undefined, other: string | undefined): string {
+function formatSelection(
+  field: InquiryOptionField,
+  value: string | undefined,
+  other: string | undefined
+): string {
   if (!value) return "";
-  if (value !== "other") return value;
+  if (value !== OTHER_OPTION_ID) return optionLabel(field, value);
   return other?.trim() ? `Other — ${other.trim()}` : "Other (unspecified)";
 }
 
@@ -169,7 +131,7 @@ export async function POST(req: Request) {
     );
   }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!isValidEmail(email)) {
     return NextResponse.json(
       { success: false, message: "Please provide a valid email address." },
       { status: 400 }
@@ -189,13 +151,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, message: "Submission too large." }, { status: 413 });
   }
 
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, CONTACT_EMAIL } = process.env;
+  const smtp = getSmtpConfig();
 
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !SMTP_FROM || !CONTACT_EMAIL) {
-    console.error(
-      "[inquiry] SMTP is not configured — refusing to report a false success. " +
-        "Set SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM, CONTACT_EMAIL. See .env.example."
-    );
+  if (!smtp) {
     return NextResponse.json(
       {
         success: false,
@@ -205,26 +163,20 @@ export async function POST(req: Request) {
     );
   }
 
-  const port = Number(SMTP_PORT ?? 587);
-  const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port,
-    secure: port === 465, // 465 = implicit TLS; 587 upgrades via STARTTLS
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
-  });
+  const transporter = createTransport(smtp);
 
   const rows: [string, string][] = [
     ["Name", name],
     ["Email", email],
     ["Phone", phone],
     ["Referring piece", body.ref ?? ""],
-    ["Wood preference", withOther(body.wood, body.woodOther)],
-    ["Resin style", withOther(body.resin, body.resinOther)],
+    ["Wood preference", formatSelection("wood", body.wood, body.woodOther)],
+    ["Resin style", formatSelection("resin", body.resin, body.resinOther)],
     ["Dimensions", body.dimensions ?? ""],
-    ["Shape", withOther(body.shape, body.shapeOther)],
-    ["Space type", withOther(body.spaceType, body.spaceTypeOther)],
+    ["Shape", formatSelection("shape", body.shape, body.shapeOther)],
+    ["Space type", formatSelection("spaceType", body.spaceType, body.spaceTypeOther)],
     ["Shipping country", body.shippingCountry ?? ""],
-    ["Budget range", body.budget ?? ""],
+    ["Budget range", formatSelection("budget", body.budget, undefined)],
     ["City", body.location ?? ""],
     ["Site language", body.locale ?? ""],
   ].filter(([, v]) => v.trim().length > 0) as [string, string][];
@@ -238,8 +190,8 @@ export async function POST(req: Request) {
 
   try {
     await transporter.sendMail({
-      from: SMTP_FROM,
-      to: CONTACT_EMAIL,
+      from: smtp.from,
+      to: smtp.to,
       // Lets the studio hit Reply and reach the customer directly.
       replyTo: `${headerSafe(name)} <${headerSafe(email)}>`,
       subject: `New table enquiry — ${headerSafe(name)}${body.ref ? ` (${headerSafe(body.ref)})` : ""}`,
