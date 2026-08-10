@@ -52,21 +52,25 @@
   "MadeForSpace": {
     "title": "Faite pour votre espace.",
     "description": "Votre pièce fixe les dimensions. Votre planche définit le caractère. Rien ici ne se choisit dans un catalogue.",
-    "imageAlt": "Détail rapproché du fil du noyer rencontrant un bord de résine coulée, montrant la transition finie à la main entre bois et résine",
     "items": [
       {
         "title": "Vous choisissez la planche",
-        "description": "Après votre acompte, nous sélectionnons trois à cinq planches correspondant à vos dimensions, nous photographions chacune brute puis humidifiée, et vous choisissez. Aucune découpe avant votre accord."
+        "description": "Après votre acompte, nous sélectionnons trois à cinq planches correspondant à vos dimensions, nous photographions chacune brute puis humidifiée, et vous choisissez. Aucune découpe avant votre accord.",
+        "imageAlt": "Planches de noyer brutes stockées dans l atelier de Marrakech, photographiées avant toute découpe pour que le client choisisse la sienne"
       },
       {
         "title": "Aux dimensions de votre pièce",
-        "description": "Parlez-nous de la pièce, pas de la table. Nous vous dirons franchement ce qui rentre, ce qui sera trop juste, et ce qui ne passera pas votre porte."
+        "description": "Parlez-nous de la pièce, pas de la table. Nous vous dirons franchement ce qui rentre, ce qui sera trop juste, et ce qui ne passera pas votre porte.",
+        "imageAlt": "Détail rapproché d un chant de table montrant la transition entre le bois et la résine coulée sur toute l épaisseur"
       },
       {
         "title": "Finie à la main",
-        "description": "Les machines aplanissent le plateau. Les mains le finissent. Le bois et la résine s'abrasent différemment : la transition entre les deux se juge au toucher, pas à l'œil."
+        "description": "Les machines aplanissent le plateau. Les mains le finissent. Le bois et la résine s'abrasent différemment : la transition entre les deux se juge au toucher, pas à l'œil.",
+        "imageAlt": "Artisan ponçant à la main la jonction entre bois et résine jusqu à une finition homogène à l établi"
       }
-    ]
+    ],
+    "eyebrow": "La commande",
+    "stageLabel": "Étape"
   },
   "CraftsmanshipSection": {
     "title": "La fabrication d'un objet qui se transmet.",
@@ -454,5 +458,8 @@
         "body": "Nous garantissons notre fabrication contre toute défaillance structurelle dans un usage domestique intérieur normal. La garantie ne couvre pas les dommages thermiques, le jaunissement dû à une exposition solaire directe prolongée, l'usage extérieur, ni les dommages causés par des produits abrasifs ou solvantés, chacun de ces cas étant évitable et documenté dans nos conseils d'entretien."
       }
     ]
+  },
+  "TableCard": {
+    "sold": "Livrée"
   }
 }

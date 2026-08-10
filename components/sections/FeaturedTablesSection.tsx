@@ -14,21 +14,89 @@ import { rtlIconClass } from "@/lib/i18n/motion";
 /**
  * Signature commissions on the homepage.
  *
- * Reads from `content/tables/tables.ts`. It previously held its own four-item
- * array in which "atlas-walnut-river" appeared twice — the same piece rendered
- * as two different cards linking to the same URL, which is duplicate content on
- * the site's highest-authority page.
+ * THE BUG THIS REPLACES. The previous layout was `flex flex-wrap
+ * justify-between` with children alternating `md:w-[60%]` and `md:w-[35%]`, and
+ * a `gap-x-24`. At the container's real width that is 710 + 414 + 96 = 1220px
+ * against 1184px available, so no pair ever fit on a row. Every card wrapped to
+ * its own line and the intended two-column rhythm collapsed into a ragged
+ * single column separated by 10rem gaps. Adding tables made it worse, not
+ * better, because each new card inherited another orphaned row.
+ *
+ * THE REPLACEMENT. A 12-column CSS grid with explicit spans. Grid cannot
+ * silently reflow the way flex-wrap does: a 7 + 5 pair always occupies one row
+ * because the columns are declared, not inferred from pixel widths.
+ *
+ * Two further corrections:
+ *
+ * - ASPECT RATIO IS NOW A LAYOUT DECISION, NOT A DATA ONE. The cards were
+ *   rendering `cover.aspect` straight from the content file, which mixes 4/5,
+ *   square, 16/9 and 3/4. Mixed ratios across a grid read as an accident. The
+ *   ratio is now assigned by grid role, so the wide card is always wide and the
+ *   tall card is always tall regardless of what the content file says.
+ *
+ * - THE STAGGER IS BOUNDED. `md:mt-32` on every second card pushed the offset
+ *   further down the page with each row. The offset now applies only within a
+ *   pair, via grid row alignment, so the rhythm repeats instead of drifting.
  */
 
-/** Alternating column widths, so the grid rhythm survives any table count. */
-const LAYOUT = [
-  { width: "md:w-[60%]", offset: "", sizes: "(max-width: 768px) 100vw, 60vw", heading: "text-3xl md:text-4xl" },
-  { width: "md:w-[35%]", offset: "md:mt-32", sizes: "(max-width: 768px) 100vw, 35vw", heading: "text-2xl md:text-3xl" },
-];
+/**
+ * Repeating 4-card rhythm across a 12-column grid.
+ *
+ * The cycle is: tall-wide, tall-narrow (dropped), narrow, wide. That gives two
+ * visually distinct rows per cycle and avoids the "two equal columns" default
+ * without letting any card become an orphan — 12 divides evenly at every step.
+ */
+const RHYTHM = [
+  {
+    span: "md:col-span-7",
+    ratio: "aspect-[4/5]",
+    heading: "text-2xl md:text-3xl lg:text-4xl",
+    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 58vw, 700px",
+    offset: "",
+  },
+  {
+    span: "md:col-span-5",
+    ratio: "aspect-[3/4]",
+    heading: "text-xl md:text-2xl lg:text-3xl",
+    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 40vw, 480px",
+    offset: "md:mt-20 lg:mt-28",
+  },
+  {
+    span: "md:col-span-5",
+    ratio: "aspect-[4/5]",
+    heading: "text-xl md:text-2xl lg:text-3xl",
+    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 40vw, 480px",
+    offset: "",
+  },
+  {
+    span: "md:col-span-7",
+    ratio: "aspect-[16/11]",
+    heading: "text-2xl md:text-3xl lg:text-4xl",
+    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 58vw, 700px",
+    offset: "md:mt-20 lg:mt-28",
+  },
+] as const;
 
-const SLAM_EASE = [0.23, 1, 0.32, 1] as const;
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-function ParallaxImage({ src, alt, sizes }: { src: string; alt: string; sizes: string }) {
+/**
+ * Slow vertical drift on the cover image, tied to scroll position.
+ *
+ * The wrapper is inset by -10% and sized 120% so there is real image outside
+ * the frame to travel into; animating `y` on a flush-fitting image would expose
+ * the edge. Transform only, so this stays on the compositor.
+ */
+function ParallaxImage({
+  src,
+  alt,
+  sizes,
+  priority,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
@@ -37,7 +105,7 @@ function ParallaxImage({ src, alt, sizes }: { src: string; alt: string; sizes: s
     offset: ["start end", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
   return (
     <div ref={ref} className="absolute inset-0 overflow-hidden w-full h-full">
@@ -49,7 +117,8 @@ function ParallaxImage({ src, alt, sizes }: { src: string; alt: string; sizes: s
           src={src}
           alt={alt}
           fill
-          className="object-cover transform transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.03]"
+          priority={priority}
+          className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
           sizes={sizes}
         />
       </motion.div>
@@ -62,83 +131,138 @@ export function FeaturedTablesSection() {
   const locale = useLocale();
   const t = useTranslations("Featured");
   const tTables = useTranslations("Tables");
+  const tCard = useTranslations("TableCard");
   const localized = tables.map((table) => localizeTable(table, tTables));
   const isRtl = getTextDirection(locale) === "rtl";
 
   return (
-    <section className="py-16 md:py-24 px-6 md:px-12 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative bg-white overflow-x-clip">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-28 lg:py-32">
+
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8">
-          <div className="max-w-xl relative z-20">
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-black mb-6 tracking-tight leading-[0.9]">
-              <span className="bg-[#DFAB2E]">{t("title")}</span>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20 md:mb-28">
+          <div className="max-w-xl">
+            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-6">
+              {t("eyebrow")}
+            </p>
+            {/*
+              Same slab treatment as every other homepage h2: inner span so the
+              gold hugs the words, `box-decoration-clone` to keep padding on
+              wrapped lines, and asymmetric vertical padding as descender
+              reserve so a serif cap-and-descender pair is never clipped.
+            */}
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-black tracking-tight leading-[1.15] text-balance">
+              <span className="bg-[#DFAB2E] box-decoration-clone px-[0.12em] pt-[0.02em] pb-[0.06em]">
+                {t("title")}
+              </span>
             </h2>
-            <p className="font-sans text-gray-600 text-lg leading-relaxed">
+            <p className="font-sans text-gray-600 text-lg leading-relaxed mt-6">
               {t("description")}
             </p>
           </div>
+
           <Link
             href="/tables"
-            className="group relative z-20 flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-[#DFAB2E] hover:border-[#DFAB2E] transition-colors w-fit"
+            className="group flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-gold hover:border-gold transition-colors w-fit shrink-0"
           >
             {t("viewAll")}
             <ArrowRight
               size={16}
-              className={`transform transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 ${rtlIconClass(isRtl)}`}
+              className={`transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 ${rtlIconClass(isRtl)}`}
             />
           </Link>
         </div>
 
-        <div className="flex flex-wrap items-start justify-between gap-y-24 md:gap-y-40 gap-x-12 md:gap-x-24 relative z-10">
+        {/*
+          `items-start` so each card keeps its own height instead of stretching
+          to the tallest in the row — the varied heights are what produce the
+          editorial rhythm.
+        */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-6 lg:gap-x-10 gap-y-14 md:gap-y-20 items-start">
           {localized.map((table, index) => {
-            const layout = LAYOUT[index % LAYOUT.length];
+            const layout = RHYTHM[index % RHYTHM.length];
             const cover = table.images[0];
+            const isSold = table.availability === "sold";
 
             return (
-              <div
+              <motion.article
                 key={table.slug}
-                className={`w-full ${layout.width} ${layout.offset} flex flex-col perspective-[1200px]`}
+                initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.9,
+                  delay: (index % 2) * 0.08,
+                  ease: EASE,
+                }}
+                className={`group ${layout.span} ${layout.offset}`}
               >
-                <Link
-                  href={`/tables/${table.slug}`}
-                  className="relative block overflow-hidden mb-6 group"
-                >
-                  <div className={`relative w-full ${cover.aspect} overflow-hidden`}>
-                    <motion.div
-                      initial={
-                        reduceMotion
-                          ? false
-                          : { opacity: 0, rotateX: 30, scale: 0.85, filter: "blur(20px)", y: 120 }
-                      }
-                      whileInView={{ opacity: 1, rotateX: 0, scale: 1, filter: "blur(0px)", y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.6, delay: (index % 2) * 0.1, ease: SLAM_EASE }}
-                      style={{ transformOrigin: "bottom center" }}
-                      className="absolute inset-0"
-                    >
-                      <ParallaxImage src={cover.src} alt={cover.alt} sizes={layout.sizes} />
-                    </motion.div>
+                <Link href={`/tables/${table.slug}`} className="block">
+                  {/* Cover */}
+                  <div className={`relative w-full ${layout.ratio} overflow-hidden bg-ivory-dark`}>
+                    <ParallaxImage
+                      src={cover.src}
+                      alt={cover.alt}
+                      sizes={layout.sizes}
+                      priority={index === 0}
+                    />
+
+                    {/*
+                      Availability chip. Only rendered for sold pieces — an
+                      "available" chip on everything else would be noise, and
+                      the enquiry CTA already implies availability.
+                    */}
+                    {isSold ? (
+                      <span className="absolute top-4 start-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-black">
+                        {tCard("sold")}
+                      </span>
+                    ) : null}
+
+                    {/*
+                      Hover scrim. Sits above the image and below the caption,
+                      so the caption text stays fully opaque while the image
+                      dims slightly behind it.
+                    */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700"
+                    />
+                  </div>
+
+                  {/* Caption */}
+                  <div className="pt-5 flex items-start justify-between gap-6">
+                    <div className="min-w-0">
+                      <div className="flex items-baseline gap-3 mb-2">
+                        <span
+                          aria-hidden="true"
+                          className="font-sans text-[10px] text-gold tabular-nums tracking-[0.2em] shrink-0"
+                        >
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className="h-px flex-1 bg-black/10 group-hover:bg-gold/50 transition-colors duration-500"
+                        />
+                      </div>
+
+                      <h3
+                        className={`font-display ${layout.heading} text-black tracking-tight leading-[1.15] pb-0.5 mb-2 group-hover:text-gold transition-colors duration-300`}
+                      >
+                        {table.name}
+                      </h3>
+                      <p className="font-sans text-xs md:text-sm text-gray-500 uppercase tracking-[0.15em]">
+                        {table.wood} &middot; {table.resinColor}
+                      </p>
+                    </div>
+
+                    <ArrowRight
+                      size={18}
+                      aria-hidden="true"
+                      className={`shrink-0 mt-8 text-black/25 group-hover:text-gold transition-all duration-500 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 ${rtlIconClass(isRtl)}`}
+                    />
                   </div>
                 </Link>
-
-                <motion.div
-                  initial={reduceMotion ? false : { opacity: 0, y: 30, filter: "blur(8px)" }}
-                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.3, ease: SLAM_EASE }}
-                  className="flex flex-col items-start"
-                >
-                  <h3
-                    className={`font-display ${layout.heading} text-black mb-1 transition-colors`}
-                  >
-                    {table.name}
-                  </h3>
-                  <p className="font-sans text-sm text-gray-500 uppercase tracking-widest">
-                    {table.wood} &amp; {table.resinColor} Resin
-                  </p>
-                </motion.div>
-              </div>
+              </motion.article>
             );
           })}
         </div>

@@ -1,146 +1,258 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useTranslations } from "next-intl";
+import { useRef } from "react";
 
-type ValueItem = { title: string; description: string };
+type ValueItem = { title: string; description: string; imageAlt: string };
 
 /**
- * "Made for your space." — the commissioning-process section.
+ * "Made for your space." — the three-stage commissioning story.
  *
- * Design decisions worth recording, because several are deliberate reversals of
- * what was here before:
+ * Layout: a sticky image column paired with a scrolling type column. The
+ * photograph stays pinned while the three stages move past it, so the section
+ * reads as one continuous idea rather than three stacked cards. That pairing is
+ * the standard editorial treatment for sequential process content, and it is
+ * what makes the section feel considered rather than templated.
  *
- * 1. BACKGROUND. Stays in the ivory family (`--background` is already ivory, so
- *    this is the site's own surface, not a new colour). The section previously
- *    sat on flat `bg-ivory` while every neighbour was `bg-white`, which read as
- *    an accident. It now steps ivory -> ivory-dark across the split, so the
- *    tonal change lands on a structural edge and reads as intent.
+ * Notes on specific choices:
  *
- * 2. NO GOLD SLAB ON THE HEADING. The h2 was `<span className="bg-[#DFAB2E]">`.
- *    Gold text on white is 2.10:1 and gold-as-fill demands near-black type; a
- *    saturated band behind a 48px serif reads as a highlighter pen. The accent
- *    moves to a 2px rule and a single numeral, where it has contrast to spare.
+ * 1. BACKGROUND. `bg-white`, matching every other homepage section. This block
+ *    was previously the only `bg-ivory` one on the page, which read as an
+ *    accident rather than a deliberate tonal step. Separation from its
+ *    neighbours now comes from the hairline rule and the vertical rhythm, not
+ *    from a colour change.
  *
- * 3. NO REPEATED LEFT BORDER. Three identical `border-s` cards is the "three
- *    equal cards" default. The items are now a hairline lattice — dividers
- *    *between* rows, no enclosing boxes — with the step numeral carrying the
- *    accent. Sequence is the actual content here, so numbering is semantic.
+ * 2. GOLD SLAB ON THE HEADING. Matches every other homepage h2. I previously
+ *    argued against it on contrast grounds, and I was wrong about which
+ *    contrast matters: the slab is a background behind BLACK type, so the pair
+ *    that must pass is black-on-gold (10.0:1, comfortably AA), not gold-on-
+ *    white. Consistency across the page wins.
  *
- * 4. ASYMMETRY. 5/7 split rather than 50/50, and the image is pulled up out of
- *    the grid so the type column and the photograph do not start on the same
- *    line.
+ * 3. THREE IMAGES, NOT ONE. Each stage now shows its own photograph, cross-
+ *    faded as that stage becomes active. A single static image beside three
+ *    unrelated stages was the weakest part of the old layout — the picture
+ *    could not illustrate what the text was saying.
+ *
+ * 4. NUMERALS AS STRUCTURE. Large ghosted numerals anchor each stage and carry
+ *    the sequence, which is the actual content here. They sit at low opacity so
+ *    they read as structure, not decoration competing with the headings.
  */
 export function MadeForYourSpaceSection() {
   const reduceMotion = useReducedMotion();
   const t = useTranslations("MadeForSpace");
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   // `t.raw` returns the array as authored in messages/*.json so the list length
   // stays a content decision rather than a code one.
   const values = t.raw("items") as ValueItem[];
 
+  const STAGE_IMAGES = [
+    "/images/process_wood_selection.png",
+    "/images/material_detail.png",
+    "/images/process_final_finish.png",
+  ];
+
+  /**
+   * Drives the image cross-fade from the scroll position of the type column.
+   * `offset` starts tracking when the column's top reaches 80% of the viewport
+   * and finishes when its bottom passes 20%, so the final image is fully
+   * settled before the section leaves the screen.
+   */
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 0.8", "end 0.2"],
+  });
+
   return (
-    <section className="relative py-24 md:py-32 lg:py-40 bg-ivory overflow-x-clip">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        {/*
-          Stacked header, left aligned, capped at 65ch. Not a split header with
-          a paragraph floating in the right column.
-        */}
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-[65ch]"
-        >
-          <div className="w-16 h-[3px] bg-gold mb-8" />
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-black tracking-tight leading-[1.05] pb-1 mb-6 text-balance">
-            {t("title")}
-          </h2>
-          <p className="font-sans text-gray-600 text-lg md:text-xl leading-relaxed">
-            {t("description")}
-          </p>
-        </motion.div>
-      </div>
-
+    <section className="relative bg-white overflow-x-clip">
       {/*
-        The split. `items-stretch` so the photograph runs the full height of the
-        step list rather than being vertically centred against it — a tall
-        image column beside a tall type column is what gives the section its
-        weight.
+        Hairline top rule at the container edge, not full-bleed: it aligns the
+        section opening with the grid the rest of the page uses.
       */}
-      <div className="max-w-7xl mx-auto mt-16 md:mt-24 px-6 md:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="border-t border-black/10 pt-20 md:pt-28 lg:pt-32">
 
-          {/*
-            Image first in the DOM and on the left at desktop, so the reading
-            order on mobile is header -> image -> steps.
-          */}
+          {/* Header */}
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-5 relative w-full aspect-[4/5] lg:aspect-auto lg:min-h-[560px] overflow-hidden bg-ivory-dark"
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-20 md:mb-28"
           >
-            <Image
-              src="/images/material_detail.png"
-              alt={t("imageAlt")}
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 42vw"
-            />
+            <div className="max-w-2xl">
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-6">
+                {t("eyebrow")}
+              </p>
+              {/*
+                The slab sits on an inner span so the background hugs the words
+                rather than spanning the column. `box-decoration-clone` keeps the
+                horizontal padding on every line when the title wraps, and the
+                asymmetric vertical padding is descender reserve — a serif at
+                this size drops below the em box and a tight block clips it.
+              */}
+              <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-black tracking-tight leading-[1.15] text-balance">
+                <span className="bg-[#DFAB2E] box-decoration-clone px-[0.12em] pt-[0.02em] pb-[0.06em]">
+                  {t("title")}
+                </span>
+              </h2>
+            </div>
+            <p className="font-sans text-gray-600 text-lg md:text-xl leading-relaxed max-w-md lg:text-end lg:pb-2">
+              {t("description")}
+            </p>
           </motion.div>
 
-          {/*
-            Hairline lattice. `divide-y` puts a rule *between* rows only, so
-            there is no border above the first or below the last — no boxes, no
-            top-and-bottom border on every row.
-          */}
-          <div className="lg:col-span-7 lg:ps-4">
-            <ol className="divide-y divide-black/10 border-t border-black/10">
+          {/* Split: sticky imagery / scrolling stages */}
+          <div ref={sectionRef} className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 pb-24 md:pb-32">
+
+            {/*
+              Sticky column. `self-start` is required for `position: sticky` to
+              work inside a grid item — without it the item stretches to the row
+              height and has nothing to stick within.
+            */}
+            <div className="lg:col-span-5 lg:sticky lg:top-28 self-start">
+              <div className="relative w-full aspect-[4/5] overflow-hidden bg-ivory-dark">
+                {STAGE_IMAGES.map((src, i) => (
+                  <StageImage
+                    key={src}
+                    src={src}
+                    alt={values[i]?.imageAlt ?? ""}
+                    index={i}
+                    total={STAGE_IMAGES.length}
+                    progress={scrollYProgress}
+                    reduceMotion={reduceMotion}
+                    priority={i === 0}
+                  />
+                ))}
+
+                {/* Stage counter, bottom-left, over the image. */}
+                <div className="absolute bottom-0 inset-x-0 p-5 md:p-6 flex items-end justify-between pointer-events-none">
+                  <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-white/80 drop-shadow-sm">
+                    {t("stageLabel")}
+                  </span>
+                  <span className="font-display text-white text-sm tabular-nums drop-shadow-sm">
+                    01 &mdash; {String(values.length).padStart(2, "0")}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Stages */}
+            <ol className="lg:col-span-7 lg:ps-6">
               {values.map((item, index) => (
                 <motion.li
                   key={item.title}
-                  initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{
-                    duration: 0.6,
-                    delay: index * 0.06,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="flex gap-6 md:gap-10 py-8 md:py-10"
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  className="group relative border-t border-black/10 last:border-b py-10 md:py-14 lg:min-h-[38vh] flex flex-col justify-center"
                 >
+                  <div className="flex items-start gap-6 md:gap-10">
+                    {/*
+                      Ghosted numeral. Low opacity so it reads as structure
+                      rather than competing with the heading, and it darkens on
+                      hover to tie the row together as one target.
+                    */}
+                    <span
+                      aria-hidden="true"
+                      className="font-display text-5xl md:text-7xl leading-none shrink-0 tabular-nums text-black/10 group-hover:text-gold/70 transition-colors duration-500"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <div className="min-w-0 pt-1 md:pt-2">
+                      <h3 className="font-display text-2xl md:text-3xl lg:text-4xl text-black tracking-tight leading-[1.2] pb-0.5 mb-4">
+                        {item.title}
+                      </h3>
+                      <p className="font-sans text-gray-600 leading-relaxed text-base md:text-lg max-w-[54ch]">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+
                   {/*
-                    The one place the accent appears as type in this section.
-                    Gold on ivory is legible at this size and weight, and the
-                    number is real information: these are sequential stages of
-                    a commission, not decoration.
+                    Gold rule that draws in on hover, from the reading edge.
+                    `origin-left` with an RTL override so it grows from the
+                    correct side in Arabic.
                   */}
                   <span
                     aria-hidden="true"
-                    className="font-display text-3xl md:text-4xl text-gold leading-none shrink-0 w-8 md:w-10 tabular-nums"
-                  >
-                    {index + 1}
-                  </span>
-
-                  <div className="min-w-0">
-                    <h3 className="font-display text-2xl md:text-3xl text-black tracking-tight leading-[1.15] pb-0.5 mb-3">
-                      {item.title}
-                    </h3>
-                    <p className="font-sans text-gray-600 leading-relaxed text-base md:text-lg max-w-[58ch]">
-                      {item.description}
-                    </p>
-                  </div>
+                    className="absolute -top-px inset-x-0 h-px bg-gold origin-left rtl:origin-right scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out"
+                  />
                 </motion.li>
               ))}
             </ol>
-          </div>
 
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * One frame of the sticky image stack.
+ *
+ * Each image owns a slice of the section's scroll progress and cross-fades
+ * within it. Opacity only — no layout properties animate — so this stays on the
+ * compositor and never triggers reflow while scrolling.
+ *
+ * Under `prefers-reduced-motion` the stack collapses to the first image at full
+ * opacity and the rest stay hidden, rather than flickering through transitions.
+ */
+function StageImage({
+  src,
+  alt,
+  index,
+  total,
+  progress,
+  reduceMotion,
+  priority,
+}: {
+  src: string;
+  alt: string;
+  index: number;
+  total: number;
+  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  reduceMotion: boolean | null;
+  priority?: boolean;
+}) {
+  const slice = 1 / total;
+  const start = index * slice;
+
+  // Fade in over the first 40% of this image's slice, hold, then fade out over
+  // the last 40%. The first and last images clamp so the stack is never blank.
+  const opacity = useTransform(
+    progress,
+    [
+      start - slice * 0.4,
+      start + slice * 0.15,
+      start + slice * 0.85,
+      start + slice * 1.4,
+    ],
+    [0, 1, 1, 0],
+    { clamp: true }
+  );
+
+  return (
+    <motion.div
+      className="absolute inset-0"
+      style={{
+        opacity: reduceMotion ? (index === 0 ? 1 : 0) : opacity,
+      }}
+      aria-hidden={index !== 0}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        priority={priority}
+        className="object-cover"
+        sizes="(max-width: 1024px) 100vw, 42vw"
+      />
+    </motion.div>
   );
 }

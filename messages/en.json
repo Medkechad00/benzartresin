@@ -52,21 +52,25 @@
   "MadeForSpace": {
     "title": "Made for your space.",
     "description": "Your room sets the dimensions. Your slab sets the character. Nothing here is chosen from a catalogue.",
-    "imageAlt": "Close detail of walnut grain meeting a poured resin edge, showing the hand-finished transition between timber and resin",
     "items": [
       {
         "title": "You choose the actual slab",
-        "description": "After your deposit we source three to five boards that fit your dimensions, photograph each one raw and wetted, and you pick. Nothing is cut until you have."
+        "description": "After your deposit we source three to five boards that fit your dimensions, photograph each one raw and wetted, and you pick. Nothing is cut until you have.",
+        "imageAlt": "Raw walnut slabs racked in the Marrakech workshop, photographed before any cutting so the client can choose the board"
       },
       {
         "title": "Built to your dimensions",
-        "description": "Tell us the room, not the table. We will tell you honestly what fits, what will feel tight, and what will not get through your door."
+        "description": "Tell us the room, not the table. We will tell you honestly what fits, what will feel tight, and what will not get through your door.",
+        "imageAlt": "Close detail of a table edge showing the transition between timber and poured resin at full thickness"
       },
       {
         "title": "Finished by hand",
-        "description": "Machines flatten the top. Hands finish it. Wood and resin abrade at different rates, so the transition between them is judged by touch, not by eye."
+        "description": "Machines flatten the top. Hands finish it. Wood and resin abrade at different rates, so the transition between them is judged by touch, not by eye.",
+        "imageAlt": "Artisan hand-sanding the wood and resin interface to an even finish at the bench"
       }
-    ]
+    ],
+    "eyebrow": "The commission",
+    "stageLabel": "Stage"
   },
   "CraftsmanshipSection": {
     "title": "The making of a modern heirloom.",
@@ -454,5 +458,8 @@
         "body": "We warrant our workmanship against structural failure under normal indoor domestic use. The warranty does not cover heat damage, UV ambering from sustained direct sunlight, outdoor use, or damage from abrasive or solvent-based cleaning products, as each of these is avoidable and documented in our care guidance."
       }
     ]
+  },
+  "TableCard": {
+    "sold": "Delivered"
   }
 }
