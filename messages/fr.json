@@ -105,6 +105,12 @@
     "viewDetails": "Voir les détails",
     "empty": "De nouvelles pièces sont en cours de photographie. Contactez-nous et nous vous montrerons ce qui est en préparation."
   },
+  "NotFound": {
+    "eyebrow": "Page introuvable",
+    "title": "Celle-ci s'est échappée.",
+    "description": "La page que vous cherchez n'est pas encore dans l'atelier. Chaque pièce ici est faite sur commande — peut-être que celle-ci est encore sur l'établi.",
+    "cta": "Retour à la collection"
+  },
   "TableDetail": {
     "woodSpecies": "Essence de bois",
     "resin": "Résine",
@@ -124,25 +130,53 @@
   },
   "Tables": {
     "atlas-walnut-river": {
-      "name": "The Atlas Walnut River",
-      "wood": "Moroccan Atlas Walnut",
-      "resinColor": "Deep Emerald Green",
-      "story": "Sourced from the foothills of the Atlas Mountains, this slab of Moroccan walnut carries dense, unpredictable grain. The river is poured in layers of deep emerald epoxy to build genuine depth rather than flat colour, then finished with a hard-wax oil that can be spot-repaired years from now.",
-      "imageAlt": "Rectangular Moroccan Atlas walnut dining table with a deep emerald green epoxy resin river running its full length"
+      "name": "L'Atlas Walnut River",
+      "wood": "Noyer de l'Atlas marocain",
+      "resinColor": "Vert émeraude profond",
+      "story": "Issu des contreforts de l'Atlas marocain, ce rare plateau de noyer présente des grains denses et imprévisibles. La rivière est coulée en couches d'époxy vert émeraude pour créer une profondeur authentique, puis finie à l'huile de finition cireuse qui peut être réparée localement des années plus tard.",
+      "imageAlt": "Table à manger rectangulaire en noyer de l'Atlas marocain avec une rivière de résine époxy vert émeraude"
     },
     "obsidian-grain": {
       "name": "Obsidian Grain",
-      "wood": "Charred Ash (Shou Sugi Ban)",
-      "resinColor": "Opaque Black",
-      "story": "The Japanese Shou Sugi Ban charring technique meets a modern deep pour. The ash is charred, brushed, and sealed, and its blackened grain sits against a light-absorbing obsidian channel. The contrast is textural rather than chromatic — both surfaces are black, and only one reflects.",
-      "imageAlt": "Rectangular charred ash Shou Sugi Ban dining table with an opaque black epoxy resin channel and visible brushed grain"
+      "wood": "Frêne carbonisé (Shou Sugi Ban)",
+      "resinColor": "Noir opaque",
+      "story": "La technique japonaise Shou Sugi Ban rencontre une coulée profonde moderne. Le frêne est carbonisé, brossé et scellé, et son grain noirci contraste avec un canal de résine obsidienne qui absorbe la lumière. Le contraste est textural plutôt que chromatique — les deux surfaces sont noires, et une seule reflète.",
+      "imageAlt": "Table à manger rectangulaire en frêne carbonisé Shou Sugi Ban avec un canal de résine époxy noire opaque et grain brossé visible"
     },
     "golden-current": {
       "name": "Golden Current",
-      "wood": "Olive Wood",
-      "resinColor": "Metallic Gold",
-      "story": "Ancient olive burls suspended in swirling metallic gold resin. The natural voids in the wood dictated where the resin could go, so the composition was set by the tree rather than by us. The metallic shifts as you move around it and reads completely differently under directional light.",
-      "imageAlt": "Round organic-edge olive wood table with metallic gold epoxy resin filling the natural burl voids"
+      "wood": "Bois d'olivier",
+      "resinColor": "Or métallisé",
+      "story": "Des nœuds d'olivier anciens suspendus dans une résine dorée métallisée tourbillonnante. Les vides naturels du bois ont dicté où la résine pouvait aller, donc la composition a été définie par l'arbre plutôt que par nous. Le métallisé change selon l'angle de vue et se lit complètement différemment sous une lumière directionnelle.",
+      "imageAlt": "Table ronde en bois d'olivier à bord organique avec résine époxy dorée métallisée remplissant les vides naturels"
+    },
+    "cedar-tide": {
+      "name": "Cedar Tide",
+      "wood": "Cèdre du Moyen Atlas",
+      "resinColor": "Turquoise translucide",
+      "story": "Une longue planche de cèdre fendue et recollée autour d'un canal turquoise translucide. La coulée est peu profonde sur les bords et s'approfondit vers le centre, donc la couleur paraît presque claire sur le pourtour et saturée au milieu.",
+      "imageAlt": "Table à manger rectangulaire en cèdre avec un canal de résine époxy turquoise translucide"
+    },
+    "saffron-basin": {
+      "name": "Saffron Basin",
+      "wood": "Érable spalté",
+      "resinColor": "Safran ambré",
+      "story": "Érable spalté avec ses lignes noires de champignon laissées entièrement visibles, coulées dans un versement ambré chaleureux. Un plateau rond fait d'une seule planche large, ce qui rend cette pièce difficile à reproduire.",
+      "imageAlt": "Table ronde en érable spalté avec une coulée de résine époxy safran ambré"
+    },
+    "quarry-edge": {
+      "name": "Quarry Edge",
+      "wood": "Chêne européen",
+      "resinColor": "Gris ardoise",
+      "story": "Chêne avec une live edge exceptionnellement cassée, remplie d'une résine ardoise opaque pour que le contour lise comme de la pierre plutôt que de l'eau. Livré à un client privé ; montré ici comme référence pour l'effet à grande échelle.",
+      "imageAlt": "Table à manger en chêne européen à bord vivant avec résine époxy gris ardoise opaque"
+    },
+    "nomad-console": {
+      "name": "Nomad Console",
+      "wood": "Thuya burl récupéré",
+      "resinColor": "Clair fumé",
+      "story": "Une console étroite en thuya burl récupéré, stabilisée et remplie d'une résine claire légèrement fumée. Prix sur demande, car le thuya de cette figure est sourcé pièce par pièce et aucune planche ne coûte la même.",
+      "imageAlt": "Console étroite en thuya burl récupéré avec résine époxy claire fumée"
     }
   },
   "OurCraft": {

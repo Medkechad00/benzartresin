@@ -105,6 +105,12 @@
     "viewDetails": "View details",
     "empty": "New pieces are being photographed. Get in touch and we will show you what is on the bench."
   },
+  "NotFound": {
+    "eyebrow": "Page not found",
+    "title": "This one got away.",
+    "description": "The page you're looking for isn't in the workshop yet. Every piece here is made to order — maybe this one is still on the bench.",
+    "cta": "Back to collection"
+  },
   "TableDetail": {
     "woodSpecies": "Wood species",
     "resin": "Resin",

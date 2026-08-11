@@ -205,10 +205,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: "Inquiry sent successfully." });
   } catch (error) {
-    const err = error as Error & { code?: string; response?: string };
+    const err = error as Error & { code?: string; response?: string; command?: string };
     console.error("[inquiry] SMTP send failed:", {
       code: err.code,
-      command: (err as any).command,
+      command: err.command,
       response: err.response,
       message: err.message,
       smtpUser: smtp.user,

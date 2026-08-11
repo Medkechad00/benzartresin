@@ -105,6 +105,12 @@
     "viewDetails": "عرض القطعة",
     "empty": "يجري تصوير قطع جديدة. تواصل معنا وسنريك ما هو على طاولة العمل."
   },
+  "NotFound": {
+    "eyebrow": "الصفحة غير موجودة",
+    "title": "هذه القطعة هربت.",
+    "description": "الصفحة التي تبحث عنها ليست في الورشة بعد. كل قطعة هنا تُصنع عند الطلب — ربما هذه لا تزال على طاولة العمل.",
+    "cta": "العودة إلى المجموعة"
+  },
   "TableDetail": {
     "woodSpecies": "نوع الخشب",
     "resin": "الراتنج",
@@ -124,25 +130,53 @@
   },
   "Tables": {
     "atlas-walnut-river": {
-      "name": "The Atlas Walnut River",
-      "wood": "Moroccan Atlas Walnut",
-      "resinColor": "Deep Emerald Green",
-      "story": "Sourced from the foothills of the Atlas Mountains, this slab of Moroccan walnut carries dense, unpredictable grain. The river is poured in layers of deep emerald epoxy to build genuine depth rather than flat colour, then finished with a hard-wax oil that can be spot-repaired years from now.",
-      "imageAlt": "Rectangular Moroccan Atlas walnut dining table with a deep emerald green epoxy resin river running its full length"
+      "name": "أتلس والنت ريفر",
+      "wood": "جوز الأطلس المغربي",
+      "resinColor": "أخضر زمردي عميق",
+      "story": "من سفوح جبال الأطلس المغربي، يأتي هذا الصفح النادر من الجوز بمنحنيات كثيفة لا يمكن التنبؤ بها. النهر مصبوب في طبقات من الإيبوكسي الأخضر الزمردي ليعطي عمقاً حقيقياً بدلاً من لون مسطح، ثم منتهٍ بزيت شمعي صلب يمكن إصلاحه موضعياً بعد سنوات.",
+      "imageAlt": "طاولة طعام مستطيلة من جوز الأطلس المغربي مع نهر من راتنج إيبوكسي أخضر زمردي"
     },
     "obsidian-grain": {
-      "name": "Obsidian Grain",
-      "wood": "Charred Ash (Shou Sugi Ban)",
-      "resinColor": "Opaque Black",
-      "story": "The Japanese Shou Sugi Ban charring technique meets a modern deep pour. The ash is charred, brushed, and sealed, and its blackened grain sits against a light-absorbing obsidian channel. The contrast is textural rather than chromatic — both surfaces are black, and only one reflects.",
-      "imageAlt": "Rectangular charred ash Shou Sugi Ban dining table with an opaque black epoxy resin channel and visible brushed grain"
+      "name": "أوبسيديان جرين",
+      "wood": "رماد محروق (شو شيغي بان)",
+      "resinColor": "أسود معتم",
+      "story": "تقنية الشو شيغي بان اليابانية تلتقي مع صب عميق حديث. الرماد محروق ومفرش ومختوم، وحجره الأسود يقف ضد قناة من راتنج أوبسيديان تمتص الضوء. التباين نصفي وليس لوني — كلا السطحين أسود، وواحد فقط يعكس.",
+      "imageAlt": "طاولة طعام مستطيلة من رماد محروق شو شيغي بان مع قناة من راتنج إيبوكسي أسود معتم وحبوب مفرشة"
     },
     "golden-current": {
-      "name": "Golden Current",
-      "wood": "Olive Wood",
-      "resinColor": "Metallic Gold",
-      "story": "Ancient olive burls suspended in swirling metallic gold resin. The natural voids in the wood dictated where the resin could go, so the composition was set by the tree rather than by us. The metallic shifts as you move around it and reads completely differently under directional light.",
-      "imageAlt": "Round organic-edge olive wood table with metallic gold epoxy resin filling the natural burl voids"
+      "name": "غولدن كورنت",
+      "wood": "خشب زيتون",
+      "resinColor": "ذهبي معدني",
+      "story": "عُقد زيتون قديمة معلقة في راتنج ذهبي معدني دوار. الفراغات الطبيعية في الخشب حددت مكان الراتنج، فالتكوين كان يحدده الشجر وليس نحن. المعدني يتغير حسب زاوية الرؤية ويُقرأ بشكل مختلف تماماً تحت ضوء موجه.",
+      "imageAlt": "طاولة دائرية من خشب الزيتون بحافة عضوية مع راتنج إيبوكسي ذهبي معدني"
+    },
+    "cedar-tide": {
+      "name": "سيدار تايد",
+      "wood": "أرز من الأطلس المتوسط",
+      "resinColor": "فيروزي شفاف",
+      "story": "لوحة أرز طويلة مقسمة وم rejoined حول قناة فيروزية شفافة. الصب ضحل على الحواف ويعمق نحو المركز، فالنون يبدو شفافاً تقريباً على الحافة ومشبعاً في الوسط.",
+      "imageAlt": "طاولة طعام مستطيلة من أرز مع قناة من راتنج إيبوكسي فيروزي شفاف"
+    },
+    "saffron-basin": {
+      "name": "سافرون بيسن",
+      "wood": "إقر مسطح",
+      "resinColor": "صفر زعفراني",
+      "story": "إقر مسطح بخطوط فطرية سوداء تبقى مرئية بالكامل، موضوع في صب كهرماني دافئ. سطح دائري من لوحة واحدة عريضة، مما يجعل هذه القطعة صعبة التكرار.",
+      "imageAlt": "طاولة دائرية من إقر مسطح مع صب من راتنج إيبوكسي صفر زعفراني"
+    },
+    "quarry-edge": {
+      "name": "كوارى إيدج",
+      "wood": "بلوط أوروبي",
+      "resinColor": "رمادي أردواز",
+      "story": "بلوط بحافة حية غير منتظمة بشكل استثنائي، مملوء براتنج أردوازي معتم ليقوم القراءة كحجر بدلاً من ماء. تم تسليمه لعميل خاص ؛ معروض هنا كمرجع للمظهر على نطاق واسع.",
+      "imageAlt": "طاولة طعام من بلوط أوروبي بحافة حية مع راتنج إيبوكسي رمادي أردوازي معتم"
+    },
+    "nomad-console": {
+      "name": "نوماد كونسول",
+      "wood": "ثويا بورل مستعاد",
+      "resinColor": "واضح مدخن",
+      "story": "كونسول ضيق من خشب الثويا البورل المستعاد، مثبت ومملوء براتنج واضح مدخن قليلاً. السعر عند الطلب، لأن خشب الثويا بهذه المنحنى يُستورد قطعة بقطعة ولا تكلف لوحان.",
+      "imageAlt": "كونسول ضيق من خشب ثويا بورل مستعاد مع راتنج إيبوكسي واضح مدخن"
     }
   },
   "OurCraft": {
