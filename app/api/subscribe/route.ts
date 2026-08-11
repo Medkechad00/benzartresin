@@ -104,7 +104,6 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: smtp.from,
       to: smtp.to,
-      // Lets the studio reply straight to the subscriber from the notification.
       replyTo: headerSafe(email),
       subject: `New studio sign-up — ${headerSafe(email)}`,
       text: [
@@ -134,9 +133,25 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: "Subscribed." });
   } catch (error) {
-    console.error("[subscribe] Failed to send:", error);
+    const err = error as Error & { code?: string; response?: string };
+    console.error("[subscribe] SMTP send failed:", {
+      code: err.code,
+      command: (err as any).command,
+      response: err.response,
+      message: err.message,
+      smtpUser: smtp.user,
+      smtpHost: smtp.host,
+      smtpPort: smtp.port,
+      to: smtp.to,
+    });
     return NextResponse.json(
-      { success: false, message: "We could not complete your sign-up. Please try again." },
+      {
+        success: false,
+        message:
+          err.code === "ECONNECTION"
+            ? "Cannot reach the mail server. Please try again or email us directly at " + smtp.to + "."
+            : "We could not complete your sign-up. Please try again or email us directly at " + smtp.to + ".",
+      },
       { status: 502 }
     );
   }

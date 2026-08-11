@@ -192,7 +192,6 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: smtp.from,
       to: smtp.to,
-      // Lets the studio hit Reply and reach the customer directly.
       replyTo: `${headerSafe(name)} <${headerSafe(email)}>`,
       subject: `New table enquiry — ${headerSafe(name)}${body.ref ? ` (${headerSafe(body.ref)})` : ""}`,
       text: [...rows.map(([l, v]) => `${l}: ${v}`), "", "Details:", message].join("\n"),
@@ -206,9 +205,25 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: "Inquiry sent successfully." });
   } catch (error) {
-    console.error("[inquiry] Failed to send:", error);
+    const err = error as Error & { code?: string; response?: string };
+    console.error("[inquiry] SMTP send failed:", {
+      code: err.code,
+      command: (err as any).command,
+      response: err.response,
+      message: err.message,
+      smtpUser: smtp.user,
+      smtpHost: smtp.host,
+      smtpPort: smtp.port,
+      to: smtp.to,
+    });
     return NextResponse.json(
-      { success: false, message: "We could not send your enquiry. Please try again or email us directly." },
+      {
+        success: false,
+        message:
+          err.code === "ECONNECTION"
+            ? "Our mail server is unreachable. Please try again or email us directly at " + smtp.to + "."
+            : "We could not send your enquiry. Please try again or email us directly at " + smtp.to + ".",
+      },
       { status: 502 }
     );
   }

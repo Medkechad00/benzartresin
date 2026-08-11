@@ -43,6 +43,9 @@ export function TestimonialsSection() {
             <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-black tracking-tight leading-[0.9] mb-6">
               <span className="bg-[#DFAB2E]">{t("title")}</span>
             </h2>
+            <p className="font-sans text-gray-600 text-lg leading-relaxed max-w-prose">
+              {t("subtitle")}
+            </p>
           </motion.div>
         </div>
 

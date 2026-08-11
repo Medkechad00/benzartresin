@@ -151,14 +151,17 @@ function InquiryForm() {
     const { name, value } = e.target;
     setFormData((prev) => {
       const next = { ...prev, [name]: value };
-      // Moving a select off "other" clears its companion text field, so a
-      // stale free-text answer can never be submitted alongside a different
-      // selection.
       if (name in OTHER_FIELDS && value !== OTHER_OPTION_ID) {
         next[OTHER_FIELDS[name as OtherSelectName]] = '';
       }
       return next;
     });
+  };
+
+  const resetForm = () => {
+    setStatus("idle");
+    setStep(1);
+    setErrorMessage("");
   };
 
   /**
@@ -285,68 +288,109 @@ function InquiryForm() {
             ) : null}
 
             {status !== "success" && (
-              <>
-                <div className="hidden lg:flex flex-col gap-4 mb-12">
-                  {steps.map((title, i) => {
-                    const id = i + 1;
-                    return (
-                      <div key={title} className="flex items-center gap-4">
-                        <div
-                          className={`w-8 h-8 rounded-full border flex items-center justify-center font-sans text-xs transition-colors ${
-                            step >= id
-                              ? "border-[#DFAB2E] text-black bg-[#DFAB2E]"
-                              : "border-gray-300 text-gray-400"
-                          }`}
-                        >
-                          {id}
-                        </div>
-                        <span
-                          className={`font-display text-lg transition-colors ${
-                            step >= id ? "text-black" : "text-gray-400"
-                          }`}
-                        >
-                          {title}
-                        </span>
+              <div className="hidden lg:flex flex-col gap-4 mb-12">
+                {steps.map((title, i) => {
+                  const id = i + 1;
+                  return (
+                    <div key={title} className="flex items-center gap-4">
+                      <div
+                        className={`w-8 h-8 rounded-full border flex items-center justify-center font-sans text-xs transition-colors ${
+                          step >= id
+                            ? "border-[#DFAB2E] text-black bg-[#DFAB2E]"
+                            : "border-gray-300 text-gray-400"
+                        }`}
+                      >
+                        {id}
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/*
-                  Reassurance block. The sales strategy identifies the
-                  Justify → De-risk transition as where most drop-off happens,
-                  so the three commitments that remove risk sit beside the form
-                  rather than buried in the FAQ.
-                */}
-                <div className="hidden lg:block border-t border-black/10 pt-6">
-                  <p className="font-sans text-[10px] uppercase tracking-widest text-gray-500 mb-4">
-                    {t("reassurance.title")}
-                  </p>
-                  <ul className="flex flex-col gap-3">
-                    {reassurance.map((item) => (
-                      <li key={item} className="font-sans text-sm text-gray-600 leading-relaxed">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </>
+                      <span
+                        className={`font-display text-lg transition-colors ${
+                          step >= id ? "text-black" : "text-gray-400"
+                        }`}
+                      >
+                        {title}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
 
           {/* Form Column */}
           <div className="lg:w-2/3 w-full max-w-2xl">
+            {/*
+              Reassurance strip. Moved from the info column (where it was
+              visually detached from the action it is reassuring about) to
+              directly above the form, in a slim gold-accented bar. The sales
+              strategy identifies de-risking as the drop-off point; placing
+              these commitments immediately before the first field means the
+              visitor reads them at the moment of commitment, not on the way
+              past.
+            */}
+            <div className="hidden lg:flex items-start gap-4 bg-gold/8 border-l-2 border-gold pl-5 pr-4 py-4 mb-8 rounded-r-sm">
+              <svg aria-hidden="true" className="w-5 h-5 text-gold shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p className="font-sans text-[10px] uppercase tracking-widest text-black/70 mb-2">
+                  {t("reassurance.title")}
+                </p>
+                <ul className="flex flex-col gap-1.5">
+                  {reassurance.map((item) => (
+                    <li key={item} className="font-sans text-sm text-black/70 leading-snug">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               {status === "success" ? (
-                <div className="bg-white p-12 border border-black/10">
-                  <h2 className="font-display text-4xl mb-6">{t("success.title")}</h2>
-                  <p className="font-sans text-gray-600 text-lg leading-relaxed">
-                    {t("success.body", { name: formData.name.split(" ")[0] || "" })}
-                  </p>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={resetForm} />
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="relative bg-white p-10 md:p-16 border border-black/10 text-center max-w-lg mx-auto"
+                  >
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      aria-label="Close and send another enquiry"
+                      className="absolute top-4 end-4 w-10 h-10 flex items-center justify-center text-black/40 hover:text-black transition-colors"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
+                      </svg>
+                    </button>
+
+                    <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-8">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-black">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                    </div>
+
+                    <h2 className="font-display text-3xl md:text-4xl text-black tracking-tight mb-6">
+                      {t("success.title")}
+                    </h2>
+                    <p className="font-sans text-gray-600 text-lg leading-relaxed mb-10">
+                      {t("success.body", { name: formData.name.split(" ")[0] || "" })}
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={resetForm}
+                      className="bg-black text-white px-10 py-4 uppercase tracking-wider text-xs font-bold hover:bg-black/90 transition-colors active:scale-[0.98]"
+                    >
+                      {t("buttons.submit")}
+                    </button>
+                  </motion.div>
                 </div>
               ) : (
                 <form

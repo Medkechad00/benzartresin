@@ -59,10 +59,10 @@ export default async function BlogIndexPage({ params }: Props) {
           </div>
 
           <h2 className="font-sans text-xs uppercase tracking-widest text-gray-500 mb-8">{t('allArticles')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 items-stretch">
             {posts.map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
-                <div className="relative w-full aspect-[4/5] overflow-hidden bg-gray-100 mb-6">
+              <Link key={post.slug} href={`/blog/${post.slug}`} className="group block h-full flex flex-col">
+                <div className="relative w-full aspect-[4/5] overflow-hidden bg-gray-100 mb-6 shrink-0">
                   <Image
                     src={post.frontmatter.heroImage}
                     alt={post.frontmatter.heroAlt}
@@ -71,14 +71,16 @@ export default async function BlogIndexPage({ params }: Props) {
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>
-                <div className="flex items-center gap-3 text-gray-500 font-sans text-xs uppercase tracking-widest mb-3">
-                  <span className="text-black font-bold">{post.frontmatter.cluster}</span>
-                  <span>•</span>
-                  <span>{formatDate(post.frontmatter.date, locale)}</span>
+                <div className="flex flex-col flex-grow">
+                  <div className="flex items-center gap-3 text-gray-500 font-sans text-xs uppercase tracking-widest mb-3">
+                    <span className="text-black font-bold">{post.frontmatter.cluster}</span>
+                    <span>•</span>
+                    <span>{formatDate(post.frontmatter.date, locale)}</span>
+                  </div>
+                  <h3 className="font-display text-2xl lg:text-3xl text-black leading-snug group-hover:text-gold transition-colors line-clamp-3">
+                    {post.frontmatter.title}
+                  </h3>
                 </div>
-                <h3 className="font-display text-2xl lg:text-3xl text-black leading-snug group-hover:text-gold transition-colors">
-                  {post.frontmatter.title}
-                </h3>
               </Link>
             ))}
           </div>

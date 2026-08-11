@@ -90,25 +90,18 @@ export function MadeForYourSpaceSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-20 md:mb-28"
+            className="mb-20 md:mb-28"
           >
-            <div className="max-w-2xl">
-              {/*
-                The slab sits on an inner span so the background hugs the words
-                rather than spanning the column. `box-decoration-clone` keeps the
-                horizontal padding on every line when the title wraps, and the
-                asymmetric vertical padding is descender reserve — a serif at
-                this size drops below the em box and a tight block clips it.
-              */}
-              <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-black tracking-tight leading-[1.15] text-balance">
+            <div className="max-w-3xl">
+              <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-black tracking-tight leading-[1.15] text-balance mb-8">
                 <span className="bg-[#DFAB2E] box-decoration-clone px-[0.12em] pt-[0.02em] pb-[0.06em]">
                   {t("title")}
                 </span>
               </h2>
+              <p className="font-sans text-gray-600 text-lg md:text-xl leading-relaxed max-w-2xl">
+                {t("description")}
+              </p>
             </div>
-            <p className="font-sans text-gray-600 text-lg md:text-xl leading-relaxed max-w-md lg:text-end lg:pb-2">
-              {t("description")}
-            </p>
           </motion.div>
 
           {/* Split: sticky imagery / scrolling stages */}
