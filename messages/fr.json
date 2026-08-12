@@ -455,5 +455,55 @@
     "commissionCta": "Concevoir votre table",
     "workshopAlt": "Vue large de l'atelier BenzArt près de Marrakech, avec les planches rangées le long du mur",
     "workshopCaption": "L'atelier BenzArt à Tasseltant, Route Dourika, Marrakech."
+  },
+  "Metadata": {
+    "home": {
+      "title": "Benzart | Tables à manger en bois massif et résine époxy",
+      "description": "Tables à manger uniques fabriquées à la main en bois massif et résine époxy. Conçues pour votre espace, construites pour des générations. Commandez votre table sur mesure."
+    },
+    "tables": {
+      "title": "Collection | Benzart Tables sur mesure",
+      "description": "Découvrez notre galerie de tables à manger uniques en bois massif et résine époxy. Chaque pièce est unique et fabriquée sur commande."
+    },
+    "tablesDetail": {
+      "title": "{name} | Benzart Tables sur mesure",
+      "description": "{story}"
+    },
+    "blog": {
+      "title": "Journal | Blog Benzart",
+      "description": "Guides experts sur les tables en résine époxy, les essences de bois, la fabrication, et le design du meuble de luxe de l'atelier Benzart."
+    },
+    "blogDetail": {
+      "title": "{title} | Journal Benzart",
+      "description": "{description}"
+    },
+    "ourCraft": {
+      "title": "Notre Savoir-Faire | Tables sur mesure en résine et bois | BenzArt",
+      "description": "Dans l'atelier BenzArt près de Marrakech : comment nous choisissons une planche, pourquoi les coulées profondes se font en couches, et pourquoi la finition à la main prend plus de temps."
+    },
+    "inquiry": {
+      "title": "Commander une table sur mesure | Demande Benzart",
+      "description": "Commencez votre commande de table sur mesure. Partagez votre vision — essence de bois, couleur de résine, dimensions, budget — et notre atelier fabriquera votre pièce."
+    },
+    "contact": {
+      "title": "Contact | Atelier Benzart",
+      "description": "Contactez l'équipe Benzart pour les demandes presse, comptes trade, ou pour visiter notre atelier de Marrakech."
+    },
+    "faq": {
+      "title": "FAQ | Benzart — Questions des tables sur mesure",
+      "description": "Questions fréquentes sur la commande d'une table personnalisée en résine et bois: délais, matériaux, livraison et entretien."
+    },
+    "privacy": {
+      "title": "Politique de confidentialité | Benzart",
+      "description": "Comment Benzart collecte, utilise et protège vos informations personnelles."
+    },
+    "terms": {
+      "title": "Conditions d'utilisation | Benzart",
+      "description": "Conditions générales régissant l'utilisation des services et commandes Benzart."
+    },
+    "notFound": {
+      "title": "Page non trouvée | Benzart",
+      "description": "La page que vous cherchez n'existe pas. Revenez à notre collection de tables artisanales sur mesure."
+    }
   }
 }

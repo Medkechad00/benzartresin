@@ -427,5 +427,55 @@
   },
   "TableCard": {
     "sold": "Delivered"
+  },
+  "Metadata": {
+    "home": {
+      "title": "Benzart | Bespoke Handcrafted Epoxy Resin & Wood Tables",
+      "description": "One-of-a-kind handcrafted dining tables using solid wood and epoxy resin. Designed for your space, built for generations. Commission your custom table today."
+    },
+    "tables": {
+      "title": "Collection | Benzart Bespoke Tables",
+      "description": "Browse our gallery of one-of-a-kind handcrafted epoxy resin and solid wood dining tables. Each piece is unique and made to order."
+    },
+    "tablesDetail": {
+      "title": "{name} | Benzart Bespoke Tables",
+      "description": "{story}"
+    },
+    "blog": {
+      "title": "Journal | Benzart Blog",
+      "description": "Expert guides on epoxy resin tables, wood species, craftsmanship, and luxury furniture design from the Benzart atelier."
+    },
+    "blogDetail": {
+      "title": "{title} | Benzart Journal",
+      "description": "{description}"
+    },
+    "ourCraft": {
+      "title": "Our Craft | How BenzArt Makes Custom Resin & Wood Tables",
+      "description": "Inside the BenzArt atelier outside Marrakech: how we choose a slab, why deep resin pours go in layers, and why hand-finishing takes longer."
+    },
+    "inquiry": {
+      "title": "Commission a Custom Table | Benzart Inquiry",
+      "description": "Start your custom table commission. Share your vision — wood species, resin color, dimensions, and budget — and our atelier will craft your piece."
+    },
+    "contact": {
+      "title": "Contact | Benzart Atelier",
+      "description": "Reach the Benzart team for press inquiries, trade accounts, or to schedule a visit to our Marrakech atelier."
+    },
+    "faq": {
+      "title": "FAQ | Benzart — Custom Table Questions Answered",
+      "description": "Frequently asked questions about commissioning a custom epoxy resin and wood table: lead times, materials, shipping, and care."
+    },
+    "privacy": {
+      "title": "Privacy Policy | Benzart",
+      "description": "How Benzart collects, uses, and protects your personal information."
+    },
+    "terms": {
+      "title": "Terms of Service | Benzart",
+      "description": "Terms and conditions governing the use of Benzart services and commissions."
+    },
+    "notFound": {
+      "title": "Page Not Found | Benzart",
+      "description": "The page you are looking for does not exist. Return to our collection of bespoke handcrafted tables."
+    }
   }
 }

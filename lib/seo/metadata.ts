@@ -34,3 +34,43 @@ export function buildAlternates(
     },
   };
 }
+
+/**
+ * Retrieve localized SEO metadata for a page.
+ *
+ * Reads from the `Metadata` namespace in messages/*.json. Each key maps to a
+ * static page (home, tables, blog, ourCraft, inquiry, contact, faq, privacy,
+ * terms, notFound). Detail pages override with `detailTitleTemplate` and
+ * `detailDescriptionTemplate` which interpolate dynamic content into the
+ * localized string.
+ *
+ * @param templateKey  Key in Metadata namespace, e.g. 'home', 'tablesDetail'.
+ * @param locale       The active locale.
+ * @param values       Optional interpolation values for dynamic templates.
+ */
+export async function getLocalizedMetadata(
+  templateKey: string,
+  locale: string,
+  values?: Record<string, string>
+): Promise<Metadata> {
+  // Dynamic import to keep the bundle lean; messages are loaded per-request on server.
+  const messages: Record<string, any> = await import(`@/messages/${locale}.json`);
+  const meta = messages.Metadata?.[templateKey];
+
+  if (!meta) {
+    return { title: undefined, description: undefined };
+  }
+
+  let title = meta.title;
+  let description = meta.description;
+
+  // Interpolate {placeholders} with values for detail pages
+  if (values) {
+    for (const [k, v] of Object.entries(values)) {
+      title = title.replace(`{${k}}`, v);
+      description = description.replace(`{${k}}`, v);
+    }
+  }
+
+  return { title, description };
+}

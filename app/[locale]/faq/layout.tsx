@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import { buildAlternates } from '@/lib/seo/metadata';
+import { buildAlternates, getLocalizedMetadata } from '@/lib/seo/metadata';
 import { localizedPath } from '@/lib/urls';
 
 type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getLocalizedMetadata('faq', locale);
   return {
-    title: 'FAQ | Benzart — Custom Table Questions Answered',
-    description: 'Frequently asked questions about commissioning a custom epoxy resin and wood table: lead times, materials, shipping, and care.',
+    title: meta.title,
+    description: meta.description,
     alternates: buildAlternates(locale, localizedPath('/faq', locale)),
   };
 }
