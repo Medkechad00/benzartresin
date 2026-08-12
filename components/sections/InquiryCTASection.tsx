@@ -4,10 +4,12 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight } from "@phosphor-icons/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { localizedPath } from "@/lib/urls";
 
 export function InquiryCTASection() {
   const reduceMotion = useReducedMotion();
+  const locale = useLocale();
   const t = useTranslations("InquiryCTA");
 
   return (
@@ -36,7 +38,7 @@ export function InquiryCTASection() {
             </p>
 
             <Link
-              href="/inquiry"
+              href={localizedPath('/inquiry', locale) as any}
               className="group relative inline-flex items-center gap-6 pb-4 border-b-2 border-black hover:border-[#DFAB2E] transition-colors duration-500 w-max"
             >
               <span className="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-black group-hover:text-[#DFAB2E] transition-colors">

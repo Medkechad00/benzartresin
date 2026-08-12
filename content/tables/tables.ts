@@ -26,6 +26,8 @@ export type TableImage = {
 
 export type TableData = {
   slug: string;
+  /** French URL slug. Arabic keeps the English slug. */
+  slugFr?: string;
   name: string;
   wood: string;
   resinColor: string;
@@ -33,30 +35,15 @@ export type TableData = {
   dimensions: string;
   story: string;
   images: TableImage[];
-  /**
-   * `made-to-order` → we can craft another piece in this design (LimitedAvailability)
-   * `sold`          → portfolio record of a delivered piece (SoldOut)
-   */
   availability: 'made-to-order' | 'sold';
-  /** "From" price in USD. Omit when not confirmed — see warning above. */
   startingPrice?: number;
-  /**
-   * Marks demo data that must not ship as real inventory.
-   *
-   * Set on the four pieces added to exercise the layout. They carry reused
-   * photography that does not match their described materials.
-   *
-   * They are NOT filtered out anywhere — the whole point is to see them
-   * rendered. This flag exists so they can be found and deleted in one pass
-   * (`grep isPlaceholder`) once real pieces are photographed, and so
-   * `placeholderTables()` can be used in a launch check.
-   */
   isPlaceholder?: boolean;
 };
 
 export const tables: TableData[] = [
   {
     slug: 'atlas-walnut-river',
+    slugFr: 'atlas-noyer-riviere',
     name: 'The Atlas Walnut River',
     wood: 'Moroccan Atlas Walnut',
     resinColor: 'Deep Emerald Green',
@@ -76,6 +63,7 @@ export const tables: TableData[] = [
   },
   {
     slug: 'obsidian-grain',
+    slugFr: 'obsidienne-grain',
     name: 'Obsidian Grain',
     wood: 'Charred Ash (Shou Sugi Ban)',
     resinColor: 'Opaque Black',
@@ -95,6 +83,7 @@ export const tables: TableData[] = [
   },
   {
     slug: 'golden-current',
+    slugFr: 'courant-dore',
     name: 'Golden Current',
     wood: 'Olive Wood',
     resinColor: 'Metallic Gold',
@@ -128,6 +117,7 @@ export const tables: TableData[] = [
      ───────────────────────────────────────────────────────────────────────── */
   {
     slug: 'cedar-tide',
+    slugFr: 'cedre-maree',
     name: 'Cedar Tide',
     wood: 'Middle Atlas Cedar',
     resinColor: 'Translucent Teal',
@@ -148,6 +138,7 @@ export const tables: TableData[] = [
   },
   {
     slug: 'saffron-basin',
+    slugFr: 'safran-bassin',
     name: 'Saffron Basin',
     wood: 'Spalted Maple',
     resinColor: 'Amber Saffron',
@@ -168,6 +159,7 @@ export const tables: TableData[] = [
   },
   {
     slug: 'quarry-edge',
+    slugFr: 'carriere-bord',
     name: 'Quarry Edge',
     wood: 'European Oak',
     resinColor: 'Slate Grey',
@@ -188,6 +180,7 @@ export const tables: TableData[] = [
   },
   {
     slug: 'nomad-console',
+    slugFr: 'nomade-console',
     name: 'Nomad Console',
     wood: 'Reclaimed Thuya Burl',
     resinColor: 'Smoke Clear',
@@ -210,7 +203,7 @@ export const tables: TableData[] = [
 ];
 
 export function getTableBySlug(slug: string): TableData | undefined {
-  return tables.find((t) => t.slug === slug);
+  return tables.find((t) => t.slug === slug || t.slugFr === slug);
 }
 
 export function getAllTableSlugs(): string[] {

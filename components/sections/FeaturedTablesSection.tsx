@@ -10,6 +10,7 @@ import { tables } from "@/content/tables/tables";
 import { localizeTable } from "@/lib/tables-i18n";
 import { getTextDirection } from "@/lib/i18n/direction";
 import { rtlIconClass } from "@/lib/i18n/motion";
+import { tableSlug, localizedPath } from "@/lib/urls";
 
 /**
  * Signature commissions on the homepage.
@@ -190,7 +191,7 @@ export function FeaturedTablesSection() {
           </div>
 
           <Link
-            href="/tables"
+            href={localizedPath('/tables', locale) as any}
             className="group flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-gold hover:border-gold transition-colors w-fit shrink-0"
           >
             {t("viewAll")}
@@ -225,7 +226,7 @@ export function FeaturedTablesSection() {
                 }}
                 className={`group ${layout.span} ${layout.offset}`}
               >
-                <Link href={`/tables/${table.slug}`} className="block">
+                <Link href={`/tables/${tableSlug(table.slug, locale)}` as any} className="block">
                   {/* Cover */}
                   <div className={`relative w-full ${layout.ratio} overflow-hidden bg-ivory-dark`}>
                     <ParallaxImage

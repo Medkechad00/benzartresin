@@ -9,6 +9,7 @@ import { Link } from "@/i18n/routing";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildLocalBusinessSchema } from "@/lib/seo/schema";
 import { SITE } from "@/lib/site-config";
+import { localizedPath } from "@/lib/urls";
 
 const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, caption: string }) => {
   const imgRef = useRef<HTMLDivElement>(null);
@@ -81,7 +82,7 @@ export default function ContactPage() {
                 {t("commissionNote")}
               </p>
               <Link
-                href="/inquiry"
+                href={localizedPath('/inquiry', locale) as any}
                 className="inline-block bg-black text-white px-6 py-4 uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98]"
               >
                 {t("commissionCta")}

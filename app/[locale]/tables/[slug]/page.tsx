@@ -8,6 +8,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { ProductOpenGraph } from '@/components/seo/ProductOpenGraph';
 import { buildProductSchema, buildBreadcrumbSchema } from '@/lib/seo/schema';
 import { buildAlternates } from '@/lib/seo/metadata';
+import { tableSlug, localizedPath } from '@/lib/urls';
 import { Link, routing } from '@/i18n/routing';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -46,11 +47,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${table.name} — ${localizedMaterial(table)} | ${SITE.name}`,
     description: table.story,
-    alternates: buildAlternates(locale, `/tables/${slug}`),
+    alternates: buildAlternates(locale, `${localizedPath('/tables', locale)}/${tableSlug(slug, locale)}`),
     openGraph: {
       title: `${table.name} | ${SITE.name}`,
       description: table.story,
-      url: abs(`/${locale}/tables/${slug}`),
+      url: abs(`/${locale}${localizedPath('/tables', locale)}/${tableSlug(slug, locale)}`),
       siteName: SITE.name,
       images: table.images.map((img) => ({ url: img.src, alt: img.alt })),
     },
@@ -84,8 +85,8 @@ export default async function TableDetailPage({ params }: Props) {
 
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: 'Home', url: `/${locale}` },
-    { name: 'Collection', url: `/${locale}/tables` },
-    { name: table.name, url: `/${locale}/tables/${slug}` },
+    { name: 'Collection', url: `/${locale}${localizedPath('/tables', locale)}` },
+    { name: table.name, url: `/${locale}${localizedPath('/tables', locale)}/${tableSlug(slug, locale)}` },
   ]);
 
   const specs = [
@@ -132,7 +133,7 @@ export default async function TableDetailPage({ params }: Props) {
           {/* Details */}
           <div className="flex flex-col sticky top-32 self-start">
             <Link
-              href="/tables"
+              href={localizedPath('/tables', locale) as any}
               className="text-xs uppercase tracking-widest text-gray-500 mb-8 hover:text-black transition-colors block w-fit"
             >
               <span aria-hidden="true" className="inline-block rtl:rotate-180">
@@ -178,10 +179,10 @@ export default async function TableDetailPage({ params }: Props) {
               </div>
             ) : null}
 
-            <Link
-              href={`/inquiry?ref=${table.slug}`}
-              className="bg-black text-white px-8 py-5 text-center uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98] w-full md:w-auto"
-            >
+              <Link
+                href={`/inquiry?ref=${table.slug}` as any}
+                className="bg-black text-white px-8 py-5 text-center uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98]"
+              >
               {t('cta')}
             </Link>
           </div>

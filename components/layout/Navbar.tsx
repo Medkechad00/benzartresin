@@ -9,17 +9,18 @@ import { SITE } from "@/lib/site-config";
 import { Logo } from "@/components/layout/Logo";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { cn } from "@/lib/utils";
+import { localizedPath } from "@/lib/urls";
 
 /**
  * "Atelier" (→/craftsmanship) and "Studio" (→/about) were two labels for two
  * pages whose own H1s said the opposite thing. Both are now one page, "Our
  * Craft", which covers the brand story and the process together.
  */
-const navLinkKeys = [
-  { key: "collection", href: "/tables" },
-  { key: "ourCraft", href: "/our-craft" },
-  { key: "journal", href: "/blog" },
-];
+const NAV_KEYS = [
+  { key: "collection", path: "/tables" },
+  { key: "ourCraft", path: "/our-craft" },
+  { key: "journal", path: "/blog" },
+] as const;
 
 interface NavbarProps {
   theme?: "light" | "dark";
@@ -53,7 +54,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
     startTransition(() => {
       const search = typeof window !== 'undefined' ? window.location.search : '';
       const hash = typeof window !== 'undefined' ? window.location.hash : '';
-      router.replace(`${pathname}${search}${hash}`, { locale: next });
+      router.replace(`${pathname}${search}${hash}` as any, { locale: next });
     });
   };
 
@@ -96,10 +97,10 @@ export function Navbar({ theme = "light" }: NavbarProps) {
           
           {/* Left: Navigation Links (Desktop) */}
           <div className="hidden md:flex items-center gap-10">
-            {navLinkKeys.map((link) => (
+            {NAV_KEYS.map((link) => (
               <Link
                 key={link.key}
-                href={link.href}
+                href={localizedPath(link.path, locale) as any}
                 className={cn(
                   "text-[11px] tracking-[0.2em] uppercase font-bold relative group transition-colors duration-500",
                   isDarkText ? "text-black/70 hover:text-black" : "text-white/70 hover:text-white"
@@ -133,17 +134,17 @@ export function Navbar({ theme = "light" }: NavbarProps) {
 
           {/* Right: CTA & Mobile Toggle */}
           <div className="flex justify-end items-center gap-4">
-            <Link
-              href="/inquiry"
-              className={cn(
-                "hidden md:flex px-6 py-3 text-[10px] uppercase tracking-[0.25em] font-bold transition-all duration-500",
-                isDarkText
-                  ? "border border-black text-black hover:bg-black hover:text-white"
-                  : "border border-white text-white hover:bg-white hover:text-black"
-              )}
-            >
-              {t('customOrder')}
-            </Link>
+             <Link
+               href={localizedPath('/inquiry', locale) as any}
+               className={cn(
+                 "hidden md:flex px-6 py-3 text-[10px] uppercase tracking-[0.25em] font-bold transition-all duration-500",
+                 isDarkText
+                   ? "border border-black text-black hover:bg-black hover:text-white"
+                   : "border border-white text-white hover:bg-white hover:text-black"
+               )}
+             >
+               {t('customOrder')}
+             </Link>
 
             {/* Locale Switcher */}
             <LanguageSwitcher
@@ -204,7 +205,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
             
             {/* Links List */}
             <div className="flex flex-col gap-2 mt-12">
-              {navLinkKeys.map((link, i) => (
+              {NAV_KEYS.map((link, i) => (
                 <motion.div
                   key={link.key}
                   initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
@@ -213,7 +214,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <Link
-                    href={link.href}
+                    href={localizedPath(link.path, locale) as any}
                     className="text-6xl sm:text-7xl font-display tracking-tight text-black hover:text-[#DFAB2E] transition-colors inline-block pb-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -229,13 +230,13 @@ export function Navbar({ theme = "light" }: NavbarProps) {
                 transition={{ duration: 0.5, delay: 0.7, ease: [0.23, 1, 0.32, 1] }}
                 className="mt-12"
               >
-                <Link
-                  href="/inquiry"
-                  className="inline-block bg-[#DFAB2E] text-black px-12 py-5 uppercase tracking-widest text-xs font-bold active:scale-[0.98] transition-transform w-full text-center sm:w-auto"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {t('customOrder')}
-                </Link>
+                 <Link
+                   href={localizedPath('/inquiry', locale) as any}
+                   className="inline-block bg-[#DFAB2E] text-black px-12 py-5 uppercase tracking-widest text-xs font-bold active:scale-[0.98] transition-transform w-full text-center sm:w-auto"
+                   onClick={() => setIsMobileMenuOpen(false)}
+                 >
+                   {t('customOrder')}
+                 </Link>
               </motion.div>
             </div>
 

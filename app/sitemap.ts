@@ -3,6 +3,7 @@ import { getAllTableSlugs } from '@/content/tables/tables';
 import { getAuthoredSlugs } from '@/lib/blog';
 import { BASE_URL, LOCALES } from '@/lib/site-config';
 import { routing } from '@/i18n/routing';
+import { localizedPath, tableSlug, blogSlug } from '@/lib/urls';
 
 /**
  * Static routes that exist and are translated in every locale (chrome + page
@@ -37,48 +38,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
   const tableSlugs = getAllTableSlugs();
 
-  // Static pages + table detail pages: genuinely available in all locales.
   for (const locale of LOCALES) {
     for (const path of STATIC_PATHS) {
+      const localized = localizedPath(path, locale);
       entries.push({
-        url: `${BASE_URL}/${locale}${path}`,
+        url: `${BASE_URL}/${locale}${localized}`,
         changeFrequency: 'monthly',
         priority: path === '' ? 1 : 0.7,
-        alternates: { languages: languagesFor(path, LOCALES) },
+        alternates: { languages: languagesFor(localized, LOCALES) },
       });
     }
 
     for (const slug of tableSlugs) {
-      const path = `/tables/${slug}`;
+      const localized = `${localizedPath('/tables', locale)}/${tableSlug(slug, locale)}`;
       entries.push({
-        url: `${BASE_URL}/${locale}${path}`,
+        url: `${BASE_URL}/${locale}${localized}`,
         changeFrequency: 'monthly',
         priority: 0.8,
-        alternates: { languages: languagesFor(path, LOCALES) },
+        alternates: { languages: languagesFor(localized, LOCALES) },
       });
     }
   }
 
-  /**
-   * Blog posts are listed per locale by what is ACTUALLY authored there.
-   *
-   * This previously listed every English slug under all three locales. Because
-   * fr/ar fall back to the English source file, that advertised the same article
-   * at three URLs — triplicated content — and produced an asymmetric hreflang
-   * cluster (the /fr/ page pointed at /en/, the /en/ page did not point back),
-   * which makes Google discard the cluster outright. Untranslated fallback pages
-   * are still reachable for visitors but are marked noindex in the page head and
-   * are omitted here.
-   */
   for (const locale of LOCALES) {
     for (const slug of getAuthoredSlugs(locale)) {
-      const path = `/blog/${slug}`;
+      const localized = `${localizedPath('/blog', locale)}/${blogSlug(slug, locale)}`;
       const translatedIn = LOCALES.filter((loc) => getAuthoredSlugs(loc).includes(slug));
       entries.push({
-        url: `${BASE_URL}/${locale}${path}`,
+        url: `${BASE_URL}/${locale}${localized}`,
         changeFrequency: 'monthly',
         priority: 0.6,
-        alternates: { languages: languagesFor(path, translatedIn) },
+        alternates: { languages: languagesFor(localized, translatedIn) },
       });
     }
   }

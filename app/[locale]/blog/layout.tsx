@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { buildAlternates } from '@/lib/seo/metadata';
+import { localizedPath } from '@/lib/urls';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -9,7 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: 'Journal | Benzart Blog',
     description: 'Expert guides on epoxy resin tables, wood species selection, craftsmanship techniques, and luxury furniture design from the Benzart atelier.',
-    alternates: buildAlternates(locale, '/blog'),
+    alternates: buildAlternates(locale, localizedPath('/blog', locale)),
   };
 }
 

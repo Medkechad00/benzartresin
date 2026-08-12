@@ -19,12 +19,14 @@ import {
   getRelatedPosts,
   getTableOfContents,
 } from '@/lib/blog';
+import { blogSlug } from '@/lib/urls';
 import { buildAlternates } from '@/lib/seo/metadata';
 import {
   buildArticleSchema,
   buildBreadcrumbSchema,
   buildFAQPageSchema,
 } from '@/lib/seo/schema';
+import { localizedPath } from '@/lib/urls';
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -64,13 +66,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       ...base,
       robots: { index: false, follow: true },
-      alternates: { canonical: `/${locale}/blog/${slug}` },
+      alternates: { canonical: `/${locale}${localizedPath('/blog', locale)}/${blogSlug(slug, locale)}` },
     };
   }
 
   return {
     ...base,
-    alternates: buildAlternates(locale, `/blog/${slug}`, getLocalesForPost(slug)),
+    alternates: buildAlternates(locale, `${localizedPath('/blog', locale)}/${blogSlug(slug, locale)}`, getLocalesForPost(slug)),
   };
 }
 
@@ -103,8 +105,8 @@ export default async function BlogPostPage({ params }: Props) {
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: 'Home', url: `/${locale}` },
-    { name: 'Journal', url: `/${locale}/blog` },
-    { name: frontmatter.title, url: `/${locale}/blog/${slug}` },
+    { name: 'Journal', url: `/${locale}${localizedPath('/blog', locale)}` },
+    { name: frontmatter.title, url: `/${locale}${localizedPath('/blog', locale)}/${blogSlug(slug, locale)}` },
   ]);
 
   const articleSchema = buildArticleSchema(locale, {
@@ -136,7 +138,7 @@ export default async function BlogPostPage({ params }: Props) {
       <section className="relative pt-36 md:pt-44 pb-12 md:pb-16 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <Link
-            href="/blog"
+            href={localizedPath('/blog', locale) as any}
             className="group inline-flex items-center gap-2 text-gray-500 hover:text-black font-sans text-[11px] uppercase tracking-[0.2em] mb-12 transition-colors duration-150"
           >
             <span
@@ -232,7 +234,7 @@ export default async function BlogPostPage({ params }: Props) {
                   {t('partOf')}
                 </p>
                 <Link
-                  href={`/blog/${pillar.slug}`}
+                  href={`${localizedPath('/blog', locale)}/${blogSlug(pillar.slug, locale)}` as any}
                   className="font-display text-lg text-black hover:text-gold transition-colors duration-150 leading-snug block"
                 >
                   {pillar.frontmatter.title}

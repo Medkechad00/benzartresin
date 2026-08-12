@@ -5,6 +5,7 @@ import { Link } from "@/i18n/routing";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
+import { localizedPath, blogSlug } from "@/lib/urls";
 
 /**
  * A post as far as this section is concerned. The homepage (a server component)
@@ -65,7 +66,7 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
           </motion.div>
 
           <Link 
-            href="/blog" 
+            href={localizedPath('/blog', locale) as any} 
             className="group relative z-20 flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-gold hover:border-gold transition-colors w-fit whitespace-nowrap"
           >
             {t("viewAll")}
@@ -76,7 +77,7 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
           
           {/* Featured Post */}
-          <Link href={`/blog/${featuredPost.slug}`} className="group block">
+          <Link href={`/blog/${blogSlug(featuredPost.slug, locale)}` as any} className="group block">
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -110,7 +111,7 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
           {/* Standard Posts Stack */}
           <div className="flex flex-col border-t border-black/10">
             {standardPosts.map((post, index) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
+              <Link key={post.slug} href={`/blog/${blogSlug(post.slug, locale)}` as any} className="group block">
                 <motion.div
                   initial={reduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}

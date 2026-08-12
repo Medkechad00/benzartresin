@@ -4,15 +4,17 @@ import { useState } from "react";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { motion, AnimatePresence } from "motion/react";
 import { CaretDown } from "@phosphor-icons/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildFAQPageSchema } from "@/lib/seo/schema";
+import { localizedPath } from "@/lib/urls";
 
 type FaqItem = { question: string; answer: string };
 
 export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const locale = useLocale();
   const t = useTranslations("Faq");
 
   /**
@@ -106,7 +108,7 @@ export default function FAQPage() {
         <div className="mt-20 border-t border-black/10 pt-12 flex flex-col sm:flex-row sm:items-center gap-6">
           <p className="font-display text-2xl text-black">{t("stillAsking")}</p>
           <Link
-            href="/inquiry"
+            href={localizedPath('/inquiry', locale) as any}
             className="bg-black text-white px-8 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98] w-fit"
           >
             {t("stillAskingCta")}

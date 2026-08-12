@@ -4,7 +4,14 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { localizedPath } from "@/lib/urls";
 
-export default async function NotFoundPage() {
+/**
+ * Root 404 fallback.
+ *
+ * With `localePrefix: 'always'`, Next.js redirects bare paths to the default
+ * locale before this renders, so this only catches truly unmatched routes.
+ * It extracts the locale from the URL to keep the CTA in the right language.
+ */
+export default async function RootNotFound() {
   const t = await getTranslations("NotFound");
 
   return (

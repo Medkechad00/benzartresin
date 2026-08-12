@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { localizedPath } from "@/lib/urls";
 
 export function HeroSection() {
   const t = useTranslations("Hero");
+  const locale = useLocale();
   /*
     `overflow-x-clip` rather than `overflow-hidden`: the title's negative inline
     margin must be allowed to overlap the image, but nothing may ever create
@@ -113,13 +115,13 @@ export function HeroSection() {
             
             <div className="flex flex-col sm:flex-row lg:flex-row gap-4">
               <Link
-                href="/tables"
+                href={localizedPath('/tables', locale) as any}
                 className="bg-black text-white px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-black/90 transition-transform active:scale-[0.98] whitespace-nowrap"
               >
                 {t('explore')}
               </Link>
               <Link
-                href="/inquiry"
+                href={localizedPath('/inquiry', locale) as any}
                 className="bg-transparent border border-black/20 text-black px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-black/5 transition-transform active:scale-[0.98] whitespace-nowrap"
               >
                 {t('custom')}

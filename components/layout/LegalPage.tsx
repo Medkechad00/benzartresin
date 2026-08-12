@@ -3,7 +3,8 @@
 import { PageLayout } from "@/components/layout/PageLayout";
 import { motion } from "motion/react";
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { localizedPath } from "@/lib/urls";
 
 type Section = { heading: string; body: string };
 
@@ -33,6 +34,7 @@ export function LegalPage({
 }) {
   const t = useTranslations("Legal");
   const tf = useTranslations("Footer");
+  const locale = useLocale();
   const sections = t.raw(sectionsKey) as Section[];
 
   return (
@@ -75,7 +77,7 @@ export function LegalPage({
                   </li>
                 ))}
                 <li className="mt-4">
-                  <Link href={crossLinkHref} className="text-gray-400 hover:text-black transition-colors underline">
+                  <Link href={localizedPath(crossLinkHref, locale) as any} className="text-gray-400 hover:text-black transition-colors underline">
                     {tf(crossLinkLabelKey)}
                   </Link>
                 </li>

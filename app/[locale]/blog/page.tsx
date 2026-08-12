@@ -4,6 +4,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Link } from '@/i18n/routing';
 import { getAllPosts, getPillars } from '@/lib/blog';
+import { blogSlug } from '@/lib/urls';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -49,7 +50,7 @@ export default async function BlogIndexPage({ params }: Props) {
           <h2 className="font-sans text-xs uppercase tracking-widest text-gray-500 mb-8">{t('topicGuides')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             {pillars.map((pillar) => (
-              <Link key={pillar.slug} href={`/blog/${pillar.slug}`} className="group block border border-black/10 p-8 hover:border-gold transition-colors">
+              <Link key={pillar.slug} href={`/blog/${blogSlug(pillar.slug, locale)}` as any} className="group block border border-black/10 p-8 hover:border-gold transition-colors">
                 <p className="font-sans text-xs uppercase tracking-widest text-gold mb-3">{pillar.frontmatter.cluster}</p>
                 <h3 className="font-display text-2xl text-black group-hover:text-gold transition-colors leading-snug">
                   {pillar.frontmatter.title}
@@ -61,7 +62,7 @@ export default async function BlogIndexPage({ params }: Props) {
           <h2 className="font-sans text-xs uppercase tracking-widest text-gray-500 mb-8">{t('allArticles')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 items-stretch">
             {posts.map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`} className="group block h-full flex flex-col">
+              <Link key={post.slug} href={`/blog/${blogSlug(post.slug, locale)}` as any} className="group block h-full flex flex-col">
                 <div className="relative w-full aspect-[4/5] overflow-hidden bg-gray-100 mb-6 shrink-0">
                   <Image
                     src={post.frontmatter.heroImage}

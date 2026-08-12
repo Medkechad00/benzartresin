@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { testimonials } from "@/content/testimonials";
+import { localizedPath } from "@/lib/urls";
 
 /**
  * Client words.
@@ -22,6 +23,7 @@ import { testimonials } from "@/content/testimonials";
  */
 export function TestimonialsSection() {
   const reduceMotion = useReducedMotion();
+  const locale = useLocale();
   const t = useTranslations("Testimonials");
   const tc = useTranslations("Common");
 
@@ -66,13 +68,13 @@ export function TestimonialsSection() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  href="/tables"
+                  href={localizedPath('/tables', locale) as any}
                   className="bg-black text-white px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98]"
                 >
                   {tc("seeCollection")}
                 </Link>
                 <Link
-                  href="/our-craft"
+                  href={localizedPath('/our-craft', locale) as any}
                   className="border border-black/20 text-black px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-black/5 transition-colors active:scale-[0.98]"
                 >
                   {tc("insideAtelier")}

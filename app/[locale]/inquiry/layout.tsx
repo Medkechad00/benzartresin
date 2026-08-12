@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { buildAlternates } from '@/lib/seo/metadata';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildBreadcrumbSchema, buildFAQPageSchema } from '@/lib/seo/schema';
+import { localizedPath } from '@/lib/urls';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -11,7 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: 'Commission a Custom Table | Benzart Inquiry',
     description: 'Start your custom table commission. Share your vision — wood species, resin color, dimensions, and budget — and our atelier will craft your piece.',
-    alternates: buildAlternates(locale, '/inquiry'),
+    alternates: buildAlternates(locale, localizedPath('/inquiry', locale)),
   };
 }
 
@@ -42,7 +43,7 @@ export default async function InquiryLayout({ children, params }: Props & { chil
 
   const breadcrumb = buildBreadcrumbSchema([
     { name: tc('home'), url: `/${locale}` },
-    { name: t('title'), url: `/${locale}/inquiry` },
+    { name: t('title'), url: `/${locale}${localizedPath('/inquiry', locale)}` },
   ]);
 
   const faq = buildFAQPageSchema(

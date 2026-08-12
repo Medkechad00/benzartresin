@@ -1,29 +1,18 @@
 import { Link } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import type { BlogPost } from '@/lib/blog';
+import { blogSlug } from '@/lib/urls';
 
 type Props = {
   post: BlogPost;
   pillar: BlogPost | null;
   clusterPosts: BlogPost[];
-  /**
-   * Posts named in `frontmatter.related` — the sideways links into *other*
-   * clusters. Previously this prop was the pillar list and was searched with
-   * `pillars.find(p => p.slug === relatedSlug)`; since related slugs are almost
-   * always cluster posts rather than pillars, every lookup returned undefined
-   * and the entire "Related reading" block silently rendered empty. Those
-   * cross-cluster links are precisely what topical authority depends on.
-   */
   relatedPosts: BlogPost[];
 };
 
-/**
- * Rendered from the `Blog` namespace in messages/*.json. These labels were
- * hardcoded English, so Arabic readers saw "Related reading" in the middle of
- * an Arabic article.
- */
 export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPosts }: Props) {
   const t = await getTranslations('Blog');
+  const locale = post.locale;
   const isPillar = !post.frontmatter.pillar;
 
   return (
@@ -35,7 +24,7 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
             {clusterPosts.map((cluster) => (
               <li key={cluster.slug}>
                 <Link
-                  href={`/blog/${cluster.slug}`}
+                  href={`/blog/${blogSlug(cluster.slug, locale)}` as any}
                   className="font-sans text-gray-700 hover:text-black underline decoration-gold decoration-2 underline-offset-4 transition-colors"
                 >
                   {cluster.frontmatter.title}
@@ -48,7 +37,7 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
         <div className="mb-12">
           <p className="font-sans text-xs uppercase tracking-widest text-gray-500 mb-3">{t('partOf')}</p>
           <Link
-            href={`/blog/${pillar.slug}`}
+            href={`/blog/${blogSlug(pillar.slug, locale)}` as any}
             className="font-display text-2xl text-black hover:text-gold transition-colors"
           >
             {pillar.frontmatter.title}
@@ -58,7 +47,7 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
               {clusterPosts.slice(0, 4).map((cluster) => (
                 <li key={cluster.slug}>
                   <Link
-                    href={`/blog/${cluster.slug}`}
+                    href={`/blog/${blogSlug(cluster.slug, locale)}` as any}
                     className="font-sans text-sm text-gray-600 hover:text-black transition-colors"
                   >
                     {cluster.frontmatter.title}
@@ -77,7 +66,7 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
             {relatedPosts.map((related) => (
               <li key={related.slug}>
                 <Link
-                  href={`/blog/${related.slug}`}
+                  href={`/blog/${blogSlug(related.slug, locale)}` as any}
                   className="font-sans text-gray-700 hover:text-black underline decoration-gold decoration-2 underline-offset-4 transition-colors"
                 >
                   {related.frontmatter.title}

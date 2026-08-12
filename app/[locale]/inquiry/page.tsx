@@ -19,6 +19,7 @@ import {
   type InquiryOption,
   type OtherSelectField,
 } from "@/lib/inquiry-schema";
+import { tableSlug } from "@/lib/urls";
 
 /**
  * Maps a piece's resin colour onto the closest select option.

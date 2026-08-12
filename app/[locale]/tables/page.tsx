@@ -4,9 +4,10 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { motion, useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { tables } from "@/content/tables/tables";
 import { localizeTable } from "@/lib/tables-i18n";
+import { tableSlug } from "@/lib/urls";
 
 /**
  * The collection gallery.
@@ -31,11 +32,10 @@ const SPANS = [
 
 export default function TablesPage() {
   const reduceMotion = useReducedMotion();
+  const locale = useLocale();
   const t = useTranslations("TablesPage");
   const tTables = useTranslations("Tables");
 
-  // Names, wood, resin colour and alt text resolve per locale; slugs, images
-  // and dimensions stay in the data file.
   const localized = tables.map((table) => localizeTable(table, tTables));
 
   return (
@@ -66,7 +66,7 @@ export default function TablesPage() {
               const cover = table.images[0];
               return (
                 <Link
-                  href={`/tables/${table.slug}`}
+                  href={`/tables/${tableSlug(table.slug, locale)}` as any}
                   key={table.slug}
                   className={`${SPANS[index % SPANS.length]} group flex flex-col`}
                 >

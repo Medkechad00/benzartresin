@@ -102,7 +102,7 @@ const components = {
     if (href.startsWith('/')) {
       return (
         <Link
-          href={href}
+          href={href as any}
           className="text-black underline decoration-gold decoration-2 underline-offset-4 hover:text-gold-dark transition-colors"
           {...props}
         />

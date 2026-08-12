@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import { ArrowRight, CircleNotch, InstagramLogo, PinterestLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { SITE } from "@/lib/site-config";
 import { Logo } from "@/components/layout/Logo";
+import { localizedPath } from "@/lib/urls";
 
 /** Maps the platform names in SITE.socialLinks onto their Phosphor icons. */
 const SOCIAL_ICONS: Record<string, PhosphorIcon | undefined> = {
@@ -172,13 +173,13 @@ export function Footer() {
         {/* Navigation Columns */}
         <div className="md:col-span-3 md:col-start-7 flex flex-col gap-6">
           <h4 className="font-sans text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">{footerT('explore')}</h4>
-          <Link href="/tables" className="group w-fit">
+          <Link href={localizedPath('/tables', locale) as any} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('collection')}</span>
           </Link>
-          <Link href="/our-craft" className="group w-fit">
+          <Link href={localizedPath('/our-craft', locale) as any} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('ourCraft')}</span>
           </Link>
-          <Link href="/blog" className="group w-fit">
+          <Link href={localizedPath('/blog', locale) as any} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('journal')}</span>
           </Link>
         </div>
@@ -186,16 +187,16 @@ export function Footer() {
         {/* Contact Column */}
         <div className="md:col-span-3 md:col-start-10 flex flex-col gap-6">
           <h4 className="font-sans text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">{footerT('connect')}</h4>
-          <Link href="/inquiry" className="group w-fit">
+          <Link href={localizedPath('/inquiry', locale) as any} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('customOrder')}</span>
           </Link>
-          <Link href="/#testimonials" className="group w-fit">
+          <Link href={"/#testimonials" as any} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{footerT('clientele')}</span>
           </Link>
-          <Link href="/contact" className="group w-fit">
+          <Link href={localizedPath('/contact', locale) as any} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{footerT('contact')}</span>
           </Link>
-          <Link href="/faq" className="group w-fit">
+          <Link href={localizedPath('/faq', locale) as any} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{footerT('faq')}</span>
           </Link>
           
@@ -251,8 +252,8 @@ export function Footer() {
             &copy; {new Date().getFullYear()} Benzart. {footerT('rights')}
           </p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="font-sans text-gray-600 text-xs hover:text-white transition-colors">{footerT('privacy')}</Link>
-            <Link href="/terms" className="font-sans text-gray-600 text-xs hover:text-white transition-colors">{footerT('terms')}</Link>
+            <Link href={localizedPath('/privacy', locale) as any} className="font-sans text-gray-600 text-xs hover:text-white transition-colors">{footerT('privacy')}</Link>
+            <Link href={localizedPath('/terms', locale) as any} className="font-sans text-gray-600 text-xs hover:text-white transition-colors">{footerT('terms')}</Link>
           </div>
         </div>
 
