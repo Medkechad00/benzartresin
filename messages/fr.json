@@ -106,10 +106,11 @@
     "empty": "De nouvelles pièces sont en cours de photographie. Contactez-nous et nous vous montrerons ce qui est en préparation."
   },
   "NotFound": {
-    "eyebrow": "Page introuvable",
-    "title": "Celle-ci s'est échappée.",
-    "description": "La page que vous cherchez n'est pas encore dans l'atelier. Chaque pièce ici est faite sur commande — peut-être que celle-ci est encore sur l'établi.",
-    "cta": "Retour à la collection"
+    "eyebrow": "404 · Page introuvable",
+    "title": "Cette pièce nous a échappé.",
+    "description": "Comme une planche légèrement décalée, cette URL n'a pas passé l'étape de finition. Revenons à la collection.",
+    "cta": "Retour à la collection",
+    "home": "Accueil"
   },
   "TableDetail": {
     "woodSpecies": "Essence de bois",

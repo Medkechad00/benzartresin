@@ -106,10 +106,11 @@
     "empty": "New pieces are being photographed. Get in touch and we will show you what is on the bench."
   },
   "NotFound": {
-    "eyebrow": "Page not found",
-    "title": "This one got away.",
-    "description": "The page you're looking for isn't in the workshop yet. Every piece here is made to order — maybe this one is still on the bench.",
-    "cta": "Back to collection"
+    "eyebrow": "404 · Page not found",
+    "title": "It seems this piece slipped.",
+    "description": "Like a slab set slightly off-square, this URL didn't make the cut. Let's bring you back to the collection.",
+    "cta": "Return to the collection",
+    "home": "Go home"
   },
   "TableDetail": {
     "woodSpecies": "Wood species",

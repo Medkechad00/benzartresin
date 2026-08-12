@@ -6,10 +6,12 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { localizedPath } from "@/lib/urls";
 import { motion } from "motion/react";
+import { ArrowLeft } from "@phosphor-icons/react";
 
 export default function NotFoundPage() {
   const t = useTranslations("NotFound");
   const locale = useLocale();
+  const isRtl = locale === "ar";
 
   return (
     <main className="min-h-screen bg-white flex flex-col overflow-x-clip">
@@ -25,7 +27,7 @@ export default function NotFoundPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-8"
+                className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#DFAB2E] mb-8"
               >
                 {t("eyebrow")}
               </motion.p>
@@ -35,6 +37,7 @@ export default function NotFoundPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
                 className="font-display text-[18vw] md:text-[10rem] lg:text-[12rem] leading-[0.85] tracking-tighter text-black mb-2"
+                style={{ WebkitTextStroke: '1px rgba(0,0,0,0.08)' }}
               >
                 404
               </motion.h1>
@@ -68,38 +71,46 @@ export default function NotFoundPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
+                className="flex flex-col sm:flex-row gap-4"
               >
                 <Link
                   href={localizedPath("/tables", locale) as any}
-                  className="group inline-flex items-center gap-4 bg-black text-white px-8 py-5 uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-all duration-500 active:scale-[0.98]"
+                  className="group inline-flex items-center justify-center gap-4 bg-black text-white px-8 py-5 uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-all duration-500 active:scale-[0.98]"
                 >
+                  {isRtl ? (
+                    <ArrowLeft size={16} className="rotate-180" />
+                  ) : (
+                    <ArrowLeft size={16} />
+                  )}
                   {t("cta")}
-                  <span className="inline-block transition-transform duration-500 group-hover:translate-x-1 rtl:-scale-x-100">
-                    →
-                  </span>
+                </Link>
+
+                <Link
+                  href="/"
+                  className="group inline-flex items-center justify-center gap-4 bg-transparent text-black px-8 py-5 uppercase tracking-widest text-xs font-bold border border-black/20 hover:border-black hover:bg-black/5 transition-all duration-500 active:scale-[0.98]"
+                >
+                  {t("home")}
                 </Link>
               </motion.div>
             </div>
 
-            {/* Right: decorative ghost number */}
+            {/* Right: Decorative outlined 404 */}
             <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, rotate: -6 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                initial={{ opacity: 0, x: isRtl ? -40 : 40 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
-                className="relative w-full max-w-sm aspect-square"
+                className="relative w-full max-w-md aspect-square"
               >
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-[30vw] md:text-[20rem] leading-none text-black/[0.03] select-none pointer-events-none">
+                  <span className="font-display text-[10rem] md:text-[14rem] leading-none text-black/[0.03] tracking-tighter select-none pointer-events-none">
                     404
                   </span>
                 </div>
 
-                <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 md:w-48 md:h-48 bg-[#DFAB2E]/10 rotate-45" />
+                <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 md:w-48 md:h-48 border border-[#DFAB2E]/20 rotate-45" />
 
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="font-display text-6xl md:text-8xl text-black/10 tracking-tighter">?</p>
-                </div>
+                <div className="absolute bottom-12 start-1/2 -translate-x-1/2 w-16 h-[2px] bg-[#DFAB2E]" />
               </motion.div>
             </div>
 
