@@ -7,6 +7,7 @@ import { getTextDirection } from '@/lib/i18n/direction';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { buildOrganizationSchema } from '@/lib/seo/schema';
 import { SITE, BASE_URL, GA_MEASUREMENT_ID } from '@/lib/site-config';
+import { getLocalizedMetadata } from '@/lib/seo/metadata';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import "../globals.css";
 
@@ -27,26 +28,12 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const meta = await getLocalizedMetadata('home', locale);
 
   return {
-    // Set once here so every relative canonical/hreflang/OG URL in the tree
-    // resolves to an absolute one.
     metadataBase: new URL(BASE_URL),
-    // No `template` here on purpose: every page and nested layout already sets
-    // a fully-formed title ending in the brand, so a template would render
-    // "About | Benzart Studio | BenzArt".
-    title: `${SITE.name} | Bespoke Handcrafted Epoxy Resin & Wood Tables`,
-    description: SITE.description,
-    /*
-      Search Console is verified by the HTML file at
-      `public/googlec88517bf2a72f890.html`, served at the domain root.
-
-      The alternative meta-tag method is deliberately NOT set here. Its token is
-      a separate value issued by Search Console and is not derivable from the
-      filename, so it cannot be filled in without reading it off the GSC screen.
-      To add it as a second signal, paste the `content` value here:
-        verification: { google: '<token from Search Console>' }
-    */
+    title: meta.title ?? `${SITE.name}`,
+    description: meta.description ?? SITE.description,
     openGraph: {
       siteName: SITE.name,
       locale: OG_LOCALE[locale] ?? 'en_US',

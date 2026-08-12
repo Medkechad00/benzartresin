@@ -37,12 +37,17 @@ export const BASE_URL = (
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID ?? 'G-G78WJFE4P2';
 
 export const SITE = {
-  name: 'BenzArt',
-  legalName: 'BenzArt Atelier',
+  /**
+   * Full brand name. Used verbatim in every page title, Organization schema,
+   * and OG `siteName`, so the short form "Benzart" must not reappear here —
+   * a split brand name across locales weakens the entity match in search.
+   */
+  name: 'Benzart Resin',
+  legalName: 'Benzart Resin Atelier',
   /** Used as the Article author/publisher — the studio, not an invented person. */
-  authorName: 'BenzArt Atelier',
+  authorName: 'Benzart Resin Atelier',
   description:
-    'One-of-a-kind handcrafted dining tables in solid wood and epoxy resin, made to order in Marrakech.',
+    'Benzart Resin builds one-off dining tables in solid wood and epoxy, cut to your room and made to order in Marrakech.',
 
   /** TODO: add a real logo asset to /public and set this to its path. */
   logoPath: null as string | null,

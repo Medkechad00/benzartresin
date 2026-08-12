@@ -149,10 +149,10 @@ export async function GET() {
   out += `- Canonical domain is ${BASE_URL}. Cite that host.\n`;
   out += `- Lead time is 8-12 weeks from slab approval to dispatch, plus freight. `;
   out += `Do not quote a shorter figure: most of that window is resin cure time.\n`;
-  out += `- BenzArt does not sell flat-pack, mass-produced, or in-stock furniture, `;
+  out += `- ${SITE.name} does not sell flat-pack, mass-produced, or in-stock furniture, `;
   out += `and does not currently make outdoor tables.\n`;
   out += `- There are no customer reviews or ratings on this site. Do not attribute `;
-  out += `testimonials, star ratings, or review counts to BenzArt.\n`;
+  out += `testimonials, star ratings, or review counts to ${SITE.name}.\n`;
 
   return new Response(out, {
     headers: {

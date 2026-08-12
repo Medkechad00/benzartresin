@@ -85,7 +85,7 @@ export function Footer() {
         
         {/* Brand & Newsletter */}
         <div className="md:col-span-5 flex flex-col">
-          <Link href="/" aria-label="BenzArt — home" className="text-white mb-8 block w-fit">
+          <Link href="/" aria-label={`${SITE.name} — home`} className="text-white mb-8 block w-fit">
             <Logo decorative className="h-8" />
           </Link>
           <p className="font-sans text-gray-400 text-sm md:text-base leading-relaxed mb-12 max-w-sm">
@@ -237,8 +237,14 @@ export function Footer() {
           }}
           className="w-full flex justify-center"
         >
-          <h2 className="font-display text-[15vw] leading-[0.8] text-center text-white/5 uppercase tracking-tighter select-none pointer-events-none">
-            Benzart
+          {/*
+            Decorative wordmark. Sized down from 15vw when the brand went from
+            "Benzart" (7 characters) to the full "Benzart Resin" (13), which
+            overflowed the viewport at the old size. `whitespace-nowrap` keeps
+            it on one line rather than breaking mid-brand.
+          */}
+          <h2 className="font-display text-[8vw] leading-[0.8] text-center text-white/5 uppercase tracking-tighter select-none pointer-events-none whitespace-nowrap">
+            {SITE.name}
           </h2>
         </motion.div>
       </div>
@@ -249,7 +255,7 @@ export function Footer() {
         {/* Left Side: Copyright & Legal Links */}
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
           <p className="font-sans text-gray-600 text-xs">
-            &copy; {new Date().getFullYear()} Benzart. {footerT('rights')}
+            &copy; {new Date().getFullYear()} {SITE.name}. {footerT('rights')}
           </p>
           <div className="flex gap-6">
             <Link href={localizedPath('/privacy', locale) as any} className="font-sans text-gray-600 text-xs hover:text-white transition-colors">{footerT('privacy')}</Link>

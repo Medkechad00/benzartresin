@@ -20,7 +20,7 @@ import {
   getTableOfContents,
 } from '@/lib/blog';
 import { blogSlug } from '@/lib/urls';
-import { buildAlternates } from '@/lib/seo/metadata';
+import { buildAlternates, getLocalizedMetadata } from '@/lib/seo/metadata';
 import {
   buildArticleSchema,
   buildBreadcrumbSchema,
@@ -41,10 +41,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return {};
 
   const { frontmatter } = post;
+  const meta = await getLocalizedMetadata('blogDetail', locale, {
+    title: frontmatter.title,
+    description: frontmatter.description,
+  });
 
   const base: Metadata = {
-    title: `${frontmatter.title} | BenzArt Journal`,
-    description: frontmatter.description,
+    title: meta.title,
+    description: meta.description,
     openGraph: {
       title: frontmatter.title,
       description: frontmatter.description,
@@ -55,13 +59,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 
-  /**
-   * Untranslated locales fall back to the English source file so visitors are
-   * never dead-ended. That fallback must not be indexed: three URLs serving
-   * identical English copy is duplicate content, and it produced an asymmetric
-   * hreflang cluster (the /fr/ page referenced /en/, /en/ never referenced /fr/)
-   * which causes Google to ignore the cluster entirely.
-   */
   if (!post.isTranslated) {
     return {
       ...base,

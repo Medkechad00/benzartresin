@@ -118,7 +118,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
           <div className="flex justify-start md:justify-center">
             <Link
               href="/"
-              aria-label="BenzArt — home"
+              aria-label={`${SITE.name} — home`}
               className={cn(
                 // The logo is masked with `bg-current`, so it simply inherits
                 // this colour. Same token that drives the nav text, which is

@@ -43,72 +43,72 @@
     "notFoundDescription": "The page you are looking for does not exist or has been moved."
   },
   "Hero": {
-    "title_part1": "Bespoke",
-    "title_part2": "& Wood Tables,",
+    "title_part1": "Epoxy River",
+    "title_part2": "& Live Edge Tables,",
     "title_part3": "Made in Marrakech.",
-    "description": "You choose the slab. We photograph it before anything is cut. One table, built to your room's dimensions, in eight to twelve weeks.",
+    "description": "You pick the slab. We photograph it dry, then wetted, before a single cut is made, so the board you approve is the board you get. Sized to your room, ready in eight to twelve weeks.",
     "explore": "See the collection",
     "custom": "Design your table"
   },
   "Featured": {
-    "title": "Signature Pieces",
-    "description": "Every table is a conversation between one piece of timber and the resin poured into it. These are pieces that show how we work.",
-    "viewAll": "View full gallery"
+    "title": "Some of what we've built",
+    "description": "Each table is a negotiation between one board and the resin poured into it. These are the pieces that show best how we settle it.",
+    "viewAll": "See all pieces"
   },
   "MadeForSpace": {
-    "title": "Made for your space.",
-    "description": "Your room sets the dimensions. Your slab sets the character. Nothing here is chosen from a catalogue.",
+    "title": "Built for one room.",
+    "description": "Your room fixes the dimensions. Your slab fixes the character. Neither one gets picked out of a catalogue.",
     "items": [
       {
         "title": "You choose the actual slab",
-        "description": "After your deposit we source three to five boards that fit your dimensions, photograph each one raw and wetted, and you pick. Nothing is cut until you have.",
+        "description": "Once your deposit clears we go looking for three to five boards that suit your measurements. Each is photographed dry, then wetted so the grain reads the way it finally will. You choose from those. Nothing meets a saw before you do.",
         "imageAlt": "Raw walnut slabs racked in the Marrakech workshop, photographed before any cutting so the client can choose the board"
       },
       {
         "title": "Built to your dimensions",
-        "description": "Tell us the room, not the table. We will tell you honestly what fits, what will feel tight, and what will not get through your door.",
+        "description": "Describe the room to us, not the table. We will tell you what genuinely fits, what turns cramped the moment chairs are pulled out, and what is never getting through your doorway.",
         "imageAlt": "Close detail of a table edge showing the transition between timber and poured resin at full thickness"
       },
       {
         "title": "Finished by hand",
-        "description": "Machines flatten the top. Hands finish it. Wood and resin abrade at different rates, so the transition between them is judged by touch, not by eye.",
+        "description": "Machines get the top flat. Hands take it the rest of the way. Wood and resin abrade at different rates, so the seam between them is judged with fingertips rather than eyes.",
         "imageAlt": "Artisan hand-sanding the wood and resin interface to an even finish at the bench"
       }
     ],
     "stageLabel": "Stage"
   },
   "InquiryCTA": {
-    "eyebrow": "Custom-made tables",
+    "eyebrow": "Made-to-order tables",
     "title_line1": "Let's build your",
-    "title_highlight": "centerpiece.",
-    "description": "Send us your room dimensions and a budget range. We will tell you what is achievable before you commit to anything, and the price is fixed before work begins.",
+    "title_highlight": "centrepiece.",
+    "description": "Send us the room's measurements and a budget range. We will tell you what is realistic before you commit to anything, and the price is locked before we start cutting.",
     "cta": "Design your table",
     "imageAlt": "Olive wood table with metallic gold resin, photographed in a styled interior"
   },
   "Testimonials": {
-    "title": "Words from our clients.",
-    "subtitle": "Every table is made for one room, one client, one moment. What they say stays with the piece.",
+    "title": "What our clients say.",
+    "subtitle": "Every table is made for one room and one client. What they say about it belongs with the piece.",
     "eyebrow": "Coming soon",
-    "body": "Every BenzArt table is made to order, one at a time, and we are still gathering written accounts from the people who live with them. We would rather show you nothing here than words we wrote ourselves.",
-    "secondary": "In the meantime, the work speaks more precisely than a quote would. Every piece in the collection is documented with its slab, its resin, and the decisions behind it.",
+    "body": "Every Benzart Resin table is made to order, one at a time, and we are still collecting written accounts from the people living with them. We would rather leave this space empty than fill it with words we wrote ourselves.",
+    "secondary": "Until then, the work puts it more precisely than a pull-quote could. Every piece in the collection is documented with the slab it came from, the resin poured into it, and the decisions that shaped it.",
     "commissionLabel": "Piece made"
   },
   "BlogPreview": {
     "eyebrow": "Journal",
     "title": "How this actually works.",
-    "description": "Pricing, timelines, wood species, shipping and customs — written out properly, because ordering something you have not seen requires more than a gallery.",
+    "description": "Pricing, lead times, species, freight and customs, written out in full. Committing to a table you have not stood next to deserves more than a photo gallery.",
     "viewAll": "Read all articles"
   },
   "TablesPage": {
     "title": "The Collection.",
-    "description": "Pieces we have made. Each one came from a single board that no longer exists, so none of these can be repeated exactly — but any of them can be a starting point for yours.",
+    "description": "Tables we have already built. Each came from a board that no longer exists, so nothing here can be repeated exactly — though any of it can be the starting point for yours.",
     "viewDetails": "View details",
-    "empty": "New pieces are being photographed. Get in touch and we will show you what is on the bench."
+    "empty": "New pieces are being photographed right now. Get in touch and we will show you what is on the bench."
   },
   "NotFound": {
     "eyebrow": "404 · Page not found",
-    "title": "It seems this piece slipped.",
-    "description": "Like a slab set slightly off-square, this URL didn't make the cut. Let's bring you back to the collection.",
+    "title": "This one slipped past us.",
+    "description": "Like a board set slightly off-square, this link did not make the cut. Let us get you back to the collection.",
     "cta": "Return to the collection",
     "home": "Go home"
   },
@@ -117,12 +117,12 @@
     "resin": "Resin",
     "dimensions": "Dimensions",
     "shape": "Shape",
-    "priceFrom": "Custom tables from",
-    "priceNote": "Final pricing depends on the slab you choose, the dimensions, the base, and where it ships. Your price is fixed before work begins.",
+    "priceFrom": "Made-to-order tables from",
+    "priceNote": "The final figure depends on the slab you choose, the dimensions, the base, and where it ships. Your price is locked before work starts.",
     "cta": "Enquire about this piece",
     "availability": "Availability",
-    "madeToOrder": "We can craft another in this design",
-    "sold": "Delivered — shown as a reference piece",
+    "madeToOrder": "We can build another in this design",
+    "sold": "Delivered — shown here for reference",
     "shapes": {
       "rectangular": "Rectangular",
       "organic": "Organic",
@@ -154,13 +154,13 @@
   },
   "OurCraft": {
     "title": "Our Craft.",
-    "description": "A workshop on the Route Dourika outside Marrakech, making one table at a time — for one specific room, for one client.",
+    "description": "One workshop on the Route Dourika outside Marrakech, building a single table at a time for one specific room and one client.",
     "philosophyHeading": "We work between traditional joinery and material science.",
-    "philosophyBody1": "Wood brings something no machine can replicate: the record of a single growing season, compressed into grain. Resin brings something wood cannot: depth that you can see into, and a finish that can be renewed.",
-    "philosophyBody2": "The table is the conversation between those two materials. Our job is to make sure the conversation is worth having.",
+    "philosophyBody1": "Wood carries something no machine can fake: the record of one growing season, compressed into grain. Resin carries what wood cannot — depth you can look into, and a finish that can be renewed instead of replaced.",
+    "philosophyBody2": "A table is the conversation between those two materials. Our job is making sure it is a conversation worth having.",
     "studioHeading": "The workshop",
-    "studioBody1": "We work from a single workshop in Marrakech. Every board is hand-selected, every pour is mixed by weight, and every surface is sanded through progressive grits before the hard-wax oil is applied.",
-    "studioBody2": "We do not subcontract the joinery or the finishing. If it carries our mark, it left our bench.",
+    "studioBody1": "Everything happens in one workshop in Marrakech. Boards are picked by hand. Every pour is mixed by weight rather than by eye, and every surface climbs through progressive grits before the hard-wax oil goes on.",
+    "studioBody2": "We do not subcontract the joinery and we do not subcontract the finishing. If it carries our mark, it left our bench.",
     "processHeading": "How a table is made",
     "phaseLabel": "Phase",
     "artisanAlt": "Artisan selecting a walnut board in the workshop",
@@ -170,27 +170,27 @@
     "phases": [
       {
         "title": "Consultation",
-        "body": "We discuss the room, the table, the materials, and the budget. By the end of the call you should know whether we are the right studio for the piece.",
+        "body": "We talk through the room, the table, the materials and the budget. By the time the call ends you should know whether we are the right workshop for the piece — including if the answer is no.",
         "alt": "Consultation call with a client"
       },
       {
         "title": "Design",
-        "body": "We produce a single measured drawing and a material board — no three-dimensional render, because the slab is the design. You approve before anything is cut.",
+        "body": "You get one measured drawing and a material board. No three-dimensional render, because the slab is the design and no render can tell you what the grain will do. You approve it before anything is cut.",
         "alt": "Measured drawing and material board"
       },
       {
         "title": "Selection",
-        "body": "After your deposit we source three to five boards that fit your dimensions, photograph each one raw and wetted, and you pick. Nothing is cut until you have.",
+        "body": "Once your deposit clears we source three to five boards matching your dimensions and photograph each one dry, then wetted. You choose from those photographs. Nothing meets a saw until you have.",
         "alt": "Client choosing a walnut board from photographs"
       },
       {
         "title": "Production",
-        "body": "Eight to twelve weeks, depending on the season and the complexity of the pour. We send progress photographs at the pour, the flatten, and the first sanding coat.",
+        "body": "Eight to twelve weeks, depending on the season and how complex the pour is. Progress photographs come at three points: the pour, the flatten, and the first sanding coat.",
         "alt": "Resin being poured into a mould"
       },
       {
         "title": "Delivery",
-        "body": "We deliver and install in Marrakech. For international delivery we crate the table ourselves and work with a freight forwarder who specialises in fine art and furniture.",
+        "body": "In Marrakech we deliver and install ourselves. For everywhere else we crate the table in-house and hand it to a freight forwarder who specialises in fine art and furniture.",
         "alt": "Table being installed in a client's home"
       }
     ],
@@ -198,23 +198,28 @@
   },
   "Contact": {
     "title": "Get in touch.",
-    "description": "For trade accounts, press, or questions that are not about a specific table. We aim to reply within 48 hours.",
+    "description": "For wholesale accounts, press, and anything that is not about one specific table. We answer within 48 hours.",
     "generalHeading": "General enquiries",
     "atelierHeading": "Atelier (by appointment)",
     "socialHeading": "Social",
     "socialEmpty": "Profiles coming soon.",
-    "commissionNote": "Want a table made? The enquiry form collects everything we need to price it properly.",
+    "commissionNote": "Want a table built? Use the enquiry form instead — it collects everything we need to quote properly, which an email rarely does.",
     "commissionCta": "Design your table",
-    "workshopAlt": "Wide view of the BenzArt workshop outside Marrakech, with slabs racked along the wall",
-    "workshopCaption": "The BenzArt atelier at Tasseltant, Route Dourika, Marrakech."
+    "address": {
+      "street": "Tasseltant, Route Dourika KM 10",
+      "locality": "Marrakech",
+      "country": "Morocco"
+    },
+    "workshopAlt": "Wide view of the Benzart Resin workshop outside Marrakech, with slabs racked along the wall",
+    "workshopCaption": "The Benzart Resin atelier at Tasseltant, Route Dourika, Marrakech."
   },
   "Inquiry": {
     "title": "Commission enquiry",
     "subtitle": "Inquiry",
     "commissionLabel": "Commission",
     "referenceEyebrow": "Reference piece",
-    "referenceNote": "If you have a table in mind that is not currently available, tell us which piece it is and we will discuss whether we can make another in the same design.",
-    "description": "Send us your room dimensions and a budget range. We will tell you what is achievable before you commit to anything, and the price is fixed before work begins.",
+    "referenceNote": "If there is a piece here you keep coming back to and it has already gone, tell us which one. We will say honestly whether another can be built in the same design.",
+    "description": "Give us the room's measurements and a budget range. Before you commit to anything we will tell you what is realistic, and your price is locked before we start cutting.",
     "steps": {
       "client": "Client",
       "vision": "Your vision",
@@ -296,45 +301,49 @@
     },
     "success": {
       "title": "Enquiry received.",
-      "body": "Thank you, {name}. We read every enquiry ourselves and will reply within two working days — usually sooner. If your project has a fixed date, say so in your reply and we will tell you honestly whether it is achievable."
+      "body": "Thank you, {name}. We read every enquiry ourselves and reply within two working days, usually sooner. If your project has a fixed date, say so when you reply and we will tell you plainly whether it is achievable."
     },
     "reassurance": {
       "title": "No obligation until we agree on the design",
       "items": [
-        "All pieces are insured from workshop to doorstep",
-        "Final dimensions confirmed before any cutting begins",
+        "Every piece insured from the bench to your doorstep",
+        "Final dimensions confirmed before a single cut",
         "Timeline agreed in writing at the start"
       ]
     },
     "processFaq": [
       {
         "question": "How long does a commission take?",
-        "answer": "Eight to twelve weeks from deposit to delivery in Marrakech. International shipping adds transit time, which we confirm at the booking stage."
+        "answer": "Eight to twelve weeks from cleared deposit to delivery in Marrakech. Most of that window is cure time between resin layers, and rushing it traps heat in the pour. International freight adds transit on top, which we confirm when you book."
       },
       {
         "question": "Can I see the slab before it is cut?",
-        "answer": "Yes, and it is required. We photograph every board raw and wetted before the first cut. You choose from those photographs, not from a catalogue."
+        "answer": "You have to. Every candidate board is photographed dry and again wetted, which is the only honest preview of how the finished grain will read. You choose from those photographs, and nothing meets a saw until you have."
+      },
+      {
+        "question": "What are your payment terms?",
+        "answer": "A deposit locks both the commission and the slab. The balance falls due before the table leaves the workshop. We do not finance pieces and we do not run staged payments after the deposit."
+      },
+      {
+        "question": "My delivery date is fixed. Can you work to it?",
+        "answer": "Sometimes. Tell us the date in your first message rather than after we have quoted, and we will say plainly whether it is achievable. We would rather lose the commission than agree to a date we know we will miss."
       },
       {
         "question": "Do you ship internationally?",
-        "answer": "Yes, regularly. We crate the table ourselves and work with a freight forwarder who specialises in fine art and furniture. You receive tracking and a packing report with every shipment."
+        "answer": "Regularly. The crate is built in-house from ISPM 15 compliant timber and handed to a forwarder who moves fine art and furniture rather than general cargo. Tracking and a packing report come with every shipment."
       },
       {
-        "question": "What happens if the table is damaged in transit?",
-        "answer": "Our packaging is designed to survive air freight and rough handling, but we also hold insurance on every commissioned piece from the moment it leaves the workshop until it is signed for."
-      },
-      {
-        "question": "Can a table be replicated?",
-        "answer": "Not to the same standard. Wood is not a material that repeats — even boards from the same tree differ in density and figure. We can make another table in the same design language, but the exact grain pattern belongs to the original piece."
-      },
-      {
-        "question": "What payment terms do you work with?",
-        "answer": "A deposit locks the commission, the balance is due before the table leaves the workshop. We do not finance pieces or accept staged payments after the deposit."
+        "question": "What if it arrives damaged?",
+        "answer": "Every commissioned piece is insured from the moment it leaves the bench until somebody signs for it. One practical tip: photograph the crate before you open it. That single photo settles a freight claim faster than anything else."
       }
     ],
     "errors": {
       "generic": "Something went wrong. Please try again or email us directly.",
       "network": "Could not reach the server. Please check your connection and try again."
+    },
+    "aria": {
+      "closeAndResend": "Close and send another enquiry",
+      "honeypotLabel": "Leave this field empty"
     }
   },
   "Blog": {
@@ -351,7 +360,7 @@
   },
   "Legal": {
     "privacyTitle": "Privacy Policy",
-    "privacyIntro": "This policy explains how BenzArt collects, uses, and protects any information you give us when you use this website or enquire about a commission.",
+    "privacyIntro": "This policy explains how Benzart Resin collects, uses, and protects any information you give us when you use this website or enquire about a commission.",
     "termsTitle": "Terms of Service",
     "termsIntro": "By using this website or enquiring about a commission, you agree to the following terms.",
     "lastUpdated": "Last updated",
@@ -394,31 +403,31 @@
   },
   "Faq": {
     "title": "FAQ.",
-    "description": "Lead times, pricing, materials, shipping, and the things we cannot do. If your question is not here, ask us directly.",
+    "description": "Cost, wood, aftercare, and the work we turn down. The commissioning steps are answered on the enquiry page; this covers everything else. If your question is missing, ask us directly.",
     "items": [
       {
-        "question": "How long does a commission take?",
-        "answer": "Eight to twelve weeks from deposit to delivery in Marrakech. International shipping adds transit time, which we confirm at the booking stage."
+        "question": "How much does a custom resin table cost?",
+        "answer": "Most dining commissions land between 3,000 and 15,000 USD. The slab is the biggest single variable: one wide, long, well-figured board can account for over a third of the total on its own. Dimensions, resin volume, the base and the destination make up the rest. Every quote is fixed in writing before work starts."
       },
       {
-        "question": "Can I see the slab before it is cut?",
-        "answer": "Yes, and it is required. We photograph every board raw and wetted before the first cut. You choose from those photographs, not from a catalogue."
+        "question": "Which wood should I choose?",
+        "answer": "Walnut for dark, dramatic grain that suits a river pour. Olive for tight, swirling figure in shorter pieces, since long clear olive boards barely exist. Maple when you want the resin to be the loud element rather than the timber. If you are undecided, tell us the room and we will shortlist two or three."
       },
       {
-        "question": "Do you ship internationally?",
-        "answer": "Yes, regularly. We crate the table ourselves and work with a freight forwarder who specialises in fine art and furniture. You receive tracking and a packing report with every shipment."
+        "question": "How do I look after it?",
+        "answer": "Wipe spills reasonably promptly and keep it out of permanent direct sun. The finish is a hard-wax oil, so a worn patch can be spot-repaired in place rather than requiring the whole top to be stripped. Refresh it every couple of years and it will outlast you."
       },
       {
-        "question": "What happens if the table is damaged in transit?",
-        "answer": "Our packaging is designed to survive air freight and rough handling, but we also hold insurance on every commissioned piece from the moment it leaves the workshop until it is signed for."
+        "question": "Will the resin yellow or crack?",
+        "answer": "Cheap resin yellows. We pour in thin layers with a UV-stabilised system, which is slower and the main reason lead times run to twelve weeks. Cracking comes from heat, not age: a pan straight off the hob will leave a permanent depression, because epoxy softens well below the temperature of a hot dish. Use a trivet and the surface is genuinely durable."
       },
       {
-        "question": "Can a table be replicated?",
-        "answer": "Not to the same standard. Wood is not a material that repeats — even boards from the same tree differ in density and figure. We can make another table in the same design language, but the exact grain pattern belongs to the original piece."
+        "question": "Can you copy a table I have seen?",
+        "answer": "Not exactly, and we will not pretend otherwise. Boards from the same tree differ in density and figure, so the grain pattern belongs to the original piece. We can build another table in the same design language, at the same standard, and it will be recognisably a sibling rather than a duplicate."
       },
       {
-        "question": "What payment terms do you work with?",
-        "answer": "A deposit locks the commission, the balance is due before the table leaves the workshop. We do not finance pieces or accept staged payments after the deposit."
+        "question": "What do you not make?",
+        "answer": "No outdoor tables, since UV and thermal movement will eventually win. No flat-pack, no mass production, nothing held in stock. We also turn down commissions where the budget and the dimensions genuinely do not meet, rather than quietly cutting corners to reach the number."
       }
     ],
     "stillAsking": "Still asking?",
@@ -430,52 +439,52 @@
   },
   "Metadata": {
     "home": {
-      "title": "Benzart | Bespoke Handcrafted Epoxy Resin & Wood Tables",
-      "description": "One-of-a-kind handcrafted dining tables using solid wood and epoxy resin. Designed for your space, built for generations. Commission your custom table today."
+      "title": "Epoxy River Dining Tables, Made to Order | Benzart Resin",
+      "description": "We build one epoxy river table at a time in Marrakech. You pick the walnut, olive or cedar slab before we cut it. Eight to twelve weeks, shipped worldwide."
     },
     "tables": {
-      "title": "Collection | Benzart Bespoke Tables",
-      "description": "Browse our gallery of one-of-a-kind handcrafted epoxy resin and solid wood dining tables. Each piece is unique and made to order."
+      "title": "Collection: Epoxy & Live Edge Tables | Benzart Resin",
+      "description": "Finished pieces from the Marrakech workshop — walnut, olive, cedar and spalted maple, each shown with the slab and resin it came from. Any one can start yours."
     },
     "tablesDetail": {
-      "title": "{name} | Benzart Bespoke Tables",
+      "title": "{name} | Benzart Resin",
       "description": "{story}"
     },
     "blog": {
-      "title": "Journal | Benzart Blog",
-      "description": "Expert guides on epoxy resin tables, wood species, craftsmanship, and luxury furniture design from the Benzart atelier."
+      "title": "Journal: Resin Table Guides | Benzart Resin",
+      "description": "Straight answers on pricing, lead times, wood species, shipping and customs for a custom resin table — written at the bench in Marrakech, not by a copywriter."
     },
     "blogDetail": {
-      "title": "{title} | Benzart Journal",
+      "title": "{title} | Benzart Resin Journal",
       "description": "{description}"
     },
     "ourCraft": {
-      "title": "Our Craft | How BenzArt Makes Custom Resin & Wood Tables",
-      "description": "Inside the BenzArt atelier outside Marrakech: how we choose a slab, why deep resin pours go in layers, and why hand-finishing takes longer."
+      "title": "How We Build Every Table | Benzart Resin",
+      "description": "Inside our Marrakech workshop: choosing the slab, pouring deep resin in layers, and hand-finishing the joint between wood and epoxy until you cannot feel it."
     },
     "inquiry": {
-      "title": "Commission a Custom Table | Benzart Inquiry",
-      "description": "Start your custom table commission. Share your vision — wood species, resin color, dimensions, and budget — and our atelier will craft your piece."
+      "title": "Commission a Custom Table | Benzart Resin",
+      "description": "Tell us the room, the budget and where it ships. We price it before you commit, you approve the slab from photographs, and nothing is cut until you do."
     },
     "contact": {
-      "title": "Contact | Benzart Atelier",
-      "description": "Reach the Benzart team for press inquiries, trade accounts, or to schedule a visit to our Marrakech atelier."
+      "title": "Contact the Workshop | Benzart Resin",
+      "description": "Reach the Benzart Resin workshop in Marrakech for wholesale accounts, press, or a visit by appointment. We reply within 48 hours."
     },
     "faq": {
-      "title": "FAQ | Benzart — Custom Table Questions Answered",
-      "description": "Frequently asked questions about commissioning a custom epoxy resin and wood table: lead times, materials, shipping, and care."
+      "title": "Custom Resin Table FAQ | Benzart Resin",
+      "description": "Lead times, pricing, wood and resin choices, international shipping and aftercare — the questions we are asked most before a table is commissioned."
     },
     "privacy": {
-      "title": "Privacy Policy | Benzart",
-      "description": "How Benzart collects, uses, and protects your personal information."
+      "title": "Privacy Policy | Benzart Resin",
+      "description": "What Benzart Resin collects when you enquire, how long it is kept, and how to have your details corrected or deleted."
     },
     "terms": {
-      "title": "Terms of Service | Benzart",
-      "description": "Terms and conditions governing the use of Benzart services and commissions."
+      "title": "Terms of Service | Benzart Resin",
+      "description": "The terms covering commissions, deposits, design ownership, delivery and liability when you order a table from Benzart Resin."
     },
     "notFound": {
-      "title": "Page Not Found | Benzart",
-      "description": "The page you are looking for does not exist. Return to our collection of bespoke handcrafted tables."
+      "title": "Page Not Found | Benzart Resin",
+      "description": "This page has moved or never existed. Head back to the collection of made-to-order resin and hardwood tables."
     }
   }
 }

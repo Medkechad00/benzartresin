@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
+import { SITE } from "@/lib/site-config";
 
 /**
- * BenzArt wordmark.
+ * Benzart Resin wordmark.
  *
  * The source asset is pure black (RGB 0,0,0) with the shape carried entirely in
  * the alpha channel — verified with sharp: all three colour channels are 0/0/0
@@ -24,6 +25,10 @@ import { cn } from "@/lib/utils";
  * label is not read twice.
  */
 
+/**
+ * Asset filename, deliberately left as `benzart-logo.webp`. It is a path on
+ * disk, not brand copy — renaming it would 404 the mask for no benefit.
+ */
 const LOGO_SRC = "/benzart-logo.webp";
 
 /** Intrinsic aspect ratio of the wordmark: 4039 x 1447. */
@@ -36,7 +41,7 @@ type LogoProps = {
   label?: string;
 };
 
-export function Logo({ className, decorative = false, label = "BenzArt" }: LogoProps) {
+export function Logo({ className, decorative = false, label = SITE.name }: LogoProps) {
   return (
     <span
       className={cn("block bg-current", className)}

@@ -43,35 +43,35 @@
     "notFoundDescription": "La page que vous recherchez n'existe pas ou a été déplacée."
   },
   "Hero": {
-    "title_part1": "Sur mesure",
-    "title_part2": "& Tables en bois",
-    "title_part3": "Fabriquées à Marrakech.",
-    "description": "Vous choisissez la planche. Nous la photographions avant toute découpe. Une table, aux dimensions de votre pièce, en huit à douze semaines.",
+    "title_part1": "Tables rivière",
+    "title_part2": "& rive naturelle,",
+    "title_part3": "faites à Marrakech.",
+    "description": "Vous choisissez la planche. Nous la photographions sèche, puis humidifiée, avant la moindre découpe : celle que vous validez est celle que vous recevez. Aux dimensions de votre pièce, en huit à douze semaines.",
     "explore": "Voir la collection",
     "custom": "Concevoir votre table"
   },
   "Featured": {
-    "title": "Signature Pieces",
-    "description": "Chaque table est un dialogue entre une pièce de bois et la résine coulée en elle. Ces pièces montrent comment nous travaillons.",
-    "viewAll": "Voir toute la galerie"
+    "title": "Quelques pièces sorties de l'atelier",
+    "description": "Chaque table est une négociation entre une planche et la résine qu'on y coule. Voici celles qui montrent le mieux notre façon de trancher.",
+    "viewAll": "Voir toutes les pièces"
   },
   "MadeForSpace": {
-    "title": "Faite pour votre espace.",
-    "description": "Votre pièce fixe les dimensions. Votre planche définit le caractère. Rien ici ne se choisit dans un catalogue.",
+    "title": "Faite pour une seule pièce.",
+    "description": "Votre pièce fixe les dimensions. Votre planche fixe le caractère. Ni l'une ni l'autre ne sort d'un catalogue.",
     "items": [
       {
         "title": "Vous choisissez la planche",
-        "description": "Après votre acompte, nous sélectionnons trois à cinq planches correspondant à vos dimensions, nous photographions chacune brute puis humidifiée, et vous choisissez. Aucune découpe avant votre accord.",
+        "description": "Dès que votre acompte est encaissé, nous cherchons trois à cinq planches correspondant à vos mesures. Chacune est photographiée sèche, puis humidifiée pour que le fil apparaisse tel qu'il sera vraiment. Vous choisissez. Rien ne passe à la scie avant.",
         "imageAlt": "Planches de noyer brutes stockées dans l'atelier de Marrakech, photographiées avant toute découpe pour que le client choisisse la sienne"
       },
       {
         "title": "Aux dimensions de votre pièce",
-        "description": "Parlez-nous de la pièce, pas de la table. Nous vous dirons franchement ce qui rentre, ce qui sera trop juste, et ce qui ne passera pas votre porte.",
+        "description": "Décrivez-nous la pièce, pas la table. Nous vous dirons ce qui rentre vraiment, ce qui devient à l'étroit dès qu'on recule les chaises, et ce qui ne franchira jamais votre porte.",
         "imageAlt": "Détail rapproché d'un chant de table montrant la transition entre le bois et la résine coulée sur toute l'épaisseur"
       },
       {
         "title": "Finie à la main",
-        "description": "Les machines aplanissent le plateau. Les mains le finissent. Le bois et la résine s'abrasent différemment : la transition entre les deux se juge au toucher, pas à l'œil.",
+        "description": "Les machines aplanissent le plateau. Les mains font le reste. Le bois et la résine s'abrasent à des vitesses différentes : la jonction se juge du bout des doigts, pas à l'œil.",
         "imageAlt": "Artisan ponçant à la main la jonction entre bois et résine jusqu'à une finition homogène à l'établi"
       }
     ],
@@ -81,34 +81,34 @@
     "eyebrow": "Tables sur mesure",
     "title_line1": "Créons votre",
     "title_highlight": "pièce maîtresse.",
-    "description": "Envoyez-nous les dimensions de votre pièce et une fourchette de budget. Nous vous dirons ce qui est réalisable avant tout engagement, et le prix est fixé avant le début du travail.",
+    "description": "Envoyez-nous les mesures de la pièce et une fourchette de budget. Avant tout engagement, nous vous dirons ce qui est réaliste, et le prix est bloqué avant la première découpe.",
     "cta": "Concevoir votre table",
     "imageAlt": "Table en bois d'olivier avec résine dorée métallisée, photographiée dans un intérieur"
   },
   "Testimonials": {
-    "title": "Mots de nos clients.",
-    "subtitle": "Chaque table est faite pour une pièce, un client, un moment. Ce qu'ils en disent reste avec la pièce.",
+    "title": "Ce que disent nos clients.",
+    "subtitle": "Chaque table est faite pour une pièce et un client. Ce qu'ils en disent appartient à la pièce.",
     "eyebrow": "Bientôt",
-    "body": "Chaque table BenzArt est fabriquée sur mesure, une par une, et nous recueillons encore les témoignages écrits de celles et ceux qui vivent avec elles. Nous préférons ne rien afficher ici plutôt que des mots que nous aurions écrits nous-mêmes.",
-    "secondary": "En attendant, le travail parle plus précisément qu'une citation. Chaque pièce de la collection est documentée : sa planche, sa résine, et les décisions qui l'ont façonnée.",
+    "body": "Chaque table Benzart Resin est fabriquée sur mesure, une par une, et nous recueillons encore les témoignages écrits de celles et ceux qui vivent avec elles. Nous préférons laisser cet espace vide plutôt que le remplir de phrases que nous aurions écrites nous-mêmes.",
+    "secondary": "En attendant, le travail le dit plus précisément qu'une citation. Chaque pièce de la collection est documentée : la planche dont elle vient, la résine qu'on y a coulée, et les décisions qui l'ont façonnée.",
     "commissionLabel": "Pièce réalisée"
   },
   "BlogPreview": {
     "eyebrow": "Journal",
     "title": "Comment cela se passe vraiment.",
-    "description": "Tarifs, délais, essences, transport et douane — expliqués en détail, parce que commander une pièce qu'on n'a pas vue demande plus qu'une galerie.",
+    "description": "Tarifs, délais, essences, transport et douane, expliqués en entier. S'engager sur une table qu'on n'a jamais vue de près mérite mieux qu'une galerie de photos.",
     "viewAll": "Lire tous les articles"
   },
   "TablesPage": {
     "title": "La Collection.",
-    "description": "Pièces que nous avons réalisées. Chacune est issue d'une seule planche qui n'existe plus, donc aucune ne peut être reproduite à l'identique — mais chacune peut être un point de départ pour la vôtre.",
+    "description": "Des tables déjà construites. Chacune vient d'une planche qui n'existe plus, donc rien ici ne peut être refait à l'identique — mais tout peut servir de point de départ à la vôtre.",
     "viewDetails": "Voir les détails",
-    "empty": "De nouvelles pièces sont en cours de photographie. Contactez-nous et nous vous montrerons ce qui est en préparation."
+    "empty": "De nouvelles pièces sont en cours de photographie. Écrivez-nous et nous vous montrerons ce qui est sur l'établi."
   },
   "NotFound": {
     "eyebrow": "404 · Page introuvable",
-    "title": "Cette pièce nous a échappé.",
-    "description": "Comme une planche légèrement décalée, cette URL n'a pas passé l'étape de finition. Revenons à la collection.",
+    "title": "Celle-ci nous a échappé.",
+    "description": "Comme une planche posée de travers, ce lien n'a pas passé la finition. Retournons à la collection.",
     "cta": "Retour à la collection",
     "home": "Accueil"
   },
@@ -118,11 +118,11 @@
     "dimensions": "Dimensions",
     "shape": "Forme",
     "priceFrom": "Tables sur mesure à partir de",
-    "priceNote": "Le prix final dépend de la planche choisie, des dimensions, du piètement et de la destination. Votre prix est fixé avant le début du travail.",
-    "cta": "Demander ce modèle",
+    "priceNote": "Le montant final dépend de la planche choisie, des dimensions, du piètement et de la destination. Votre prix est bloqué avant le début du travail.",
+    "cta": "Demander cette pièce",
     "availability": "Disponibilité",
-    "madeToOrder": "Nous pouvons réaliser une autre pièce dans ce design",
-    "sold": "Livrée — présentée comme pièce de référence",
+    "madeToOrder": "Nous pouvons en construire une autre dans ce dessin",
+    "sold": "Livrée — montrée ici à titre de référence",
     "shapes": {
       "rectangular": "Rectangulaire",
       "organic": "Organique",
@@ -160,35 +160,35 @@
     },
     "saffron-basin": {
       "name": "Saffron Basin",
-      "wood": "Érable spalté",
+      "wood": "Érable échauffé",
       "resinColor": "Safran ambré",
-      "story": "Érable spalté avec ses lignes noires de champignon laissées entièrement visibles, coulées dans un versement ambré chaleureux. Un plateau rond fait d'une seule planche large, ce qui rend cette pièce difficile à reproduire.",
-      "imageAlt": "Table ronde en érable spalté avec une coulée de résine époxy safran ambré"
+      "story": "Un érable échauffé dont les veines noires de champignon restent entièrement visibles, noyées dans une coulée ambrée chaleureuse. Le plateau rond est taillé dans une seule planche large, ce qui rend la pièce très difficile à refaire.",
+      "imageAlt": "Table ronde en érable échauffé avec une coulée de résine époxy safran ambré"
     },
     "quarry-edge": {
       "name": "Quarry Edge",
       "wood": "Chêne européen",
       "resinColor": "Gris ardoise",
-      "story": "Chêne avec une live edge exceptionnellement cassée, remplie d'une résine ardoise opaque pour que le contour lise comme de la pierre plutôt que de l'eau. Livré à un client privé ; montré ici comme référence pour l'effet à grande échelle.",
-      "imageAlt": "Table à manger en chêne européen à bord vivant avec résine époxy gris ardoise opaque"
+      "story": "Un chêne à la rive naturelle exceptionnellement accidentée, comblée d'une résine ardoise opaque pour que le contour se lise comme de la pierre plutôt que comme de l'eau. Livrée à un client privé, elle est montrée ici comme référence de l'effet à grande échelle.",
+      "imageAlt": "Table à manger en chêne européen à rive naturelle avec résine époxy gris ardoise opaque"
     },
     "nomad-console": {
       "name": "Nomad Console",
-      "wood": "Thuya burl récupéré",
+      "wood": "Loupe de thuya récupérée",
       "resinColor": "Clair fumé",
-      "story": "Une console étroite en thuya burl récupéré, stabilisée et remplie d'une résine claire légèrement fumée. Prix sur demande, car le thuya de cette figure est sourcé pièce par pièce et aucune planche ne coûte la même.",
-      "imageAlt": "Console étroite en thuya burl récupéré avec résine époxy claire fumée"
+      "story": "Une console étroite en loupe de thuya récupérée, stabilisée puis comblée d'une résine claire légèrement fumée. Prix sur demande : une loupe de ce madrage se trouve pièce par pièce, et aucune ne coûte le même prix.",
+      "imageAlt": "Console étroite en loupe de thuya récupérée avec résine époxy claire fumée"
     }
   },
   "OurCraft": {
     "title": "Notre métier.",
-    "description": "Un atelier sur la Route Dourika, à l'extérieur de Marrakech, qui fabrique une table à la fois — pour une pièce précise, pour un client précis.",
+    "description": "Un seul atelier sur la Route Dourika, à l'extérieur de Marrakech, qui construit une table à la fois pour une pièce précise et un client précis.",
     "philosophyHeading": "Nous travaillons entre l'ébénisterie traditionnelle et la science des matériaux.",
-    "philosophyBody1": "Le bois apporte ce qu'aucune machine ne peut reproduire : le souvenir d'une seule saison de croissance, condensé dans le fil. La résine apporte ce que le bois ne peut pas : une profondeur dans laquelle on peut regarder, et une finition qui peut être renouvelée.",
-    "philosophyBody2": "La table est le dialogue entre ces deux matériaux. Notre travail est de s'assurer que ce dialogue vaut la peine d'être écouté.",
+    "philosophyBody1": "Le bois porte ce qu'aucune machine ne sait imiter : la trace d'une seule saison de croissance, comprimée dans le fil. La résine apporte ce que le bois ne peut pas — une profondeur dans laquelle le regard entre, et une finition qui se renouvelle au lieu de se remplacer.",
+    "philosophyBody2": "Une table est la conversation entre ces deux matières. Notre travail consiste à faire en sorte qu'elle vaille la peine d'être tenue.",
     "studioHeading": "L'atelier",
-    "studioBody1": "Nous travaillons depuis un seul atelier à Marrakech. Chaque planche est sélectionnée à la main, chaque coulée est dosée au poids, et chaque surface est poncée à la main à travers des grains progressifs avant l'application de l'huile de finition.",
-    "studioBody2": "Nous ne sous-traitons ni la menuiserie ni la finition. Si elle porte notre marque, elle est sortie de notre atelier.",
+    "studioBody1": "Tout se passe dans un seul atelier à Marrakech. Les planches sont choisies à la main. Chaque coulée est dosée au poids plutôt qu'à l'œil, et chaque surface remonte les grains de ponçage un par un avant l'huile-cire dure.",
+    "studioBody2": "Nous ne sous-traitons ni la menuiserie ni la finition. Si la pièce porte notre marque, elle est sortie de notre établi.",
     "processHeading": "Comment une table est fabriquée",
     "phaseLabel": "Phase",
     "artisanAlt": "Artisan sélectionnant une planche de noyer dans l'atelier",
@@ -198,27 +198,27 @@
     "phases": [
       {
         "title": "Consultation",
-        "body": "Nous discutons de la pièce, de la table, des matériaux et du budget. À la fin de l'appel, vous saurez si nous sommes le bon atelier pour votre projet.",
+        "body": "Nous parlons de la pièce, de la table, des matériaux et du budget. À la fin de l'appel, vous saurez si nous sommes le bon atelier pour ce projet — y compris si la réponse est non.",
         "alt": "Appel de consultation avec un client"
       },
       {
         "title": "Design",
-        "body": "Nous produisons un seul plan coté et un échantillon de matériaux — pas de rendu 3D, car la planche est le design. Vous validez avant toute découpe.",
+        "body": "Vous recevez un plan coté et un échantillon de matériaux. Pas de rendu 3D : la planche est le design, et aucun rendu ne dira ce que le fil va faire. Vous validez avant la moindre découpe.",
         "alt": "Plan coté et échantillon de matériaux"
       },
       {
         "title": "Sélection",
-        "body": "Après votre acompte, nous sélectionnons trois à cinq planches correspondant à vos dimensions, nous photographions chacune brute puis humidifiée, et vous choisissez. Aucune découpe avant votre accord.",
+        "body": "Dès l'acompte encaissé, nous cherchons trois à cinq planches correspondant à vos dimensions et photographions chacune sèche, puis humidifiée. Vous choisissez sur ces photos. Rien ne passe à la scie avant.",
         "alt": "Client choisissant une planche de noyer parmi des photographies"
       },
       {
         "title": "Production",
-        "body": "Huit à douze semaines, selon la saison et la complexité de la coulée. Nous envoyons des photographies d'avancement au moment de la coulée, de l'équerrage et de la première couche de ponçage.",
+        "body": "Huit à douze semaines, selon la saison et la complexité de la coulée. Les photos d'avancement arrivent à trois moments : la coulée, l'équerrage et la première couche de ponçage.",
         "alt": "Résine en cours de coulée dans un moule"
       },
       {
         "title": "Livraison",
-        "body": "Nous livrons et installons à Marrakech. Pour les livraisons internationales, nous conditionnons la table nous-mêmes et travaillons avec un transporteur spécialisé dans les œuvres d'art et le mobilier.",
+        "body": "À Marrakech, nous livrons et installons nous-mêmes. Partout ailleurs, nous fabriquons la caisse en interne et la confions à un transitaire spécialisé dans les œuvres d'art et le mobilier.",
         "alt": "Table en cours d'installation chez un client"
       }
     ],
@@ -229,8 +229,8 @@
     "subtitle": "Demande",
     "commissionLabel": "Commission",
     "referenceEyebrow": "Pièce de référence",
-    "referenceNote": "Si vous avez une table en tête qui n'est pas disponible, dites-nous laquelle et nous discuterons de la possibilité d'en réaliser une autre dans le même esprit.",
-    "description": "Envoyez-nous les dimensions de votre pièce et une fourchette de budget. Nous vous dirons ce qui est réalisable avant tout engagement, et le prix est fixé avant le début du travail.",
+    "referenceNote": "S'il y a ici une pièce sur laquelle vous revenez sans cesse et qu'elle est déjà partie, dites-nous laquelle. Nous vous dirons franchement si une autre peut être construite dans le même dessin.",
+    "description": "Donnez-nous les mesures de la pièce et une fourchette de budget. Avant tout engagement, nous vous dirons ce qui est réaliste, et votre prix est bloqué avant la première découpe.",
     "steps": {
       "client": "Client",
       "vision": "Votre vision",
@@ -312,45 +312,49 @@
     },
     "success": {
       "title": "Demande reçue.",
-      "body": "Merci, {name}. Nous lisons chaque demande nous-mêmes et vous répondrons sous deux jours ouvrés — souvent plus tôt. Si votre projet a une date fixe, précisez-le et nous vous dirons franchement si elle est réalisable."
+      "body": "Merci, {name}. Nous lisons chaque demande nous-mêmes et répondons sous deux jours ouvrés, souvent plus tôt. Si votre projet a une date fixe, précisez-le en répondant et nous vous dirons franchement si elle est tenable."
     },
     "reassurance": {
       "title": "Aucun engagement financier tant que le design n'est pas accepté",
       "items": [
-        "Toutes les pièces sont assurées de l'atelier jusqu'à chez vous",
-        "Dimensions finales confirmées avant toute découpe",
+        "Chaque pièce assurée de l'établi jusqu'à votre porte",
+        "Dimensions finales confirmées avant la moindre découpe",
         "Délai convenu par écrit dès le départ"
       ]
     },
     "processFaq": [
       {
-        "question": "Combien de temps dure une commande ?",
-        "answer": "Huit à douze semaines entre le dépôt et la livraison à Marrakech. L'expédition internationale ajoute un délai de transit que nous confirmons lors de la réservation."
+        "question": "Combien de temps prend une commande ?",
+        "answer": "Huit à douze semaines entre l'encaissement de l'acompte et la livraison à Marrakech. L'essentiel de ce délai est le temps de prise entre les couches de résine, et l'accélérer emprisonne la chaleur dans la coulée. Le fret international s'ajoute, confirmé à la réservation."
       },
       {
-        "question": "Puis-je voir la planche avant qu'elle soit coupée ?",
-        "answer": "Oui, et c'est obligatoire. Nous photographions chaque planche brute puis humidifiée avant la première découpe. Vous choisissez parmi ces photographies, pas parmi un catalogue."
-      },
-      {
-        "question": "Livrez-vous à l'international ?",
-        "answer": "Oui, régulièrement. Nous conditionnons la table nous-mêmes et travaillons avec un transporteur spécialisé dans les œuvres d'art et le mobilier. Vous recevez un suivi et un rapport d'emballage avec chaque envoi."
-      },
-      {
-        "question": "Que se passe-t-il si la table est endommagée pendant le transport ?",
-        "answer": "Notre emballage est conçu pour résister au transport aérien et aux manipulations brusques, mais nous souscrivons également une assurance sur chaque pièce commandée dès qu'elle quitte l'atelier jusqu'à sa réception."
-      },
-      {
-        "question": "Une table peut-elle être reproduite ?",
-        "answer": "Pas dans les mêmes conditions. Le bois n'est pas un matériau qui se répète — même les planches d'un même arbre diffèrent par leur densité et leur veinage. Nous pouvons réaliser une autre table dans le même esprit, mais le dessin exact du grain appartient à la pièce originale."
+        "question": "Puis-je voir la planche avant la découpe ?",
+        "answer": "Vous devez la voir. Chaque planche retenue est photographiée sèche puis humidifiée, seul aperçu honnête de ce que donnera le fil fini. Vous choisissez sur ces photos, et rien ne passe à la scie avant."
       },
       {
         "question": "Quelles sont vos conditions de paiement ?",
-        "answer": "Un acompte verrouille la commande, le solde est dû avant que la table ne quitte l'atelier. Nous ne finançons pas les pièces et n'acceptons pas de paiements échelonnés après l'acompte."
+        "answer": "L'acompte bloque à la fois la commande et la planche. Le solde est dû avant que la table quitte l'atelier. Nous ne finançons pas les pièces et n'échelonnons pas les paiements après l'acompte."
+      },
+      {
+        "question": "Ma date de livraison est fixe. Pouvez-vous la tenir ?",
+        "answer": "Parfois. Donnez-nous la date dans votre premier message, pas après le devis, et nous vous dirons franchement si elle est tenable. Nous préférons perdre la commande que promettre une date que nous savons intenable."
+      },
+      {
+        "question": "Livrez-vous à l'international ?",
+        "answer": "Régulièrement. La caisse est construite chez nous en bois conforme ISPM 15, puis confiée à un transitaire qui déplace des œuvres d'art et du mobilier, pas du fret général. Suivi et rapport d'emballage fournis à chaque envoi."
+      },
+      {
+        "question": "Et si la table arrive abîmée ?",
+        "answer": "Chaque pièce est assurée depuis l'établi jusqu'à la signature à réception. Un conseil pratique : photographiez la caisse avant de l'ouvrir. Cette seule photo règle un litige de fret plus vite que tout le reste."
       }
     ],
     "errors": {
       "generic": "Une erreur s'est produite. Veuillez réessayer ou nous écrire directement.",
       "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez."
+    },
+    "aria": {
+      "closeAndResend": "Fermer et envoyer une nouvelle demande",
+      "honeypotLabel": "Laissez ce champ vide"
     }
   },
   "Blog": {
@@ -367,7 +371,7 @@
   },
   "Legal": {
     "privacyTitle": "Politique de confidentialité",
-    "privacyIntro": "Cette politique explique comment BenzArt collecte, utilise et protège les informations que vous nous communiquez lorsque vous utilisez ce site web ou demandez un devis.",
+    "privacyIntro": "Cette politique explique comment Benzart Resin collecte, utilise et protège les informations que vous nous communiquez lorsque vous utilisez ce site web ou demandez un devis.",
     "termsTitle": "Conditions d'utilisation",
     "termsIntro": "En utilisant ce site web ou en demandant un devis, vous acceptez les conditions suivantes.",
     "lastUpdated": "Dernière mise à jour",
@@ -410,31 +414,31 @@
   },
   "Faq": {
     "title": "FAQ.",
-    "description": "Délais, tarifs, matériaux, expédition, et ce que nous ne faisons pas. Si votre question n'y figure pas, posez-la nous directement.",
+    "description": "Prix, essences, entretien, et le travail que nous refusons. Les étapes de la commande sont détaillées sur la page de demande ; ici, tout le reste. Si votre question manque, posez-la directement.",
     "items": [
       {
-        "question": "Combien de temps dure une commande ?",
-        "answer": "Huit à douze semaines entre le dépôt et la livraison à Marrakech. L'expédition internationale ajoute un délai de transit que nous confirmons lors de la réservation."
+        "question": "Combien coûte une table en résine sur mesure ?",
+        "answer": "La plupart des tables de salle à manger se situent entre 3 000 et 15 000 $. La planche est la variable la plus lourde : un plateau large, long et bien madré peut représenter à lui seul plus d'un tiers du total. Les dimensions, le volume de résine, le piètement et la destination font le reste. Chaque devis est fixé par écrit avant le début du travail."
       },
       {
-        "question": "Puis-je voir la planche avant qu'elle soit coupée ?",
-        "answer": "Oui, et c'est obligatoire. Nous photographions chaque planche brute puis humidifiée avant la première découpe. Vous choisissez parmi ces photographies, pas parmi un catalogue."
+        "question": "Quelle essence choisir ?",
+        "answer": "Le noyer pour un fil sombre et spectaculaire, qui porte bien une coulée rivière. L'olivier pour un madrage serré et tourbillonnant sur des pièces courtes, car les longues planches d'olivier sans défaut n'existent quasiment pas. L'érable quand la résine doit être l'élément fort plutôt que le bois. Si vous hésitez, décrivez la pièce et nous en présélectionnerons deux ou trois."
       },
       {
-        "question": "Livrez-vous à l'international ?",
-        "answer": "Oui, régulièrement. Nous conditionnons la table nous-mêmes et travaillons avec un transporteur spécialisé dans les œuvres d'art et le mobilier. Vous recevez un suivi et un rapport d'emballage avec chaque envoi."
+        "question": "Comment l'entretenir ?",
+        "answer": "Essuyez les liquides sans trop attendre et évitez le plein soleil permanent. La finition est une huile-cire dure : une zone usée se reprend localement, sans décaper tout le plateau. Un rafraîchissement tous les deux ans et elle vous survivra."
       },
       {
-        "question": "Que se passe-t-il si la table est endommagée pendant le transport ?",
-        "answer": "Notre emballage est conçu pour résister au transport aérien et aux manipulations brusques, mais nous souscrivons également une assurance sur chaque pièce commandée dès qu'elle quitte l'atelier jusqu'à sa réception."
+        "question": "La résine va-t-elle jaunir ou fissurer ?",
+        "answer": "Une résine bon marché jaunit. Nous coulons en couches fines avec un système stabilisé anti-UV, plus lent, et c'est la raison principale des douze semaines de délai. La fissuration vient de la chaleur, pas de l'âge : une casserole sortie du feu laissera un creux définitif, car l'époxy se ramollit bien en dessous de la température d'un plat chaud. Avec un dessous-de-plat, la surface est réellement durable."
       },
       {
-        "question": "Une table peut-elle être reproduite ?",
-        "answer": "Pas dans les mêmes conditions. Le bois n'est pas un matériau qui se répète — même les planches d'un même arbre diffèrent par leur densité et leur veinage. Nous pouvons réaliser une autre table dans le même esprit, mais le dessin exact du grain appartient à la pièce originale."
+        "question": "Pouvez-vous copier une table que j'ai vue ?",
+        "answer": "Pas à l'identique, et nous ne prétendrons pas le contraire. Deux planches d'un même arbre diffèrent en densité et en madrage, donc le dessin du fil appartient à la pièce d'origine. Nous pouvons en construire une autre dans le même langage et au même niveau : ce sera une sœur, pas un double."
       },
       {
-        "question": "Quelles sont vos conditions de paiement ?",
-        "answer": "Un acompte verrouille la commande, le solde est dû avant que la table ne quitte l'atelier. Nous ne finançons pas les pièces et n'acceptons pas de paiements échelonnés après l'acompte."
+        "question": "Que ne faites-vous pas ?",
+        "answer": "Pas de tables d'extérieur : les UV et les mouvements thermiques finissent toujours par gagner. Pas de kit à monter, pas de série, aucun stock. Nous refusons aussi les commandes où le budget et les dimensions ne se rejoignent pas vraiment, plutôt que de rogner discrètement pour atteindre le chiffre."
       }
     ],
     "stillAsking": "Vous avez encore des questions ?",
@@ -446,64 +450,69 @@
   },
   "Contact": {
     "title": "Contact.",
-    "description": "Pour les comptes professionnels, la presse, ou toute question qui ne concerne pas une table précise. Nous répondons sous 48 heures.",
+    "description": "Pour les comptes revendeurs, la presse, et tout ce qui ne concerne pas une table précise. Nous répondons sous 48 heures.",
     "generalHeading": "Renseignements généraux",
     "atelierHeading": "Atelier (sur rendez-vous)",
     "socialHeading": "Réseaux",
     "socialEmpty": "Profils à venir.",
-    "commissionNote": "Vous souhaitez faire fabriquer une table ? Le formulaire rassemble tout ce qu'il nous faut pour établir un prix sérieux.",
+    "commissionNote": "Vous voulez faire construire une table ? Passez plutôt par le formulaire : il rassemble tout ce qu'il nous faut pour chiffrer sérieusement, ce qu'un e-mail fait rarement.",
     "commissionCta": "Concevoir votre table",
-    "workshopAlt": "Vue large de l'atelier BenzArt près de Marrakech, avec les planches rangées le long du mur",
-    "workshopCaption": "L'atelier BenzArt à Tasseltant, Route Dourika, Marrakech."
+    "address": {
+      "street": "Tasseltant, Route Dourika KM 10",
+      "locality": "Marrakech",
+      "country": "Maroc"
+    },
+    "workshopAlt": "Vue large de l'atelier Benzart Resin près de Marrakech, avec les planches rangées le long du mur",
+    "workshopCaption": "L'atelier Benzart Resin à Tasseltant, Route Dourika, Marrakech."
   },
   "Metadata": {
     "home": {
-      "title": "Benzart | Tables à manger en bois massif et résine époxy",
-      "description": "Tables à manger uniques fabriquées à la main en bois massif et résine époxy. Conçues pour votre espace, construites pour des générations. Commandez votre table sur mesure."
+      "title": "Tables rivière en résine époxy sur mesure | Benzart Resin",
+      "description": "Nous fabriquons une table rivière à la fois, à Marrakech. Vous choisissez la planche de noyer, d'olivier ou de cèdre avant la découpe. Huit à douze semaines."
     },
     "tables": {
-      "title": "Collection | Benzart Tables sur mesure",
-      "description": "Découvrez notre galerie de tables à manger uniques en bois massif et résine époxy. Chaque pièce est unique et fabriquée sur commande."
+      "title": "Collection : tables époxy et rive naturelle | Benzart Resin",
+      "description": "Les pièces sorties de l'atelier de Marrakech — noyer, olivier, cèdre, érable échauffé — chacune avec sa planche et sa résine. Toutes peuvent inspirer la vôtre."
     },
     "tablesDetail": {
-      "title": "{name} | Benzart Tables sur mesure",
+      "title": "{name} | Benzart Resin",
       "description": "{story}"
     },
     "blog": {
-      "title": "Journal | Blog Benzart",
-      "description": "Guides experts sur les tables en résine époxy, les essences de bois, la fabrication, et le design du meuble de luxe de l'atelier Benzart."
+      "title": "Journal : guides tables en résine | Benzart Resin",
+      "description": "Tarifs, délais, essences, transport et douane pour une table en résine sur mesure : des réponses écrites à l'établi, à Marrakech, pas par une agence."
     },
     "blogDetail": {
-      "title": "{title} | Journal Benzart",
+      "title": "{title} | Journal Benzart Resin",
       "description": "{description}"
     },
     "ourCraft": {
-      "title": "Notre Savoir-Faire | Tables sur mesure en résine et bois | BenzArt",
-      "description": "Dans l'atelier BenzArt près de Marrakech : comment nous choisissons une planche, pourquoi les coulées profondes se font en couches, et pourquoi la finition à la main prend plus de temps."
+      "title": "Comment nous fabriquons chaque table | Benzart Resin",
+      "description": "Dans notre atelier de Marrakech : le choix de la planche, la coulée de résine en couches successives, et la finition à la main de la jonction bois-résine."
     },
     "inquiry": {
-      "title": "Commander une table sur mesure | Demande Benzart",
-      "description": "Commencez votre commande de table sur mesure. Partagez votre vision — essence de bois, couleur de résine, dimensions, budget — et notre atelier fabriquera votre pièce."
+      "title": "Commander une table sur mesure | Benzart Resin",
+      "description": "Dites-nous la pièce, le budget et la destination. Le prix est fixé avant tout engagement et vous validez la planche sur photo avant la moindre découpe."
     },
     "contact": {
-      "title": "Contact | Atelier Benzart",
-      "description": "Contactez l'équipe Benzart pour les demandes presse, comptes trade, ou pour visiter notre atelier de Marrakech."
+      "title": "Contacter l'atelier | Benzart Resin",
+      "description": "Joignez l'atelier Benzart Resin à Marrakech pour les comptes revendeurs, la presse ou une visite sur rendez-vous. Nous répondons sous 48 heures."
     },
     "faq": {
-      "title": "FAQ | Benzart — Questions des tables sur mesure",
-      "description": "Questions fréquentes sur la commande d'une table personnalisée en résine et bois: délais, matériaux, livraison et entretien."
+      "title": "Questions fréquentes | Benzart Resin",
+      "description": "Délais, tarifs, choix du bois et de la résine, livraison internationale et entretien : les questions qui reviennent avant chaque commande."
     },
     "privacy": {
-      "title": "Politique de confidentialité | Benzart",
-      "description": "Comment Benzart collecte, utilise et protège vos informations personnelles."
+      "title": "Politique de confidentialité | Benzart Resin",
+      "description": "Ce que Benzart Resin collecte lors de votre demande, la durée de conservation, et comment faire corriger ou supprimer vos informations."
     },
     "terms": {
-      "title": "Conditions d'utilisation | Benzart",
-      "description": "Conditions générales régissant l'utilisation des services et commandes Benzart."
+      "title": "Conditions d'utilisation | Benzart Resin",
+      "description": "Les conditions applicables aux commandes, acomptes, propriété du design, livraison et responsabilité pour toute table Benzart Resin."
     },
     "notFound": {
-      "title": "Page non trouvée | Benzart",
-      "description": "La page que vous cherchez n'existe pas. Revenez à notre collection de tables artisanales sur mesure."
+      "title": "Page introuvable | Benzart Resin",
+      "description": "Cette page a été déplacée ou n'a jamais existé. Retournez à la collection de tables en résine et bois massif fabriquées sur mesure."
     }
   }
 }

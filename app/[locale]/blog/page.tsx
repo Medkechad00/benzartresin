@@ -1,12 +1,24 @@
 import Image from 'next/image';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Link } from '@/i18n/routing';
 import { getAllPosts, getPillars } from '@/lib/blog';
 import { blogSlug } from '@/lib/urls';
+import { getLocalizedMetadata, buildAlternates } from '@/lib/seo/metadata';
 
 type Props = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const meta = await getLocalizedMetadata('blog', locale);
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: buildAlternates(locale, '/blog'),
+  };
+}
 
 /**
  * Formats against the active locale rather than a hardcoded 'en-US', so Arabic
