@@ -19,7 +19,7 @@ import {
   getRelatedPosts,
   getTableOfContents,
 } from '@/lib/blog';
-import { blogSlug } from '@/lib/urls';
+import { blogSlug, englishBlogSlug } from '@/lib/urls';
 import { buildAlternates, getLocalizedMetadata } from '@/lib/seo/metadata';
 import {
   buildArticleSchema,
@@ -30,14 +30,25 @@ import { localizedPath } from '@/lib/urls';
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
+/**
+ * Emits the slug as it appears in each locale's URL, not the filename.
+ *
+ * French exposes translated slugs while the MDX files stay named in English,
+ * so `fr` must be prerendered under the translated slug or every French
+ * article 404s. `englishBlogSlug` reverses this at read time.
+ */
 export async function generateStaticParams() {
   const slugs = getPostSlugs('en');
-  return routing.locales.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
+  return routing.locales.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug: blogSlug(slug, locale) }))
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
-  const post = getPost(locale, slug);
+  // `slug` arrives in the locale's own form; content is keyed by the English one.
+  const englishSlug = englishBlogSlug(slug, locale);
+  const post = getPost(locale, englishSlug);
   if (!post) return {};
 
   const { frontmatter } = post;
@@ -63,13 +74,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       ...base,
       robots: { index: false, follow: true },
-      alternates: { canonical: `/${locale}${localizedPath('/blog', locale)}/${blogSlug(slug, locale)}` },
+      alternates: { canonical: `/${locale}${localizedPath('/blog', locale)}/${blogSlug(englishSlug, locale)}` },
     };
   }
 
   return {
     ...base,
-    alternates: buildAlternates(locale, `${localizedPath('/blog', locale)}/${blogSlug(slug, locale)}`, getLocalesForPost(slug)),
+    alternates: buildAlternates(locale, `${localizedPath('/blog', locale)}/${blogSlug(englishSlug, locale)}`, getLocalesForPost(englishSlug)),
   };
 }
 
@@ -90,24 +101,26 @@ export default async function BlogPostPage({ params }: Props) {
   const t = await getTranslations('Blog');
   const tc = await getTranslations('Common');
 
-  const post = getPost(locale, slug);
+  // URL slug -> English slug, which is the MDX filename.
+  const englishSlug = englishBlogSlug(slug, locale);
+  const post = getPost(locale, englishSlug);
   if (!post) notFound();
 
   const { frontmatter } = post;
-  const pillarSlug = frontmatter.pillar ?? slug;
+  const pillarSlug = frontmatter.pillar ?? englishSlug;
   const pillar = getPost(locale, pillarSlug);
-  const clusterPosts = getClusterPosts(locale, pillarSlug).filter((p) => p.slug !== slug);
-  const relatedPosts = getRelatedPosts(locale, post).filter((p) => p.slug !== slug);
+  const clusterPosts = getClusterPosts(locale, pillarSlug).filter((p) => p.slug !== englishSlug);
+  const relatedPosts = getRelatedPosts(locale, post).filter((p) => p.slug !== englishSlug);
   const toc = getTableOfContents(post.content);
 
   const breadcrumb = buildBreadcrumbSchema([
-    { name: 'Home', url: `/${locale}` },
-    { name: 'Journal', url: `/${locale}${localizedPath('/blog', locale)}` },
-    { name: frontmatter.title, url: `/${locale}${localizedPath('/blog', locale)}/${blogSlug(slug, locale)}` },
+    { name: tc('home'), url: `/${locale}` },
+    { name: t('title').replace(/\.$/, ''), url: `/${locale}${localizedPath('/blog', locale)}` },
+    { name: frontmatter.title, url: `/${locale}${localizedPath('/blog', locale)}/${blogSlug(englishSlug, locale)}` },
   ]);
 
   const articleSchema = buildArticleSchema(locale, {
-    slug,
+    slug: englishSlug,
     title: frontmatter.title,
     description: frontmatter.description,
     datePublished: frontmatter.date,

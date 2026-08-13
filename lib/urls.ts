@@ -43,6 +43,24 @@ const FR_BLOG_SLUGS: Record<string, string> = {
 };
 
 /**
+ * Inverse of `blogSlug`: maps a slug as it appears in the URL back to the
+ * English slug, which is also the MDX filename on disk.
+ *
+ * Required because the content files are named with English slugs while French
+ * URLs expose translated ones. Without this, `/fr/journal/<translated-slug>`
+ * resolves to no file and 404s — every route that reads a slug from `params`
+ * must pass it through here before touching the filesystem.
+ */
+export function englishBlogSlug(urlSlug: string, locale: string): string {
+  if (locale === "fr") {
+    for (const [english, french] of Object.entries(FR_BLOG_SLUGS)) {
+      if (french === urlSlug) return english;
+    }
+  }
+  return urlSlug;
+}
+
+/**
  * Resolves a localized pathname for static routes.
  *
  * next-intl's `Link` handles this automatically when `pathnames` is configured,
