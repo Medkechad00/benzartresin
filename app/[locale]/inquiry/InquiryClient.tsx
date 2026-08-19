@@ -3,7 +3,9 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { InquirySuccess, type SummaryEntry } from "@/components/inquiry/InquirySuccess";
 import { motion, AnimatePresence } from "motion/react";
+import { FileText, Ruler, ShieldCheck } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
 import { getTextDirection } from "@/lib/i18n/direction";
 import { slideOffset } from "@/lib/i18n/motion";
@@ -20,6 +22,20 @@ import {
   type OtherSelectField,
 } from "@/lib/inquiry-schema";
 import { tableSlug } from "@/lib/urls";
+
+/**
+ * One icon per reassurance claim, positionally matched to
+ * `Inquiry.reassurance.items` in the message files:
+ *
+ *   0  insured from the bench to your doorstep  -> ShieldCheck
+ *   1  final dimensions confirmed before a cut  -> Ruler
+ *   2  timeline agreed in writing at the start  -> FileText
+ *
+ * Index-matched rather than keyed, because the copy is authored as a plain array
+ * so its length stays a content decision. The render falls back to ShieldCheck
+ * if a fourth item is ever added, so adding copy cannot crash the page.
+ */
+const REASSURANCE_ICONS = [ShieldCheck, Ruler, FileText];
 
 function resinOptionFor(resinColor: string): string {
   const c = resinColor.toLowerCase();
@@ -81,7 +97,7 @@ export default function InquiryClient() {
     spaceType: "", spaceTypeOther: "",
     shippingCountry: "", budget: "",
     location: "", message: "", locale, ref: "",
-    website: ""
+    extraNotes: ""
   });
 
   const steps = [
@@ -131,6 +147,31 @@ export default function InquiryClient() {
         {t(`${group}.${option.id}`)}
       </option>
     ));
+
+  /**
+   * Human-readable restatement of the submission, for the confirmation panel.
+   *
+   * Select answers are stored as ids ("privateDining", "5000to8000"), so each
+   * one is resolved back through the same translation namespace the <option>
+   * came from — showing a visitor the raw id would undercut the whole point of
+   * restating their enquiry. "Other" answers resolve to the free-text value
+   * instead. Empty fields are dropped rather than rendered blank.
+   */
+  const selectionValue = (group: string, value: string, other: string): string => {
+    if (!value) return "";
+    if (value === OTHER_OPTION_ID) return other.trim();
+    return t(`${group}.${value}`);
+  };
+
+  const successSummary: SummaryEntry[] = [
+    { label: t("referenceEyebrow"), value: referringPiece?.name ?? "" },
+    { label: t("fields.wood"), value: selectionValue("woodOptions", formData.wood, formData.woodOther) },
+    { label: t("fields.resin"), value: selectionValue("resinOptions", formData.resin, formData.resinOther) },
+    { label: t("fields.dimensions"), value: formData.dimensions },
+    { label: t("fields.shape"), value: selectionValue("shapeOptions", formData.shape, formData.shapeOther) },
+    { label: t("fields.budget"), value: selectionValue("budgetOptions", formData.budget, "") },
+    { label: t("fields.shippingCountry"), value: formData.shippingCountry },
+  ].filter((entry) => entry.value.trim().length > 0);
 
   const otherInput = (name: OtherSelectName) => {
     if (formData[name] !== OTHER_OPTION_ID) return null;
@@ -190,6 +231,33 @@ export default function InquiryClient() {
     }
   };
 
+  /**
+   * The confirmation takes the whole content area, not the form's column.
+   *
+   * While the form is up, the page is a two-column layout: a sticky title and
+   * step tracker on the left, the form on the right capped at `max-w-2xl`. None
+   * of that left column is true once the enquiry is in. It still reads
+   * "Commission enquiry" over instructions for filling in a form that no longer
+   * exists, and the confirmation was being squeezed into 672px beside it.
+   *
+   * Returning early here lets the confirmation use the same `max-w-7xl`
+   * twelve-column grid as every other section on the site, which is what makes
+   * an asymmetric composition possible at all.
+   */
+  if (status === "success") {
+    return (
+      <PageLayout>
+        <div className="pt-16 md:pt-24">
+          <InquirySuccess
+            firstName={formData.name.trim().split(/\s+/)[0] ?? ""}
+            summary={successSummary}
+            onReset={resetForm}
+          />
+        </div>
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout>
       <Suspense fallback={null}>
@@ -236,52 +304,85 @@ export default function InquiryClient() {
               </motion.div>
             ) : null}
 
-            {status !== "success" && (
-              <div className="hidden lg:flex flex-col gap-4 mb-12">
-                {steps.map((title, i) => {
-                  const id = i + 1;
-                  return (
-                    <div key={title} className="flex items-center gap-4">
-                      <div
-                        className={`w-8 h-8 rounded-full border flex items-center justify-center font-sans text-xs transition-colors ${
-                          step >= id
-                            ? "border-[#DFAB2E] text-black bg-[#DFAB2E]"
-                            : "border-gray-300 text-gray-400"
-                        }`}
-                      >
-                        {id}
-                      </div>
-                      <span
-                        className={`font-display text-lg transition-colors ${
-                          step >= id ? "text-black" : "text-gray-400"
-                        }`}
-                      >
-                        {title}
-                      </span>
+            {/*
+              No `status !== "success"` guard needed: the success state returns
+              its own full-width layout above, so this tracker only ever renders
+              while the form is up.
+            */}
+            <div className="hidden lg:flex flex-col gap-4 mb-12">
+              {steps.map((title, i) => {
+                const id = i + 1;
+                return (
+                  <div key={title} className="flex items-center gap-4">
+                    <div
+                      className={`w-8 h-8 rounded-full border flex items-center justify-center font-sans text-xs transition-colors ${
+                        step >= id
+                          ? "border-[#DFAB2E] text-black bg-[#DFAB2E]"
+                          : "border-gray-300 text-gray-400"
+                      }`}
+                    >
+                      {id}
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                    <span
+                      className={`font-display text-lg transition-colors ${
+                        step >= id ? "text-black" : "text-gray-400"
+                      }`}
+                    >
+                      {title}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           <div className="lg:w-2/3 w-full max-w-2xl">
-            <div className="hidden lg:flex items-start gap-4 bg-gold/8 border-l-2 border-gold pl-5 pr-4 py-4 mb-8 rounded-r-sm">
-              <svg aria-hidden="true" className="w-5 h-5 text-gold shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <p className="font-sans text-[10px] uppercase tracking-widest text-black/70 mb-2">
-                  {t("reassurance.title")}
-                </p>
-                <ul className="flex flex-col gap-1.5">
-                  {reassurance.map((item) => (
-                    <li key={item} className="font-sans text-sm text-black/70 leading-snug">
-                      {item}
+            {/*
+              Trust callout.
+
+              Three things were wrong with the version this replaces:
+
+               1. `hidden lg:flex`. The single strongest reassurance on the page
+                  was invisible on phones, which is exactly where a long form
+                  needs it most and where most of this traffic is.
+               2. The claim "No obligation until we agree on the design" was set
+                  at `text-[10px] uppercase`, the size this project uses for
+                  field labels. It is not a label, it is the promise that gets
+                  someone to finish the form, and it now reads at display size.
+               3. One hand-rolled SVG tick sat above three unmarked claims. Each
+                  claim now carries its own Phosphor icon, which turns the block
+                  into a scannable checklist instead of a paragraph.
+
+              Logical properties throughout so the gold rule stays on the reading
+              edge in Arabic. Square corners rather than the previous
+              `rounded-e-sm`, matching the sharp-cornered form beside it.
+            */}
+            <div className="flex flex-col gap-4 bg-gold/8 border-s-2 border-gold ps-5 pe-5 py-5 md:ps-6 md:pe-6 md:py-6 mb-8">
+              <p className="font-display text-lg md:text-xl text-black tracking-tight leading-snug">
+                {t("reassurance.title")}
+              </p>
+              <ul className="flex flex-col gap-3">
+                {reassurance.map((item, i) => {
+                  const Icon = REASSURANCE_ICONS[i] ?? ShieldCheck;
+                  return (
+                    <li key={item} className="flex items-start gap-3">
+                      {/*
+                        `gold-dark` rather than `gold`: at 18px on the pale
+                        `gold/8` tint the lighter token nearly disappeared.
+                        Phosphor's `regular` weight matches the 1.5 stroke used
+                        by the other icons in this project.
+                      */}
+                      <Icon
+                        size={18}
+                        weight="regular"
+                        aria-hidden="true"
+                        className="text-gold-dark shrink-0 mt-px"
+                      />
+                      <span className="font-sans text-sm text-black/70 leading-snug">{item}</span>
                     </li>
-                  ))}
-                </ul>
-              </div>
+                  );
+                })}
+              </ul>
             </div>
 
             <motion.div
@@ -289,62 +390,42 @@ export default function InquiryClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              {status === "success" ? (
-                <div className="relative">
-                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={resetForm} />
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="relative bg-white p-10 md:p-16 border border-black/10 text-center max-w-lg mx-auto"
-                  >
-                    <button
-                      type="button"
-                      onClick={resetForm}
-                      aria-label={t("aria.closeAndResend")}
-                      className="absolute top-4 end-4 w-10 h-10 flex items-center justify-center text-black/40 hover:text-black transition-colors"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
-                      </svg>
-                    </button>
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white p-8 md:p-16 border border-black/10 relative overflow-hidden min-h-[400px]"
+              >
+                  {/*
+                    Honeypot.
 
-                    <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-8">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-black">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                    </div>
+                    Named `extraNotes`, not `website`. The old name was the
+                    direct cause of every enquiry from this project's own
+                    browser being discarded: password managers map `website` to
+                    the URL of a saved login and fill it on sight, and none of
+                    them honour `autocomplete="off"`. The name now matches
+                    nothing in any autofill vocabulary, while a bot that fills
+                    every field it finds — which is what this is for — still
+                    trips it.
 
-                    <h2 className="font-display text-3xl md:text-4xl text-black tracking-tight mb-6">
-                      {t("success.title")}
-                    </h2>
-                    <p className="font-sans text-gray-600 text-lg leading-relaxed mb-10">
-                      {t("success.body", { name: formData.name.split(" ")[0] || "" })}
-                    </p>
+                    The `data-*` attributes are the opt-outs for the four
+                    managers that ignore `autocomplete`: LastPass, 1Password,
+                    Dashlane, Bitwarden.
 
-                    <button
-                      type="button"
-                      onClick={resetForm}
-                      className="bg-black text-white px-10 py-4 uppercase tracking-wider text-xs font-bold hover:bg-black/90 transition-colors active:scale-[0.98]"
-                    >
-                      {t("buttons.submit")}
-                    </button>
-                  </motion.div>
-                </div>
-              ) : (
-                <form
-                  onSubmit={handleSubmit}
-                  className="bg-white p-8 md:p-16 border border-black/10 relative overflow-hidden min-h-[400px]"
-                >
+                    Off-screen rather than `display:none`, because some bots skip
+                    fields that are not rendered.
+                  */}
                   <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden">
-                    <label htmlFor="website">{t("aria.honeypotLabel")}</label>
+                    <label htmlFor="extraNotes">{t("aria.honeypotLabel")}</label>
                     <input
                       type="text"
-                      id="website"
-                      name="website"
+                      id="extraNotes"
+                      name="extraNotes"
                       tabIndex={-1}
                       autoComplete="off"
-                      value={formData.website}
+                      data-lpignore="true"
+                      data-1p-ignore=""
+                      data-form-type="other"
+                      data-bwignore="true"
+                      value={formData.extraNotes}
                       onChange={handleChange}
                     />
                   </div>
@@ -378,7 +459,16 @@ export default function InquiryClient() {
                         </div>
                         <div className="flex flex-col gap-2">
                           <label htmlFor="phone" className={LABEL_CLASS}>{t("fields.phone")} *</label>
-                          <input required type="tel" id="phone" name="phone" autoComplete="tel" value={formData.phone} onChange={handleChange} className={FIELD_CLASS} placeholder={t("fields.phonePlaceholder")} dir="ltr" />
+                          {/*
+                            dir="ltr" is deliberate: a typed number is a series of European-number
+                            runs split by neutral spaces, and an RTL paragraph reorders those runs
+                            ("+966 55 123 4567" reads back as "4567 123 55 966+"). dir="auto" cannot
+                            hold that line, because on an input it resolves from the value rather
+                            than the placeholder, so an empty field fell back to ltr and pulled the
+                            Arabic placeholder to the left edge. Since the field's own direction is
+                            now pinned, alignment has to key off the page: text-right, not text-end.
+                          */}
+                          <input required type="tel" id="phone" name="phone" autoComplete="tel" value={formData.phone} onChange={handleChange} className={`${FIELD_CLASS} ${isRtl ? "text-right" : ""}`} placeholder={t("fields.phonePlaceholder")} dir="ltr" />
                         </div>
                       </motion.div>
                     )}
@@ -486,7 +576,6 @@ export default function InquiryClient() {
                     </button>
                   </div>
                 </form>
-              )}
             </motion.div>
           </div>
 

@@ -42,7 +42,7 @@ export function Footer() {
    */
   const [email, setEmail] = useState("");
   /** Honeypot. Hidden from users; anything in it marks the sender as a bot. */
-  const [website, setWebsite] = useState("");
+  const [extraNotes, setExtraNotes] = useState("");
   const [status, setStatus] = useState<SubscribeStatus>("idle");
   const [feedback, setFeedback] = useState("");
 
@@ -57,7 +57,7 @@ export function Footer() {
       const response = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, locale, website }),
+        body: JSON.stringify({ email, locale, extraNotes }),
       });
 
       const result = await response.json().catch(() => null);
@@ -119,18 +119,29 @@ export function Footer() {
                 />
 
                 {/*
-                  Honeypot. Off-screen rather than `display:none`, because some
-                  bots skip fields that are not rendered. `tabIndex={-1}` and
-                  `aria-hidden` keep it away from keyboard and screen-reader
-                  users, and `autoComplete="off"` stops browsers filling it.
+                  Honeypot.
+
+                  Named `extraNotes`, not `website`: password managers map
+                  `website` to a saved login's URL and fill it regardless of
+                  `autocomplete="off"`, which silently discarded genuine
+                  submissions on the inquiry form. The `data-*` attributes are
+                  the opt-outs for LastPass, 1Password, Dashlane and Bitwarden.
+
+                  Off-screen rather than `display:none`, because some bots skip
+                  fields that are not rendered. `tabIndex={-1}` and `aria-hidden`
+                  keep it away from keyboard and screen-reader users.
                 */}
                 <input
                   type="text"
-                  name="website"
-                  value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
+                  name="extraNotes"
+                  value={extraNotes}
+                  onChange={(e) => setExtraNotes(e.target.value)}
                   tabIndex={-1}
                   autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore=""
+                  data-form-type="other"
+                  data-bwignore="true"
                   aria-hidden="true"
                   className="absolute -left-[9999px] w-px h-px opacity-0"
                 />

@@ -154,7 +154,7 @@
   },
   "OurCraft": {
     "title": "Our Craft.",
-    "description": "One workshop on the Route Dourika outside Marrakech, building a single table at a time for one specific room and one client.",
+    "description": "One workshop on Ourika Road outside Marrakech, building a single table at a time for one specific room and one client.",
     "philosophyHeading": "We work between traditional joinery and material science.",
     "philosophyBody1": "Wood carries something no machine can fake: the record of one growing season, compressed into grain. Resin carries what wood cannot — depth you can look into, and a finish that can be renewed instead of replaced.",
     "philosophyBody2": "A table is the conversation between those two materials. Our job is making sure it is a conversation worth having.",
@@ -206,12 +206,12 @@
     "commissionNote": "Want a table built? Use the enquiry form instead — it collects everything we need to quote properly, which an email rarely does.",
     "commissionCta": "Design your table",
     "address": {
-      "street": "Tasseltant, Route Dourika KM 10",
+      "street": "Tasseltant, Ourika Road KM 10",
       "locality": "Marrakech",
       "country": "Morocco"
     },
     "workshopAlt": "Wide view of the Benzart Resin workshop outside Marrakech, with slabs racked along the wall",
-    "workshopCaption": "The Benzart Resin atelier at Tasseltant, Route Dourika, Marrakech."
+    "workshopCaption": "The Benzart Resin atelier at Tasseltant, Ourika Road, Marrakech."
   },
   "Inquiry": {
     "title": "Commission enquiry",
@@ -249,7 +249,7 @@
       "location": "Where will the table live?",
       "locationPlaceholder": "Room, city, or country",
       "message": "Tell us about the project",
-      "messagePlaceholder": "Anything else we should know — existing furniture, lighting, how the space is used...",
+      "messagePlaceholder": "Anything else we should know: existing furniture, lighting, how the space is used...",
       "optional": "Optional"
     },
     "placeholders": {
@@ -288,9 +288,9 @@
     },
     "budgetOptions": {
       "under3000": "Under 3,000 USD",
-      "3000to5000": "3,000 – 5,000 USD",
-      "5000to8000": "5,000 – 8,000 USD",
-      "8000to15000": "8,000 – 15,000 USD",
+      "3000to5000": "3,000 - 5,000 USD",
+      "5000to8000": "5,000 - 8,000 USD",
+      "8000to15000": "8,000 - 15,000 USD",
       "over15000": "Over 15,000 USD"
     },
     "buttons": {
@@ -301,7 +301,31 @@
     },
     "success": {
       "title": "Enquiry received.",
-      "body": "Thank you, {name}. We read every enquiry ourselves and reply within two working days, usually sooner. If your project has a fixed date, say so when you reply and we will tell you plainly whether it is achievable."
+      "body": "Thank you, {name}. We read every enquiry ourselves and reply within two working days, usually sooner. If your project has a fixed date, say so when you reply and we will tell you plainly whether it is achievable.",
+      "eyebrow": "Received",
+      "nextTitle": "What happens next",
+      "summaryTitle": "What you sent us",
+      "urgentTitle": "Working to a fixed date?",
+      "urgentBody": "Reply to the confirmation in your inbox, or reach us directly. A date is far easier to protect the earlier we know about it.",
+      "steps": [
+        {
+          "title": "We read it ourselves",
+          "body": "No agency and no auto-reply. You will hear back within two working days, usually sooner."
+        },
+        {
+          "title": "Slab photographs",
+          "body": "We send the candidate boards photographed dry and again wetted, which is the only honest preview of the finished grain."
+        },
+        {
+          "title": "Quote and timeline in writing",
+          "body": "Final dimensions, price, and delivery window all agreed before a single cut is made."
+        }
+      ],
+      "actions": {
+        "browse": "Browse the collection",
+        "again": "Send another enquiry"
+      },
+      "imageAlt": "Raw walnut boards selected in the workshop before cutting"
     },
     "reassurance": {
       "title": "No obligation until we agree on the design",
@@ -342,7 +366,6 @@
       "network": "Could not reach the server. Please check your connection and try again."
     },
     "aria": {
-      "closeAndResend": "Close and send another enquiry",
       "honeypotLabel": "Leave this field empty"
     }
   },

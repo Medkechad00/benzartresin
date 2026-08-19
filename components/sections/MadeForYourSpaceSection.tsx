@@ -155,17 +155,46 @@ export function MadeForYourSpaceSection() {
                       Ghosted numeral. Low opacity so it reads as structure
                       rather than competing with the heading, and it darkens on
                       hover to tie the row together as one target.
+
+                      It darkens rather than turning gold. The heading beside it
+                      now carries a solid gold band, so a gold numeral plus the
+                      gold rule that draws in on hover put three gold elements in
+                      one row and the band stopped being the thing your eye
+                      landed on. Black at 25% still reads as a state change.
                     */}
                     <span
                       aria-hidden="true"
-                      className="font-display text-5xl md:text-7xl leading-none shrink-0 tabular-nums text-black/10 group-hover:text-gold/70 transition-colors duration-500"
+                      className="font-display text-5xl md:text-7xl leading-none shrink-0 tabular-nums text-black/10 group-hover:text-black/25 transition-colors duration-500"
                     >
                       {String(index + 1).padStart(2, "0")}
                     </span>
 
                     <div className="min-w-0 pt-1 md:pt-2">
+                      {/*
+                        Same gold band as the section headline above, so the
+                        stage titles read as part of one typographic system.
+
+                        `box-decoration-clone` is required, not optional: without
+                        it a title that wraps gets the horizontal padding only on
+                        the first and last fragments, and the band tears open
+                        mid-phrase. `pt`/`pb` are em-based so the band scales with
+                        the type across the three breakpoints, and the slightly
+                        larger `pb` is descender reserve for the `y` in
+                        "dimensions" and "by".
+
+                        `leading-[1.2]` on the h3 is what keeps stacked bands from
+                        colliding when a title does wrap: the band is about 1.08em
+                        tall inside a 1.2em line box, leaving a hairline of white
+                        between lines rather than a solid slab.
+
+                        Hierarchy still holds against the h2 despite the shared
+                        treatment, because the sizes stay two steps apart
+                        (4xl/5xl/6xl against 2xl/3xl/4xl).
+                      */}
                       <h3 className="font-display text-2xl md:text-3xl lg:text-4xl text-black tracking-tight leading-[1.2] pb-0.5 mb-4">
-                        {item.title}
+                        <span className="bg-[#DFAB2E] box-decoration-clone px-[0.12em] pt-[0.02em] pb-[0.06em]">
+                          {item.title}
+                        </span>
                       </h3>
                       <p className="font-sans text-gray-600 leading-relaxed text-base md:text-lg max-w-[54ch]">
                         {item.description}

@@ -80,7 +80,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     ...base,
-    alternates: buildAlternates(locale, `${localizedPath('/blog', locale)}/${blogSlug(englishSlug, locale)}`, getLocalesForPost(englishSlug)),
+    alternates: buildAlternates(
+      locale,
+      // Resolver, not a string: four posts have translated French slugs, so each
+      // alternate must be built in its own locale or it 307s. `getLocalesForPost`
+      // still narrows the cluster to locales that actually have the article.
+      (loc) => `${localizedPath('/blog', loc)}/${blogSlug(englishSlug, loc)}`,
+      getLocalesForPost(englishSlug)
+    ),
   };
 }
 
@@ -149,7 +156,7 @@ export default async function BlogPostPage({ params }: Props) {
         <div className="max-w-7xl mx-auto">
           <Link
             href={localizedPath('/blog', locale) as any}
-            className="group inline-flex items-center gap-2 text-gray-500 hover:text-black font-sans text-[11px] uppercase tracking-[0.2em] mb-12 transition-colors duration-150"
+            className="group inline-flex items-center gap-2 px-4 py-2 border border-black/10 rounded-none text-[11px] uppercase tracking-[0.2em] font-bold text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all duration-300"
           >
             <span
               aria-hidden="true"
@@ -160,7 +167,7 @@ export default async function BlogPostPage({ params }: Props) {
             {tc('backToJournal')}
           </Link>
 
-          <div className="max-w-4xl">
+          <div className="mt-8">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-sans text-[11px] uppercase tracking-[0.2em] mb-8">
               {/*
                 gold-dark (#C49A1F) rather than the #DFAB2E slab colour: gold as

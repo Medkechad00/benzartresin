@@ -68,7 +68,110 @@ export function createTransport(config: SmtpConfig): Transporter {
     // 465 is implicit TLS; 587 starts plaintext and upgrades via STARTTLS.
     secure: config.port === 465,
     auth: { user: config.user, pass: config.pass },
+    /**
+     * Explicit timeouts.
+     *
+     * Without them nodemailer inherits the OS socket defaults, which on a
+     * silently dropped connection is minutes. Both routes are capped at
+     * `maxDuration = 30`, so a stalled handshake burns the entire budget and
+     * the function is killed before it can answer — the visitor gets a dead
+     * request rather than an error they can act on. These three cover the
+     * stages that actually stall: TCP connect, the 220 greeting, and
+     * mid-session silence.
+     */
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 20_000,
   });
+}
+
+/* ──────────────────────────── error reporting ───────────────────────────── */
+
+type SmtpError = Error & {
+  code?: string;
+  command?: string;
+  response?: string;
+  responseCode?: number;
+};
+
+/**
+ * Formats an SMTP failure as a single flat string.
+ *
+ * The string is the point. Both routes previously did
+ * `console.error("...failed:", { code, response, ... })`, and Next's
+ * structured dev logger serialises a trailing object argument to `{}` — so
+ * every SMTP failure in this project was recorded as
+ * `[inquiry] SMTP send failed: {}`. The handler was correct, the error was
+ * caught, and the one detail needed to fix it was dropped on the floor, which
+ * is indistinguishable from having no error handling at all. Interpolating into
+ * the message string survives every logger.
+ */
+export function describeSmtpError(error: unknown, config: SmtpConfig): string {
+  const err = error as SmtpError;
+
+  const parts = [
+    `code=${err?.code ?? "none"}`,
+    `command=${err?.command ?? "none"}`,
+    `responseCode=${err?.responseCode ?? "none"}`,
+    `response=${err?.response ?? "none"}`,
+    `message=${err?.message ?? String(error)}`,
+    `transport=${config.user}@${config.host}:${config.port}`,
+    `to=${config.to}`,
+  ];
+
+  const hint = smtpHint(err);
+  if (hint) parts.push(`hint=${hint}`);
+
+  return parts.join(" | ");
+}
+
+/**
+ * Maps the failures whose cause is not guessable from the message text.
+ *
+ * The TLS case is here because it cost a full debugging session: the message
+ * says "self-signed certificate in certificate chain", which reads like a
+ * problem with Gmail's certificate, and the same credentials authenticate
+ * perfectly from a plain `node` script in the same shell. The actual cause is
+ * local and has nothing to do with the code.
+ */
+function smtpHint(err: SmtpError): string | null {
+  const message = err?.message ?? "";
+
+  if (/self-signed certificate|unable to verify the first certificate|unable to get local issuer/i.test(message)) {
+    return (
+      "TLS interception, not a mail problem. An antivirus or corporate proxy " +
+      "(AVG/Avast Mail Shield, ESET, Kaspersky, Bitdefender) is terminating the " +
+      "SMTP connection and re-signing it with a private root that lives in the OS " +
+      "certificate store but not in Node's bundled CA list. Start the server with " +
+      "NODE_USE_SYSTEM_CA=1 so Node reads the OS store. Never 'fix' this with " +
+      "NODE_TLS_REJECT_UNAUTHORIZED=0 or tls.rejectUnauthorized:false — that " +
+      "disables certificate verification process-wide, including for real MITM."
+    );
+  }
+
+  if (err?.code === "EAUTH") {
+    return (
+      "Credentials rejected. For Gmail, SMTP_PASS must be a 16-character App " +
+      "Password rather than the account password, and App Passwords are revoked " +
+      "when the account password changes or 2FA is reconfigured."
+    );
+  }
+
+  if (err?.code === "ECONNECTION" || err?.code === "ETIMEDOUT" || err?.code === "ESOCKET") {
+    return (
+      "Could not establish or hold the connection. Check that outbound 587/465 is " +
+      "open from the host — many providers block SMTP egress by default."
+    );
+  }
+
+  if (err?.responseCode === 550 || err?.responseCode === 553) {
+    return (
+      "The server rejected the sender. Gmail requires the From address to be the " +
+      "authenticated account or a verified 'Send mail as' alias."
+    );
+  }
+
+  return null;
 }
 
 /* ─────────────────────────────── sanitising ─────────────────────────────── */
@@ -114,8 +217,43 @@ const MAX_TRACKED_KEYS = 5000;
  */
 export function createRateLimiter({ windowMs, max }: { windowMs: number; max: number }) {
   const hits = new Map<string, { count: number; resetAt: number }>();
+  let warnedAboutUnknown = false;
 
   return function rateLimit(key: string): { ok: boolean; retryAfter: number } {
+    /**
+     * Never limit in development.
+     *
+     * Locally there is no proxy, so `clientKey` cannot distinguish requests and
+     * returns "unknown" for all of them — every submission lands in one bucket.
+     * At `max: 5` that means the sixth test submission of the hour is refused,
+     * and the 429 reads to the developer exactly like a broken mailer. Bots are
+     * not the threat model on localhost.
+     */
+    if (process.env.NODE_ENV !== "production") return { ok: true, retryAfter: 0 };
+
+    /**
+     * Fail open when the client cannot be identified.
+     *
+     * On Vercel or behind Cloudflare `x-forwarded-for` is always present. Its
+     * absence means the app is running without a trusted proxy, in which case
+     * every visitor shares the "unknown" bucket and the limiter stops being a
+     * spam control and becomes a self-inflicted outage on the lead funnel: five
+     * enquiries site-wide per hour and the form is shut for everyone. Counting
+     * is worse than not counting here. The honeypot and field validation do not
+     * depend on network trust and still apply.
+     */
+    if (key === "unknown") {
+      if (!warnedAboutUnknown) {
+        warnedAboutUnknown = true;
+        console.warn(
+          "[mail] rate limiting disabled: no x-forwarded-for/x-real-ip on inbound " +
+            "requests, so clients cannot be told apart. Put the app behind a proxy " +
+            "that sets these headers to re-enable it."
+        );
+      }
+      return { ok: true, retryAfter: 0 };
+    }
+
     const now = Date.now();
     const entry = hits.get(key);
 

@@ -44,7 +44,7 @@
   },
   "Hero": {
     "title_part1": "Tables rivière",
-    "title_part2": "& rive naturelle,",
+    "title_part2": "& bord naturel,",
     "title_part3": "faites à Marrakech.",
     "description": "Vous choisissez la planche. Nous la photographions sèche, puis humidifiée, avant la moindre découpe : celle que vous validez est celle que vous recevez. Aux dimensions de votre pièce, en huit à douze semaines.",
     "explore": "Voir la collection",
@@ -169,8 +169,8 @@
       "name": "Quarry Edge",
       "wood": "Chêne européen",
       "resinColor": "Gris ardoise",
-      "story": "Un chêne à la rive naturelle exceptionnellement accidentée, comblée d'une résine ardoise opaque pour que le contour se lise comme de la pierre plutôt que comme de l'eau. Livrée à un client privé, elle est montrée ici comme référence de l'effet à grande échelle.",
-      "imageAlt": "Table à manger en chêne européen à rive naturelle avec résine époxy gris ardoise opaque"
+      "story": "Un chêne au bord naturel exceptionnellement accidenté, comblé d'une résine ardoise opaque pour que le contour se lise comme de la pierre plutôt que comme de l'eau. Livrée à un client privé, elle est montrée ici comme référence de l'effet à grande échelle.",
+      "imageAlt": "Table à manger en chêne européen à bord naturel avec résine époxy gris ardoise opaque"
     },
     "nomad-console": {
       "name": "Nomad Console",
@@ -182,7 +182,7 @@
   },
   "OurCraft": {
     "title": "Notre métier.",
-    "description": "Un seul atelier sur la Route Dourika, à l'extérieur de Marrakech, qui construit une table à la fois pour une pièce précise et un client précis.",
+    "description": "Un seul atelier sur la Route de l'Ourika, à l'extérieur de Marrakech, qui construit une table à la fois pour une pièce précise et un client précis.",
     "philosophyHeading": "Nous travaillons entre l'ébénisterie traditionnelle et la science des matériaux.",
     "philosophyBody1": "Le bois porte ce qu'aucune machine ne sait imiter : la trace d'une seule saison de croissance, comprimée dans le fil. La résine apporte ce que le bois ne peut pas — une profondeur dans laquelle le regard entre, et une finition qui se renouvelle au lieu de se remplacer.",
     "philosophyBody2": "Une table est la conversation entre ces deux matières. Notre travail consiste à faire en sorte qu'elle vaille la peine d'être tenue.",
@@ -260,7 +260,7 @@
       "location": "Où vivra la table ?",
       "locationPlaceholder": "Pièce, ville ou pays",
       "message": "Parlez-nous du projet",
-      "messagePlaceholder": "Tout ce qui peut nous aider — mobilier existant, éclairage, usage de l'espace...",
+      "messagePlaceholder": "Tout ce qui peut nous aider : mobilier existant, éclairage, usage de l'espace...",
       "optional": "Facultatif"
     },
     "placeholders": {
@@ -299,9 +299,9 @@
     },
     "budgetOptions": {
       "under3000": "Moins de 3 000 €",
-      "3000to5000": "3 000 – 5 000 €",
-      "5000to8000": "5 000 – 8 000 €",
-      "8000to15000": "8 000 – 15 000 €",
+      "3000to5000": "3 000 - 5 000 €",
+      "5000to8000": "5 000 - 8 000 €",
+      "8000to15000": "8 000 - 15 000 €",
       "over15000": "Plus de 15 000 €"
     },
     "buttons": {
@@ -312,7 +312,31 @@
     },
     "success": {
       "title": "Demande reçue.",
-      "body": "Merci, {name}. Nous lisons chaque demande nous-mêmes et répondons sous deux jours ouvrés, souvent plus tôt. Si votre projet a une date fixe, précisez-le en répondant et nous vous dirons franchement si elle est tenable."
+      "body": "Merci, {name}. Nous lisons chaque demande nous-mêmes et répondons sous deux jours ouvrés, souvent plus tôt. Si votre projet a une date fixe, précisez-le en répondant et nous vous dirons franchement si elle est tenable.",
+      "eyebrow": "Reçue",
+      "nextTitle": "Les prochaines étapes",
+      "summaryTitle": "Ce que vous nous avez envoyé",
+      "urgentTitle": "Une date impérative ?",
+      "urgentBody": "Répondez à la confirmation reçue dans votre boîte mail, ou contactez-nous directement. Plus tôt nous connaissons la date, plus il est simple de la tenir.",
+      "steps": [
+        {
+          "title": "Nous la lisons nous-mêmes",
+          "body": "Aucune agence, aucune réponse automatique. Vous aurez une réponse sous deux jours ouvrés, souvent plus tôt."
+        },
+        {
+          "title": "Photographies des plateaux",
+          "body": "Nous envoyons les planches retenues, photographiées à sec puis humidifiées. C'est le seul aperçu honnête du grain fini."
+        },
+        {
+          "title": "Devis et calendrier par écrit",
+          "body": "Dimensions finales, prix et délai de livraison convenus avant la moindre découpe."
+        }
+      ],
+      "actions": {
+        "browse": "Découvrir la collection",
+        "again": "Envoyer une autre demande"
+      },
+      "imageAlt": "Planches de noyer brut sélectionnées à l'atelier avant la découpe"
     },
     "reassurance": {
       "title": "Aucun engagement financier tant que le design n'est pas accepté",
@@ -353,7 +377,6 @@
       "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez."
     },
     "aria": {
-      "closeAndResend": "Fermer et envoyer une nouvelle demande",
       "honeypotLabel": "Laissez ce champ vide"
     }
   },
@@ -458,12 +481,12 @@
     "commissionNote": "Vous voulez faire construire une table ? Passez plutôt par le formulaire : il rassemble tout ce qu'il nous faut pour chiffrer sérieusement, ce qu'un e-mail fait rarement.",
     "commissionCta": "Concevoir votre table",
     "address": {
-      "street": "Tasseltant, Route Dourika KM 10",
+      "street": "Tasseltant, Route de l'Ourika KM 10",
       "locality": "Marrakech",
       "country": "Maroc"
     },
     "workshopAlt": "Vue large de l'atelier Benzart Resin près de Marrakech, avec les planches rangées le long du mur",
-    "workshopCaption": "L'atelier Benzart Resin à Tasseltant, Route Dourika, Marrakech."
+    "workshopCaption": "L'atelier Benzart Resin à Tasseltant, Route de l'Ourika, Marrakech."
   },
   "Metadata": {
     "home": {

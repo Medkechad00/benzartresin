@@ -3,6 +3,7 @@ import {
   clientKey,
   createRateLimiter,
   createTransport,
+  describeSmtpError,
   escapeHtml,
   getSmtpConfig,
   headerSafe,
@@ -66,7 +67,7 @@ type InquiryPayload = {
   /** Slug of the piece the visitor came from, via /inquiry?ref=<slug>. */
   ref?: string;
   /** Honeypot — must stay empty. Not rendered to real users. */
-  website?: string;
+  extraNotes?: string;
 };
 
 /* ────────────────────────────── rate limiting ───────────────────────────── */
@@ -112,11 +113,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, message: "Invalid request body." }, { status: 400 });
   }
 
-  // Honeypot: real users never see this field, so anything in it is a bot.
-  // Returns 200 so the bot cannot distinguish rejection from success.
-  if (body.website && body.website.trim() !== "") {
-    console.warn("[inquiry] honeypot triggered — discarding submission");
-    return NextResponse.json({ success: true, message: "Inquiry sent successfully." });
+  /**
+   * Honeypot.
+   *
+   * This block used to return a fake success and drop the submission, on the
+   * reasoning that only a bot can fill a field no human can see. That reasoning
+   * was wrong in practice, and it cost real commissions.
+   *
+   * The field was named `website` and carried `autocomplete="off"`. No major
+   * password manager honours that attribute, and `website` is exactly the key
+   * they map to the URL of a saved login — so the field was being autofilled on
+   * page load. Because the form's reset does not clear its state, one autofill
+   * poisoned every subsequent submission in the session. The visitor got the
+   * confirmation screen every time and the studio received nothing.
+   *
+   * So the honeypot no longer decides anything by itself; it annotates. A
+   * commission enquiry is worth several thousand and a spam email costs a moment
+   * to delete, and that asymmetry means this signal must never be the thing that
+   * stops delivery. The flag travels in the subject line so the studio can
+   * filter on it.
+   */
+  const honeypot = (body.extraNotes ?? "").trim();
+  const flaggedAsSpam = honeypot !== "";
+
+  if (flaggedAsSpam) {
+    console.warn(
+      "[inquiry] honeypot filled — delivering anyway, flagged as suspected spam. " +
+        `value=${JSON.stringify(honeypot.slice(0, 120))} ` +
+        "(a URL or an email address here almost always means autofill, not a bot)"
+    );
   }
 
   const name = (body.name ?? "").trim();
@@ -193,9 +218,22 @@ export async function POST(req: Request) {
       from: smtp.from,
       to: smtp.to,
       replyTo: `${headerSafe(name)} <${headerSafe(email)}>`,
-      subject: `New table enquiry — ${headerSafe(name)}${body.ref ? ` (${headerSafe(body.ref)})` : ""}`,
-      text: [...rows.map(([l, v]) => `${l}: ${v}`), "", "Details:", message].join("\n"),
+      subject: `${flaggedAsSpam ? "[SUSPECTED SPAM] " : ""}New table enquiry — ${headerSafe(name)}${body.ref ? ` (${headerSafe(body.ref)})` : ""}`,
+      text: [
+        ...(flaggedAsSpam
+          ? ["NOTE: the hidden anti-spam field was filled. Usually browser autofill on a genuine enquiry — check before discarding.", ""]
+          : []),
+        ...rows.map(([l, v]) => `${l}: ${v}`),
+        "",
+        "Details:",
+        message,
+      ].join("\n"),
       html: `
+        ${
+          flaggedAsSpam
+            ? `<p style="font-family:sans-serif;font-size:13px;background:#FFF4D6;border-left:3px solid #E4B028;padding:10px 12px;margin:0 0 16px;">The hidden anti-spam field was filled on this submission. That is usually browser autofill on a genuine enquiry rather than a bot — read it before discarding.</p>`
+            : ""
+        }
         <h2 style="font-family:sans-serif;">New table enquiry</h2>
         <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse;">${htmlRows}</table>
         <h3 style="font-family:sans-serif;">Details</h3>
@@ -205,17 +243,27 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: "Inquiry sent successfully." });
   } catch (error) {
-    const err = error as Error & { code?: string; response?: string; command?: string };
-    console.error("[inquiry] SMTP send failed:", {
-      code: err.code,
-      command: err.command,
-      response: err.response,
-      message: err.message,
-      smtpUser: smtp.user,
-      smtpHost: smtp.host,
-      smtpPort: smtp.port,
-      to: smtp.to,
-    });
+    const err = error as Error & { code?: string };
+
+    console.error(`[inquiry] SMTP send failed: ${describeSmtpError(error, smtp)}`);
+
+    /**
+     * Preserve the lead.
+     *
+     * Previously the catch block logged the transport error and nothing else, so
+     * a failed send destroyed the submission: the visitor was told to email us
+     * instead, most never do, and the studio had no record that anyone tried.
+     * This log line is the only remaining copy of the enquiry, so it is written
+     * in full and in one piece, ready to be recovered by hand.
+     */
+    console.error(
+      `[inquiry] UNSENT LEAD — recover manually: ${JSON.stringify({
+        receivedAt: new Date().toISOString(),
+        ...Object.fromEntries(rows),
+        details: message,
+      })}`
+    );
+
     return NextResponse.json(
       {
         success: false,

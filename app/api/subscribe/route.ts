@@ -3,6 +3,7 @@ import {
   clientKey,
   createRateLimiter,
   createTransport,
+  describeSmtpError,
   escapeHtml,
   getSmtpConfig,
   headerSafe,
@@ -46,7 +47,7 @@ type SubscribePayload = {
   /** Locale the form was submitted from, so replies can match the language. */
   locale?: string;
   /** Honeypot — must stay empty. Not rendered to real users. */
-  website?: string;
+  extraNotes?: string;
 };
 
 export async function POST(req: Request) {
@@ -65,11 +66,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, message: "Invalid request body." }, { status: 400 });
   }
 
-  // Honeypot: real users never see this field, so anything in it is a bot.
-  // Returns 200 so the bot cannot distinguish rejection from success.
-  if (body.website && body.website.trim() !== "") {
-    console.warn("[subscribe] honeypot triggered — discarding submission");
-    return NextResponse.json({ success: true, message: "Subscribed." });
+  /**
+   * Honeypot — annotates, never discards. See the long note in
+   * `app/api/inquiry/route.ts`: the field was named `website`, password managers
+   * autofilled it despite `autocomplete="off"`, and every genuine submission was
+   * being dropped behind a fake success.
+   */
+  const honeypot = (body.extraNotes ?? "").trim();
+  const flaggedAsSpam = honeypot !== "";
+
+  if (flaggedAsSpam) {
+    console.warn(
+      "[subscribe] honeypot filled — delivering anyway, flagged as suspected spam. " +
+        `value=${JSON.stringify(honeypot.slice(0, 120))}`
+    );
   }
 
   const email = (body.email ?? "").trim();
@@ -105,7 +115,7 @@ export async function POST(req: Request) {
       from: smtp.from,
       to: smtp.to,
       replyTo: headerSafe(email),
-      subject: `New studio sign-up — ${headerSafe(email)}`,
+      subject: `${flaggedAsSpam ? "[SUSPECTED SPAM] " : ""}New studio sign-up — ${headerSafe(email)}`,
       text: [
         `Email: ${email}`,
         locale ? `Site language: ${locale}` : "",
@@ -133,17 +143,20 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: "Subscribed." });
   } catch (error) {
-    const err = error as Error & { code?: string; response?: string; command?: string };
-    console.error("[subscribe] SMTP send failed:", {
-      code: err.code,
-      command: err.command,
-      response: err.response,
-      message: err.message,
-      smtpUser: smtp.user,
-      smtpHost: smtp.host,
-      smtpPort: smtp.port,
-      to: smtp.to,
-    });
+    const err = error as Error & { code?: string };
+
+    console.error(`[subscribe] SMTP send failed: ${describeSmtpError(error, smtp)}`);
+
+    // The address is the entire submission, so losing it loses the sign-up.
+    // Same reasoning as the inquiry route: this log is the last copy.
+    console.error(
+      `[subscribe] UNSENT SIGN-UP — recover manually: ${JSON.stringify({
+        receivedAt: new Date().toISOString(),
+        email,
+        locale,
+      })}`
+    );
+
     return NextResponse.json(
       {
         success: false,

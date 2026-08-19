@@ -61,6 +61,15 @@ export function englishBlogSlug(urlSlug: string, locale: string): string {
 }
 
 /**
+ * Inverse of `tableSlug`: maps a slug as it appears in the URL back to the
+ * English slug, which is the canonical identifier in the tables data.
+ */
+export function englishTableSlug(urlSlug: string): string {
+  const table = getTableBySlug(urlSlug);
+  return table?.slug ?? urlSlug;
+}
+
+/**
  * Resolves a localized pathname for static routes.
  *
  * next-intl's `Link` handles this automatically when `pathnames` is configured,

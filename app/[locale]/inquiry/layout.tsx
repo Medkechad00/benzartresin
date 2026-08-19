@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: meta.title,
     description: meta.description,
-    alternates: buildAlternates(locale, localizedPath('/inquiry', locale)),
+    alternates: buildAlternates(locale, '/inquiry'),
   };
 }
 

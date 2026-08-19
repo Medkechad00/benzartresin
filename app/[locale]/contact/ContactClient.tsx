@@ -22,13 +22,29 @@ const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, 
 
   return (
     <figure className="my-16 md:my-24 relative w-full">
-      <div ref={imgRef} className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+      {/*
+        Aspect ratio rather than `h-[50vh] md:h-[70vh]`.
+
+        Viewport units are unstable on phones: the value changes when browser
+        chrome collapses on scroll, so the frame resized mid-scroll and reflowed
+        everything below it, which also fights the parallax transform above. A
+        ratio derives height from width and does not move. 3:2 at base and 16:9
+        from `md` land close to what the old percentages produced.
+      */}
+      <div ref={imgRef} className="relative w-full aspect-[3/2] md:aspect-[16/9] overflow-hidden">
         <motion.div style={{ y }} className="absolute inset-0 w-full h-[130%]">
           <Image
             src={src}
             alt={alt}
             fill
             className="object-cover"
+            /*
+              `sizes` was missing entirely, so the browser assumed 100vw and
+              downloaded the largest candidate on every viewport. This figure is
+              full-bleed inside a capped container, so 100vw below the cap and
+              1280px above it.
+            */
+            sizes="(max-width: 1280px) 100vw, 1280px"
           />
         </motion.div>
       </div>
@@ -96,7 +112,7 @@ export default function ContactClient() {
                 <h3 className="font-sans font-bold uppercase tracking-widest text-xs mb-6 text-[#DFAB2E]">{t("generalHeading")}</h3>
                 <a href={`mailto:${SITE.email}`} className="block font-display text-2xl md:text-3xl text-black hover:text-gray-500 transition-colors mb-2 break-words">{SITE.email}</a>
                 {SITE.telephone ? (
-                  <a href={`tel:${SITE.telephone}`} className="block font-sans text-gray-600 hover:text-black transition-colors" dir="ltr">{SITE.telephoneDisplay}</a>
+                  <a href={`tel:${SITE.telephone}`} className="block font-sans text-gray-600 hover:text-black transition-colors text-end" dir="ltr">{SITE.telephoneDisplay}</a>
                 ) : null}
               </div>
 

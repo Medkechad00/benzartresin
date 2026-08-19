@@ -47,7 +47,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${table.name} — ${localizedMaterial(table)} | ${SITE.name}`,
     description: table.story,
-    alternates: buildAlternates(locale, `${localizedPath('/tables', locale)}/${tableSlug(slug, locale)}`),
+    alternates: buildAlternates(
+      locale,
+      // Resolver, not a string: the path segment and the slug both differ by
+      // locale ('/tables/atlas-walnut-river' vs '/collection/atlas-noyer-riviere'),
+      // so each alternate has to be built in its own locale or it 307s.
+      (loc) => `${localizedPath('/tables', loc)}/${tableSlug(slug, loc)}`
+    ),
     openGraph: {
       title: `${table.name} | ${SITE.name}`,
       description: table.story,

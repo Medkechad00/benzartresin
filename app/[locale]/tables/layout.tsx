@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { buildAlternates, getLocalizedMetadata } from '@/lib/seo/metadata';
-import { localizedPath } from '@/lib/urls';
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -11,7 +10,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: meta.title,
     description: meta.description,
-    alternates: buildAlternates(locale, localizedPath('/tables', locale)),
+    alternates: buildAlternates(locale, '/tables'),
     openGraph: {
       title: meta.title || undefined,
       description: meta.description || undefined,

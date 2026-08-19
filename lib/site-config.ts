@@ -52,7 +52,14 @@ export const SITE = {
   /** TODO: add a real logo asset to /public and set this to its path. */
   logoPath: null as string | null,
 
-  /** Confirmed by the studio. */
+  /**
+   * Brand email shown on the site and in structured data.
+   *
+   * Inbound mail (inquiries + newsletter) is delivered to `pressEmail` /
+   * CONTACT_EMAIL, which is a separate Gmail account. The two addresses must
+   * not be conflated: the brand email is for display, the receiving inbox is
+   * where the studio actually reads submissions.
+   */
   email: 'benzartdecor@gmail.com',
   /**
    * No separate press inbox yet — press enquiries route to the main address so
@@ -60,23 +67,17 @@ export const SITE = {
    */
   pressEmail: 'benzartdecor@gmail.com',
 
-  /** Confirmed by the studio. E.164 format, as schema.org requires. */
+  /** Confirmed by the studio. */
   telephone: '+212660203060',
   /** Human-readable form for the visible page. Same number, formatted. */
   telephoneDisplay: '+212 660 203 060',
 
   address: {
     /**
-     * Confirmed by the studio (Aug 2026). Previously listed as "Sidi Ghanem",
-     * which was wrong.
-     *
-     * NOTE FOR THE STUDIO: please confirm the spelling "Dourika". The road out
-     * of Marrakech toward the Ourika valley is normally written "Route de
-     * l'Ourika". Since this string is emitted into LocalBusiness schema and is
-     * what Google matches against Maps and any Business Profile, a misspelling
-     * here weakens the local-entity match.
+     * Confirmed by the studio (Aug 2026). The road out of Marrakech toward the
+     * Ourika valley is "Route de l'Ourika".
      */
-    streetAddress: 'Tasseltant, Route Dourika KM 10',
+    streetAddress: 'Tasseltant, Ourika Road KM 10',
     addressLocality: 'Marrakech',
     addressCountry: 'MA',
   },

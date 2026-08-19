@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { Link, usePathname, useRouter } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { getTextDirection } from "@/lib/i18n/direction";
@@ -9,7 +9,7 @@ import { SITE } from "@/lib/site-config";
 import { Logo } from "@/components/layout/Logo";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { cn } from "@/lib/utils";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, blogSlug, englishBlogSlug, tableSlug, englishTableSlug } from "@/lib/urls";
 
 /**
  * "Atelier" (→/craftsmanship) and "Studio" (→/about) were two labels for two
@@ -38,23 +38,47 @@ export function Navbar({ theme = "light" }: NavbarProps) {
   /**
    * Locale switching via next-intl's router.
    *
-   * The previous implementation split `window.location.pathname`, swapped
-   * segment 1, and assigned `window.location.href` — a full document reload
-   * that discarded any query string or hash. That broke /inquiry?ref=<sku>
-   * specifically: switching language dropped the piece the visitor arrived
-   * from. `usePathname` from next-intl returns the pathname without the locale
-   * prefix, and `router.replace` preserves the rest of the URL.
+   * `usePathname` from next-intl drops dynamic route params (e.g. [slug])
+   * when called from a layout, so `/en/blog/my-post` becomes `/blog` and
+   * `router.replace` throws "Insufficient params". Reading the full pathname
+   * from `window.location.pathname` preserves every segment, then we strip
+   * the current locale prefix manually before handing it to `router.replace`.
+   * Search and hash are preserved too, so /inquiry?ref=<sku> survives the
+   * switch without a full reload.
    */
-  const pathname = usePathname();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const switchLocale = (next: string) => {
     if (next === locale) return;
     startTransition(() => {
-      const search = typeof window !== 'undefined' ? window.location.search : '';
-      const hash = typeof window !== 'undefined' ? window.location.hash : '';
-      router.replace(`${pathname}${search}${hash}` as any, { locale: next });
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+      const withoutLocale = path.startsWith(`/${locale}`) ? path.slice(`/${locale}`.length) : path;
+
+      let targetPath = withoutLocale;
+
+      const blogMatch = withoutLocale.match(/^\/blog\/([^/]+)$/);
+      if (blogMatch) {
+        const currentSlug = blogMatch[1];
+        const englishSlug = englishBlogSlug(currentSlug, locale);
+        const newSlug = blogSlug(englishSlug, next);
+        const base = localizedPath('/blog', next);
+        targetPath = `${base}/${newSlug}`;
+      } else {
+        const tableMatch = withoutLocale.match(/^\/tables\/([^/]+)$/);
+        if (tableMatch) {
+          const englishSlug = englishTableSlug(tableMatch[1]);
+          const newSlug = tableSlug(englishSlug, next);
+          const base = localizedPath('/tables', next);
+          targetPath = `${base}/${newSlug}`;
+        } else {
+          targetPath = localizedPath(withoutLocale, next);
+        }
+      }
+
+      router.replace(`${targetPath}${search}${hash}` as any, { locale: next });
     });
   };
 
