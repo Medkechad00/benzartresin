@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { testimonials } from "@/content/testimonials";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
 
 /**
  * Client words.
@@ -22,13 +22,12 @@ import { localizedPath } from "@/lib/urls";
  * changes here. No Review or AggregateRating schema is emitted in either case.
  */
 export function TestimonialsSection() {
-  const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("Testimonials");
   const tc = useTranslations("Common");
 
   const reveal = {
-    initial: reduceMotion ? false : { opacity: 0, y: 20 },
+    initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, amount: 0.4 },
     transition: { duration: 0.8, ease: [0.23, 1, 0.32, 1] as const },
@@ -57,7 +56,7 @@ export function TestimonialsSection() {
               {...reveal}
               className="border border-dashed border-black/20 bg-ivory/40 p-8 md:p-12"
             >
-              <p className="font-sans text-xs uppercase tracking-[0.2em] text-gray-500 mb-4">
+              <p className="font-sans text-xs uppercase tracking-[0.2em] text-gray-600 mb-4">
                 {t("eyebrow")}
               </p>
               <p className="font-sans text-gray-700 text-lg leading-relaxed max-w-prose mb-8">
@@ -68,13 +67,13 @@ export function TestimonialsSection() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  href={localizedPath('/tables', locale) as any}
+                  href={toHref(localizedPath('/tables', locale))}
                   className="bg-black text-white px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98]"
                 >
                   {tc("seeCollection")}
                 </Link>
                 <Link
-                  href={localizedPath('/our-craft', locale) as any}
+                  href={toHref(localizedPath('/our-craft', locale))}
                   className="border border-black/20 text-black px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-black/5 transition-colors active:scale-[0.98]"
                 >
                   {tc("insideAtelier")}
@@ -86,7 +85,7 @@ export function TestimonialsSection() {
               {testimonials.map((item, index) => (
                 <motion.figure
                   key={`${item.author}-${index}`}
-                  initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{
@@ -99,11 +98,11 @@ export function TestimonialsSection() {
                   <blockquote className="font-sans text-gray-800 leading-relaxed text-base md:text-lg mb-6">
                     {item.quote}
                   </blockquote>
-                  <figcaption className="font-sans text-xs uppercase tracking-[0.2em] text-gray-500">
+                  <figcaption className="font-sans text-xs uppercase tracking-[0.2em] text-gray-600">
                     <span className="text-black font-bold">{item.author}</span>
                     {item.location ? <span> · {item.location}</span> : null}
                     {item.commission ? (
-                      <span className="block mt-2 tracking-normal normal-case text-gray-500">
+                      <span className="block mt-2 tracking-normal normal-case text-gray-600">
                         {item.commission}
                       </span>
                     ) : null}

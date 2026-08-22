@@ -4,7 +4,7 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { motion } from "motion/react";
 import { Link } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
 
 type Section = { heading: string; body: string };
 
@@ -60,12 +60,12 @@ export function LegalPage({
             >
               {t(introKey)}
             </motion.p>
-            <p className="font-sans text-xs uppercase tracking-widest text-gray-400">
+            <p className="font-sans text-xs uppercase tracking-widest text-gray-600">
               {t("lastUpdated")}: 2026-08
             </p>
 
             <div className="hidden lg:block border-t border-black/10 pt-8 mt-8">
-              <ul className="flex flex-col gap-3 font-sans text-sm text-gray-500">
+              <ul className="flex flex-col gap-3 font-sans text-sm text-gray-600">
                 {sections.map((section) => (
                   <li key={section.heading}>
                     <a
@@ -77,7 +77,7 @@ export function LegalPage({
                   </li>
                 ))}
                 <li className="mt-4">
-                  <Link href={localizedPath(crossLinkHref, locale) as any} className="text-gray-400 hover:text-black transition-colors underline">
+                  <Link href={toHref(localizedPath(crossLinkHref, locale))} className="text-gray-600 hover:text-black transition-colors underline">
                     {tf(crossLinkLabelKey)}
                   </Link>
                 </li>

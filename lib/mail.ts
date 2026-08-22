@@ -184,6 +184,29 @@ export function headerSafe(value: string): string {
   return value.replace(/[\r\n]+/g, " ").trim();
 }
 
+/**
+ * Sanitises a display name destined for a structured address field.
+ *
+ * `headerSafe` alone is not enough for a name that will sit beside an address.
+ * It strips CR/LF, which blocks classic header splitting, but it leaves commas,
+ * semicolons and angle brackets — and nodemailer parses `replyTo` as an address
+ * LIST. So a visitor calling themselves
+ *
+ *     attacker@evil.com, X
+ *
+ * produced `replyTo: "attacker@evil.com, X <victim@example.com>"`, and the
+ * studio's reply went to the attacker as well as the visitor. Angle brackets do
+ * the same job by confusing the display-name/address boundary.
+ *
+ * Both routes now pass `{ name, address }` to nodemailer instead of a
+ * hand-built string, which is the real fix — nodemailer quotes the display name
+ * itself. This is defence in depth for the case where someone reintroduces
+ * string concatenation.
+ */
+export function addressNameSafe(value: string): string {
+  return headerSafe(value).replace(/[,;<>"\\]/g, " ").replace(/\s+/g, " ").trim();
+}
+
 export function escapeHtml(value: unknown): string {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -201,6 +224,144 @@ export function escapeHtml(value: unknown): string {
 export function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 320;
 }
+
+/* ──────────────────────────── request validation ────────────────────────── */
+
+/** Largest JSON body either route will read, before parsing. */
+export const MAX_BODY_BYTES = 64 * 1024;
+
+/**
+ * Coerces an untrusted JSON value to a bounded, trimmed string.
+ *
+ * Two bugs this closes.
+ *
+ * 1. TYPE CONFUSION. `InquiryPayload` is a compile-time type over
+ *    `await req.json()`, so it asserts nothing at runtime. `{"name": 1}` reached
+ *    `(body.name ?? "").trim()` and threw `TypeError: trim is not a function`
+ *    OUTSIDE the try/catch — an unauthenticated 500 from one line of input.
+ *
+ * 2. UNBOUNDED FIELDS. Only `name`, `email` and `message` had length caps.
+ *    `phone`, `dimensions`, `shippingCountry`, `locale`, `ref`, `shape` and
+ *    `shapeOther` had none, and every one of them is interpolated into an email
+ *    the studio reads. App Router route handlers impose no body limit, so the
+ *    ceiling was the platform's (~4.5MB on Vercel).
+ *
+ * Anything that is not a string becomes "", which the required-field checks then
+ * reject with a 400 — the correct answer for a malformed request.
+ */
+export function str(value: unknown, maxLength: number): string {
+  if (typeof value !== "string") return "";
+  return value.trim().slice(0, maxLength);
+}
+
+/**
+ * Rejects requests that are not genuine same-origin JSON posts.
+ *
+ * Neither route checked anything about where a request came from, and neither
+ * checked `Content-Type` before calling `req.json()`. That combination made both
+ * endpoints callable cross-origin without a preflight: a `fetch` with
+ * `Content-Type: text/plain` (or a plain `<form enctype="text/plain">`) is a
+ * CORS-*simple* request, so the browser sends the body, `req.json()` parses it
+ * happily, and mail goes out.
+ *
+ * The attacker cannot read the response, and there is no session to ride, so
+ * this is not classic CSRF — it is abuse amplification. Any third-party page
+ * could make its visitors silently send mail to the studio inbox, using THEIR
+ * IPs, which also sidesteps the per-IP rate limiter entirely.
+ *
+ * Requiring `application/json` forces a preflight for any cross-origin caller,
+ * at which point the absence of CORS headers makes the browser refuse. The
+ * `Origin` check is the belt to that braces and is skipped when the header is
+ * absent (same-origin non-browser callers, curl, uptime checks) rather than
+ * failing closed on them.
+ */
+export function rejectUnsafeRequest(req: Request): Response | null {
+  const contentType = req.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    return Response.json(
+      { success: false, message: "Unsupported content type." },
+      { status: 415 }
+    );
+  }
+
+  const origin = req.headers.get("origin");
+  if (origin) {
+    let originHost: string;
+    try {
+      originHost = new URL(origin).host;
+    } catch {
+      return Response.json({ success: false, message: "Invalid origin." }, { status: 403 });
+    }
+
+    // `host` reflects the request's own authority, so this compares like for
+    // like across custom domains, preview URLs and localhost without a list.
+    const host = req.headers.get("host");
+    if (host && originHost !== host) {
+      return Response.json({ success: false, message: "Cross-origin request refused." }, { status: 403 });
+    }
+  }
+
+  const declaredLength = Number(req.headers.get("content-length") ?? 0);
+  if (declaredLength > MAX_BODY_BYTES) {
+    return Response.json({ success: false, message: "Submission too large." }, { status: 413 });
+  }
+
+  return null;
+}
+
+/**
+ * Reads and parses the JSON body with a hard byte cap.
+ *
+ * `content-length` is client-supplied and optional, so it cannot be the only
+ * guard — this reads the text and measures it. Returns `null` on anything that
+ * is not a JSON object, which callers turn into a 400.
+ */
+export async function readJsonBody(req: Request): Promise<Record<string, unknown> | null> {
+  let text: string;
+  try {
+    text = await req.text();
+  } catch {
+    return null;
+  }
+
+  if (text.length > MAX_BODY_BYTES) return null;
+
+  try {
+    const parsed = JSON.parse(text);
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+    return parsed as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Redacts an email for logging: `benzart@gmail.com` -> `b*****t@gmail.com`.
+ *
+ * The recovery logs exist so a failed send never destroys a lead, which is the
+ * right instinct — but they were writing the visitor's full name, email, phone
+ * and free-text message into the runtime log, where they land in Vercel's log
+ * store and any drain configured on it, under retention the form never disclosed
+ * and outside any erasure workflow. This keeps the log useful for reconciling a
+ * lost lead against a later enquiry without making the log itself a copy of the
+ * personal data.
+ */
+export function redactEmail(value: string): string {
+  const at = value.indexOf("@");
+  if (at < 1) return "***";
+  const local = value.slice(0, at);
+  const domain = value.slice(at);
+  if (local.length <= 2) return `${local[0]}*${domain}`;
+  return `${local[0]}${"*".repeat(Math.min(local.length - 2, 6))}${local[local.length - 1]}${domain}`;
+}
+
+/** Same idea for a phone number: keep the last two digits for reconciliation. */
+export function redactPhone(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length <= 2) return "***";
+  return `${"*".repeat(Math.min(digits.length - 2, 10))}${digits.slice(-2)}`;
+}
+
 
 /* ────────────────────────────── rate limiting ───────────────────────────── */
 

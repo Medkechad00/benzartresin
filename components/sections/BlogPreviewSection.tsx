@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { ArrowRight } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
-import { localizedPath, blogSlug } from "@/lib/urls";
+import { localizedPath, blogHref, toHref } from "@/lib/urls";
 
 /**
  * A post as far as this section is concerned. The homepage (a server component)
@@ -28,7 +28,6 @@ export type BlogPreviewPost = {
 };
 
 export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
-  const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("BlogPreview");
   const tc = useTranslations("Common");
@@ -53,7 +52,7 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.8 }}
             transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
@@ -66,8 +65,8 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
           </motion.div>
 
           <Link 
-            href={localizedPath('/blog', locale) as any} 
-            className="group relative z-20 flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-gold hover:border-gold transition-colors w-fit whitespace-nowrap"
+            href={toHref(localizedPath('/blog', locale))} 
+            className="group relative z-20 flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-gold-ink hover:border-gold-ink transition-colors w-fit whitespace-nowrap"
           >
             {t("viewAll")}
             <ArrowRight size={16} className="transform group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1 transition-transform" />
@@ -77,9 +76,9 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
           
           {/* Featured Post */}
-          <Link href={`/blog/${blogSlug(featuredPost.slug, locale)}` as any} className="group block">
+          <Link href={toHref(blogHref(featuredPost.slug, locale))} className="group block">
             <motion.div
-              initial={reduceMotion ? false : { opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
@@ -111,9 +110,9 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
           {/* Standard Posts Stack */}
           <div className="flex flex-col border-t border-black/10">
             {standardPosts.map((post, index) => (
-              <Link key={post.slug} href={`/blog/${blogSlug(post.slug, locale)}` as any} className="group block">
+              <Link key={post.slug} href={toHref(blogHref(post.slug, locale))} className="group block">
                 <motion.div
-                  initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.8 }}
                   transition={{ duration: 0.6, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }}
@@ -123,7 +122,7 @@ export function BlogPreviewSection({ posts }: { posts: BlogPreviewPost[] }) {
                     <Image src={post.image} alt={post.imageAlt} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 20vw" />
                   </div>
                   <div className="flex flex-col justify-center flex-grow">
-                    <div className="flex items-center gap-3 text-gray-500 font-sans text-xs uppercase tracking-widest mb-3">
+                    <div className="flex items-center gap-3 text-gray-600 font-sans text-xs uppercase tracking-widest mb-3">
                       <span className="text-black font-bold">{post.category}</span>
                       <span>•</span>
                       <span>{formatDate(post.date)}</span>

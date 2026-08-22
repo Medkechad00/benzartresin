@@ -19,8 +19,14 @@ import {
   getRelatedPosts,
   getTableOfContents,
 } from '@/lib/blog';
-import { blogSlug, englishBlogSlug } from '@/lib/urls';
-import { buildAlternates, getLocalizedMetadata } from '@/lib/seo/metadata';
+import { blogSlug, blogHref, englishBlogSlug, toHref } from '@/lib/urls';
+import {
+  buildAlternates,
+  clampDescription,
+  getLocalizedMetadata,
+  INDEXABLE,
+  openGraphFor,
+} from '@/lib/seo/metadata';
 import {
   buildArticleSchema,
   buildBreadcrumbSchema,
@@ -44,48 +50,78 @@ export async function generateStaticParams() {
   );
 }
 
+/**
+ * Unknown slugs 404 at the routing layer instead of being server-rendered.
+ *
+ * `dynamicParams` defaults to true, so any string under `/{locale}/blog/`
+ * triggered an on-demand render that read the filesystem and then called
+ * `notFound()`. The traversal guard in `lib/blog.ts` made that safe, but it was
+ * load-bearing rather than defence-in-depth. Every valid slug is enumerated
+ * above, so anything else is invalid by definition.
+ */
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   // `slug` arrives in the locale's own form; content is keyed by the English one.
   const englishSlug = englishBlogSlug(slug, locale);
   const post = getPost(locale, englishSlug);
-  if (!post) return {};
+  if (!post) return { robots: { index: false, follow: false } };
 
   const { frontmatter } = post;
+
+  /**
+   * Clamped to SERP length.
+   *
+   * `getLocalizedMetadata` interpolates the article title into
+   * `"{title} | Benzart Resin Journal"` — a 24-character suffix — and 13 of the
+   * 18 titles exceeded 60 characters as a result. It also used
+   * `frontmatter.description` verbatim, and 11 of 18 ran past 160. Both are now
+   * cut on a word boundary inside `getLocalizedMetadata`.
+   *
+   * Open Graph gets the UNCLAMPED strings on purpose: Facebook, LinkedIn and X
+   * render far more than 60 characters of title, and there is no reason to
+   * truncate a share card to a Google limit.
+   */
   const meta = await getLocalizedMetadata('blogDetail', locale, {
     title: frontmatter.title,
     description: frontmatter.description,
   });
 
+  const path = blogHref(englishSlug, locale);
+
   const base: Metadata = {
     title: meta.title,
     description: meta.description,
-    openGraph: {
+    openGraph: openGraphFor({
+      locale,
       title: frontmatter.title,
-      description: frontmatter.description,
-      images: [{ url: frontmatter.heroImage, alt: frontmatter.heroAlt }],
+      description: clampDescription(frontmatter.description),
+      path,
       type: 'article',
+      images: [{ url: frontmatter.heroImage, alt: frontmatter.heroAlt }],
       publishedTime: frontmatter.date,
       modifiedTime: frontmatter.updated ?? frontmatter.date,
-    },
+    }),
   };
 
   if (!post.isTranslated) {
     return {
       ...base,
       robots: { index: false, follow: true },
-      alternates: { canonical: `/${locale}${localizedPath('/blog', locale)}/${blogSlug(englishSlug, locale)}` },
+      alternates: { canonical: `/${locale}${path}` },
     };
   }
 
   return {
     ...base,
+    robots: INDEXABLE,
     alternates: buildAlternates(
       locale,
       // Resolver, not a string: four posts have translated French slugs, so each
       // alternate must be built in its own locale or it 307s. `getLocalesForPost`
       // still narrows the cluster to locales that actually have the article.
-      (loc) => `${localizedPath('/blog', loc)}/${blogSlug(englishSlug, loc)}`,
+      (loc) => blogHref(englishSlug, loc),
       getLocalesForPost(englishSlug)
     ),
   };
@@ -137,7 +173,12 @@ export default async function BlogPostPage({ params }: Props) {
   });
 
   return (
-    <main className="min-h-screen bg-white selection:bg-gold selection:text-black">
+    /*
+      A <div>, not <main>: the root layout already renders
+      <main id="main-content">, and nesting a second one duplicated the landmark
+      and put <Navbar> and <Footer> inside the main content region.
+    */
+    <div className="min-h-screen bg-white selection:bg-gold selection:text-black">
       <JsonLd data={breadcrumb} />
       <JsonLd data={articleSchema} />
       {frontmatter.faq?.length ? <JsonLd data={buildFAQPageSchema(frontmatter.faq)} /> : null}
@@ -155,7 +196,7 @@ export default async function BlogPostPage({ params }: Props) {
       <section className="relative pt-36 md:pt-44 pb-12 md:pb-16 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <Link
-            href={localizedPath('/blog', locale) as any}
+            href={toHref(localizedPath('/blog', locale))}
             className="group inline-flex items-center gap-2 px-4 py-2 border border-black/10 rounded-none text-[11px] uppercase tracking-[0.2em] font-bold text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all duration-300"
           >
             <span
@@ -175,17 +216,17 @@ export default async function BlogPostPage({ params }: Props) {
                 slab below is the right place for the bright gold, because there
                 the text sits on top of it in near-black.
               */}
-              <span className="text-gold-dark font-bold">{frontmatter.cluster}</span>
+              <span className="text-gold-ink font-bold">{frontmatter.cluster}</span>
               <span className="text-black/20">/</span>
-              <span className="text-gray-500">{formatDate(frontmatter.date, locale)}</span>
+              <span className="text-gray-600">{formatDate(frontmatter.date, locale)}</span>
               <span className="text-black/20">/</span>
-              <span className="text-gray-500">
+              <span className="text-gray-600">
                 {t('readingTime', { minutes: post.readingMinutes })}
               </span>
               {!post.isTranslated && locale !== 'en' ? (
                 <>
                   <span className="text-black/20">/</span>
-                  <span className="text-gray-400 normal-case tracking-normal">
+                  <span className="text-gray-600 normal-case tracking-normal">
                     {t('englishNotice')}
                   </span>
                 </>
@@ -222,9 +263,24 @@ export default async function BlogPostPage({ params }: Props) {
               src={frontmatter.heroImage}
               alt={frontmatter.heroAlt}
               fill
-              priority
+              /*
+                `loading="eager"` + `fetchPriority="high"`, not `priority`.
+
+                `priority` is deprecated as of Next 16 in favour of `preload`,
+                and this was the only site in the codebase still using it —
+                every other eager image already states its intent with the two
+                standard HTML attributes. Same LCP behaviour, no deprecation.
+              */
+              loading="eager"
+              fetchPriority="high"
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, 1280px"
+              /*
+                The hero sits in `max-w-7xl` with `px-12`, so its real maximum
+                is 1280px minus padding — and the source PNGs are 1024px square
+                anyway. Declaring 1280 made the browser request a wider variant
+                than any source can supply.
+              */
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1184px"
             />
           </div>
         </div>
@@ -247,12 +303,12 @@ export default async function BlogPostPage({ params }: Props) {
 
             {pillar && pillar.slug !== slug ? (
               <div className="mt-10 pt-8 border-t border-black/10">
-                <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-gray-400 mb-3">
+                <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-gray-600 mb-3">
                   {t('partOf')}
                 </p>
                 <Link
-                  href={`${localizedPath('/blog', locale)}/${blogSlug(pillar.slug, locale)}` as any}
-                  className="font-display text-lg text-black hover:text-gold transition-colors duration-150 leading-snug block"
+                  href={toHref(blogHref(pillar.slug, locale))}
+                  className="font-display text-lg text-black hover:text-gold-ink transition-colors duration-150 leading-snug block"
                 >
                   {pillar.frontmatter.title}
                 </Link>
@@ -263,7 +319,11 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="lg:w-3/4 min-w-0 w-full">
             {/* Caps the measure so long-form prose stays readable in a wide column. */}
             <article className="max-w-[68ch]">
-              <MdxContent source={post.content} />
+              <MdxContent
+                source={post.content}
+                locale={locale}
+                labels={{ scrollableTable: tc('scrollableTable') }}
+              />
             </article>
 
             {frontmatter.faq?.length ? (
@@ -298,6 +358,6 @@ export default async function BlogPostPage({ params }: Props) {
       </section>
 
       <Footer />
-    </main>
+    </div>
   );
 }

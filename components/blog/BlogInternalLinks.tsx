@@ -1,7 +1,7 @@
 import { Link } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import type { BlogPost } from '@/lib/blog';
-import { blogSlug } from '@/lib/urls';
+import { blogHref, toHref } from '@/lib/urls';
 
 type Props = {
   post: BlogPost;
@@ -24,8 +24,8 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
             {clusterPosts.map((cluster) => (
               <li key={cluster.slug}>
                 <Link
-                  href={`/blog/${blogSlug(cluster.slug, locale)}` as any}
-                  className="font-sans text-gray-700 hover:text-black underline decoration-gold decoration-2 underline-offset-4 transition-colors"
+                  href={toHref(blogHref(cluster.slug, locale))}
+                  className="font-sans text-gray-700 hover:text-black underline decoration-gold-ink decoration-2 underline-offset-4 transition-colors"
                 >
                   {cluster.frontmatter.title}
                 </Link>
@@ -35,10 +35,10 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
         </div>
       ) : pillar ? (
         <div className="mb-12">
-          <p className="font-sans text-xs uppercase tracking-widest text-gray-500 mb-3">{t('partOf')}</p>
+          <p className="font-sans text-xs uppercase tracking-widest text-gray-600 mb-3">{t('partOf')}</p>
           <Link
-            href={`/blog/${blogSlug(pillar.slug, locale)}` as any}
-            className="font-display text-2xl text-black hover:text-gold transition-colors"
+            href={toHref(blogHref(pillar.slug, locale))}
+            className="font-display text-2xl text-black hover:text-gold-ink transition-colors"
           >
             {pillar.frontmatter.title}
           </Link>
@@ -47,7 +47,7 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
               {clusterPosts.slice(0, 4).map((cluster) => (
                 <li key={cluster.slug}>
                   <Link
-                    href={`/blog/${blogSlug(cluster.slug, locale)}` as any}
+                    href={toHref(blogHref(cluster.slug, locale))}
                     className="font-sans text-sm text-gray-600 hover:text-black transition-colors"
                   >
                     {cluster.frontmatter.title}
@@ -66,8 +66,8 @@ export async function BlogInternalLinks({ post, pillar, clusterPosts, relatedPos
             {relatedPosts.map((related) => (
               <li key={related.slug}>
                 <Link
-                  href={`/blog/${blogSlug(related.slug, locale)}` as any}
-                  className="font-sans text-gray-700 hover:text-black underline decoration-gold decoration-2 underline-offset-4 transition-colors"
+                  href={toHref(blogHref(related.slug, locale))}
+                  className="font-sans text-gray-700 hover:text-black underline decoration-gold-ink decoration-2 underline-offset-4 transition-colors"
                 >
                   {related.frontmatter.title}
                 </Link>

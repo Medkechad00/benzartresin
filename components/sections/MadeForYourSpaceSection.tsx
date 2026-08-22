@@ -1,11 +1,16 @@
 "use client";
 
-import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useRef } from "react";
+import { useState } from "react";
+import { useSafeReducedMotion } from "@/lib/hooks/use-safe-reduced-motion";
 
-type ValueItem = { title: string; description: string; imageAlt: string };
+/*
+  `imageAlt` was dropped along with the per-stage photographs: the sticky
+  column is now a single video embed, so there is no image for a stage to
+  describe.
+*/
+type ValueItem = { title: string; description: string };
 
 /**
  * "Made for your space." — the three-stage commissioning story.
@@ -40,30 +45,43 @@ type ValueItem = { title: string; description: string; imageAlt: string };
  *    they read as structure, not decoration competing with the headings.
  */
 export function MadeForYourSpaceSection() {
-  const reduceMotion = useReducedMotion();
   const t = useTranslations("MadeForSpace");
-  const sectionRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Playback is a user-controllable state, not a fixed query parameter.
+   *
+   * The embed was `autoplay=1&loop=1&background=1&controls=0`: motion that
+   * starts by itself, runs longer than five seconds, repeats forever, and — with
+   * `background=1` plus `controls=0` — renders no player chrome at all, so there
+   * was no pause affordance anywhere on the page. That is a direct WCAG 2.2.2
+   * (Pause, Stop, Hide) failure at Level A, and because `MotionConfig` only
+   * governs Motion components it also ignored `prefers-reduced-motion`
+   * entirely.
+   *
+   * Two changes fix it without giving up the design:
+   *
+   *  - The default is derived from the visitor's own preference. Reduced motion
+   *    means the video mounts paused, showing Vimeo's own poster frame.
+   *  - A real button toggles it. Changing the `autoplay` parameter remounts the
+   *    iframe (via `key`), which is what actually starts and stops playback —
+   *    Vimeo's postMessage API would need `player.js`, and pulling a
+   *    third-party script onto the homepage to add a pause button is a poor
+   *    trade when a remount does the same job for nothing.
+   *
+   * `useSafeReducedMotion` rather than `useReducedMotion`: the latter returns
+   * `null` on the server and the real value on the first client render, which is
+   * exactly the hydration mismatch documented in
+   * `components/providers/MotionProvider.tsx`. This returns `false` until
+   * mounted, so the server and the hydrating render agree and the preference is
+   * adopted one tick later.
+   */
+  const reduceMotion = useSafeReducedMotion();
+  const [playing, setPlaying] = useState(true);
+  const isPlaying = playing && !reduceMotion;
 
   // `t.raw` returns the array as authored in messages/*.json so the list length
   // stays a content decision rather than a code one.
   const values = t.raw("items") as ValueItem[];
-
-  const STAGE_IMAGES = [
-    "/images/process_wood_selection.png",
-    "/images/material_detail.png",
-    "/images/process_final_finish.png",
-  ];
-
-  /**
-   * Drives the image cross-fade from the scroll position of the type column.
-   * `offset` starts tracking when the column's top reaches 80% of the viewport
-   * and finishes when its bottom passes 20%, so the final image is fully
-   * settled before the section leaves the screen.
-   */
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 0.8", "end 0.2"],
-  });
 
   return (
     <section className="relative bg-white overflow-x-clip">
@@ -86,7 +104,7 @@ export function MadeForYourSpaceSection() {
 
           {/* Header */}
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -105,7 +123,7 @@ export function MadeForYourSpaceSection() {
           </motion.div>
 
           {/* Split: sticky imagery / scrolling stages */}
-          <div ref={sectionRef} className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 pb-24 md:pb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 pb-24 md:pb-32">
 
             {/*
               Sticky column. `self-start` is required for `position: sticky` to
@@ -113,29 +131,84 @@ export function MadeForYourSpaceSection() {
               height and has nothing to stick within.
             */}
             <div className="lg:col-span-5 lg:sticky lg:top-28 self-start">
-              <div className="relative w-full aspect-[4/5] overflow-hidden bg-ivory-dark">
-                {STAGE_IMAGES.map((src, i) => (
-                  <StageImage
-                    key={src}
-                    src={src}
-                    alt={values[i]?.imageAlt ?? ""}
-                    index={i}
-                    total={STAGE_IMAGES.length}
-                    progress={scrollYProgress}
-                    reduceMotion={reduceMotion}
-                    priority={i === 0}
-                  />
-                ))}
+              {/*
+                Vimeo embed, replacing a three-image scroll-linked cross-fade.
 
-                {/* Stage counter, bottom-left, over the image. */}
-                <div className="absolute bottom-0 inset-x-0 p-5 md:p-6 flex items-end justify-between pointer-events-none">
-                  <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-white/80 drop-shadow-sm">
-                    {t("stageLabel")}
+                `padding-top: 133.33%` on the wrapper with the iframe absolutely
+                filling it is the standard intrinsic-ratio box — 4:3 portrait,
+                which is the ratio the source is encoded at. It reserves the
+                frame's height before the iframe loads, so nothing reflows; using
+                a fixed height instead would letterbox at some widths and clip at
+                others.
+
+                The supplied snippet also shipped `<script src=".../player.js">`.
+                That is only needed to drive playback through Vimeo's JS API — for
+                a plain embed the iframe is self-contained, and injecting a
+                third-party script into a client component would block the main
+                thread on a homepage that is already image-heavy. Left out
+                deliberately; add it back only if this needs programmatic control.
+
+                Query-string parameters make the embed behave as a background
+                element without any of that JS: `autoplay=1&muted=1&loop=1`
+                start the video silently (browsers block unmuted autoplay, so
+                mute is what makes autoplay legal), loop it, and therefore never
+                let it reach an end screen — which is what would otherwise show
+                the Vimeo profile badge and suggested related videos.
+                `background=1` removes every piece of Vimeo chrome (title bar,
+                byline, portrait, share controls); `title=0&byline=0&portrait=0`
+                and `controls=0` are the explicit per-element switches that
+                cover plans on which `background` is not honoured. `dnt=1`
+                stops Vimeo setting tracking cookies, which also trims the
+                player's own network work. None of these add requests — the
+                iframe count, lazy loading, and shift-free ratio box are all
+                unchanged.
+
+                `title` is required: an iframe without one is announced as
+                "frame" with no indication of its contents.
+              */}
+              <div className="relative w-full overflow-hidden bg-ivory-dark" style={{ paddingTop: "133.33%" }}>
+                <iframe
+                  /*
+                    `key` forces a remount when playback is toggled. Vimeo reads
+                    `autoplay` only at load, so changing the src alone would not
+                    start or stop anything.
+                  */
+                  key={isPlaying ? "playing" : "paused"}
+                  src={`https://player.vimeo.com/video/1219958577?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=${
+                    isPlaying ? 1 : 0
+                  }&muted=1&loop=1&dnt=1&background=1&title=0&byline=0&portrait=0&controls=0`}
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  /*
+                    Deferred so the embed never competes with the hero for
+                    bandwidth or main-thread time during first paint. This section
+                    sits well below the fold.
+                  */
+                  loading="lazy"
+                  title={t("videoTitle")}
+                  className="absolute inset-0 h-full w-full border-0"
+                />
+
+                {/*
+                  The pause control WCAG 2.2.2 requires.
+
+                  `background=1` and `controls=0` strip every one of Vimeo's own
+                  controls, so without this there was no mechanism anywhere to
+                  stop an infinite auto-playing animation. Positioned inside the
+                  ratio box so it travels with the video, and sized past the 24px
+                  target minimum.
+                */}
+                <button
+                  type="button"
+                  onClick={() => setPlaying((v) => !v)}
+                  aria-pressed={isPlaying}
+                  className="absolute bottom-3 end-3 z-10 flex items-center gap-2 bg-black/80 px-3 py-2 font-sans text-[11px] font-bold uppercase tracking-[0.15em] text-white backdrop-blur-sm transition-colors hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <span aria-hidden="true" className="block leading-none">
+                    {isPlaying ? "❙❙" : "▶"}
                   </span>
-                  <span className="font-display text-white text-sm tabular-nums drop-shadow-sm">
-                    01 &mdash; {String(values.length).padStart(2, "0")}
-                  </span>
-                </div>
+                  {isPlaying ? t("videoPause") : t("videoPlay")}
+                </button>
               </div>
             </div>
 
@@ -144,7 +217,7 @@ export function MadeForYourSpaceSection() {
               {values.map((item, index) => (
                 <motion.li
                   key={item.title}
-                  initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+                  initial={{ opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.4 }}
                   transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -222,66 +295,3 @@ export function MadeForYourSpaceSection() {
   );
 }
 
-/**
- * One frame of the sticky image stack.
- *
- * Each image owns a slice of the section's scroll progress and cross-fades
- * within it. Opacity only — no layout properties animate — so this stays on the
- * compositor and never triggers reflow while scrolling.
- *
- * Under `prefers-reduced-motion` the stack collapses to the first image at full
- * opacity and the rest stay hidden, rather than flickering through transitions.
- */
-function StageImage({
-  src,
-  alt,
-  index,
-  total,
-  progress,
-  reduceMotion,
-  priority,
-}: {
-  src: string;
-  alt: string;
-  index: number;
-  total: number;
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
-  reduceMotion: boolean | null;
-  priority?: boolean;
-}) {
-  const slice = 1 / total;
-  const start = index * slice;
-
-  // Fade in over the first 40% of this image's slice, hold, then fade out over
-  // the last 40%. The first and last images clamp so the stack is never blank.
-  const opacity = useTransform(
-    progress,
-    [
-      start - slice * 0.4,
-      start + slice * 0.15,
-      start + slice * 0.85,
-      start + slice * 1.4,
-    ],
-    [0, 1, 1, 0],
-    { clamp: true }
-  );
-
-  return (
-    <motion.div
-      className="absolute inset-0"
-      style={{
-        opacity: reduceMotion ? (index === 0 ? 1 : 0) : opacity,
-      }}
-      aria-hidden={index !== 0}
-    >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        priority={priority}
-        className="object-cover"
-        sizes="(max-width: 1024px) 100vw, 42vw"
-      />
-    </motion.div>
-  );
-}

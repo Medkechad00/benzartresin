@@ -4,7 +4,8 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { Link } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
+import { heroImage } from "@/content/section-images";
 
 export function HeroSection() {
   const t = useTranslations("Hero");
@@ -191,10 +192,18 @@ export function HeroSection() {
               className="w-full h-full relative overflow-hidden rounded-sm"
             >
               <Image
-                src="/images/hero_lifestyle.png"
-                alt="Luxury handcrafted resin and walnut dining table in an elegant interior"
+                src={heroImage.src}
+                alt={t('imageAlt')}
                 fill
-                priority
+                /*
+                  The hero is the LCP element on the homepage. `priority` was
+                  deprecated in Next 16, so the intent is stated with `loading`
+                  and `fetchPriority` instead.
+                */
+                loading="eager"
+                fetchPriority="high"
+                placeholder="blur"
+                blurDataURL={heroImage.blurDataURL}
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 60vw"
               />
@@ -214,13 +223,13 @@ export function HeroSection() {
             
             <div className="flex flex-col sm:flex-row lg:flex-row gap-4">
               <Link
-                href={localizedPath('/tables', locale) as never}
+                href={toHref(localizedPath('/tables', locale))}
                 className="bg-black text-white px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-black/90 transition-transform active:scale-[0.98] whitespace-nowrap"
               >
                 {t('explore')}
               </Link>
               <Link
-                href={localizedPath('/inquiry', locale) as never}
+                href={toHref(localizedPath('/inquiry', locale))}
                 className="bg-transparent border border-black/20 text-black px-6 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-black/5 transition-transform active:scale-[0.98] whitespace-nowrap"
               >
                 {t('custom')}

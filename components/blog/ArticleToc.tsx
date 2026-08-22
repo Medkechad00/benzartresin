@@ -54,7 +54,7 @@ export function ArticleToc({ entries, label }: { entries: TocEntry[]; label: str
 
   return (
     <nav aria-label={label} className="hidden lg:block">
-      <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-gray-400 mb-5">
+      <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-gray-600 mb-5">
         {label}
       </p>
       <ul className="flex flex-col gap-3 border-s border-black/10">
@@ -68,8 +68,8 @@ export function ArticleToc({ entries, label }: { entries: TocEntry[]; label: str
                 className={[
                   "block ps-4 border-s-2 font-sans text-sm leading-snug transition-colors duration-150 ease-out",
                   isActive
-                    ? "border-gold text-black"
-                    : "border-transparent text-gray-400 hover:text-black",
+                    ? "border-gold-ink text-black"
+                    : "border-transparent text-gray-600 hover:text-black",
                 ].join(" ")}
               >
                 {entry.text}

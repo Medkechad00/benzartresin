@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useScroll, useSpring, useReducedMotion } from "motion/react";
+import { motion, useScroll, useSpring } from "motion/react";
+import { useSafeReducedMotion } from "@/lib/hooks/use-safe-reduced-motion";
 
 /**
  * Scroll-linked reading progress for long-form articles.
@@ -16,9 +17,16 @@ import { motion, useScroll, useSpring, useReducedMotion } from "motion/react";
  *    never triggers layout during scroll.
  *  - Hidden entirely under `prefers-reduced-motion`: it is decorative
  *    reinforcement of the scrollbar, not information the reader needs.
+ *
+ * The preference is read through `useSafeReducedMotion()` because this is a
+ * conditional *return*: Motion's own hook reports `null` on the server and the
+ * real value on the hydrating render, so a reduced-motion visitor would have had
+ * the server send this bar and the client immediately remove it — a structural
+ * hydration mismatch. Deferring by one tick unmounts it right after hydration
+ * instead, which is invisible for a scroll indicator at scroll position 0.
  */
 export function ReadingProgress() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useSafeReducedMotion();
   const { scrollYProgress } = useScroll();
 
   const scaleX = useSpring(scrollYProgress, {

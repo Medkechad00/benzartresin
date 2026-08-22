@@ -1,19 +1,11 @@
-import type { Metadata } from "next";
 import { LegalPage } from "@/components/layout/LegalPage";
-import { getLocalizedMetadata, buildAlternates } from "@/lib/seo/metadata";
 
-type Props = { params: Promise<{ locale: string }> };
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  const meta = await getLocalizedMetadata('privacy', locale);
-  return {
-    title: meta.title,
-    description: meta.description,
-    alternates: buildAlternates(locale, '/privacy'),
-  };
-}
-
+/**
+ * Metadata for this route is declared in `layout.tsx`, not here.
+ *
+ * This file used to carry a second, byte-identical `generateMetadata`. Two
+ * copies of the same thing is how one of them ends up stale.
+ */
 export default function PrivacyPage() {
   return (
     <LegalPage

@@ -6,7 +6,13 @@
     "customOrder": "Commande sur mesure",
     "menu": "Menu",
     "language": "Langue",
-    "socials": "Réseaux sociaux"
+    "socials": "Réseaux sociaux",
+    "primaryLabel": "Principale",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "changeLanguage": "Changer de langue",
+    "languageList": "Choisir une langue",
+    "mobileMenuLabel": "Menu du site"
   },
   "Footer": {
     "tagline": "Une table à la fois, fabriquée sur mesure à Marrakech. Vous choisissez la planche avant la moindre découpe.",
@@ -40,7 +46,11 @@
     "error": "Une erreur est survenue",
     "backToHome": "Retour à l'accueil",
     "notFound": "Page non trouvée",
-    "notFoundDescription": "La page que vous recherchez n'existe pas ou a été déplacée."
+    "notFoundDescription": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "skipToContent": "Aller au contenu principal",
+    "requiredFieldsNote": "Les champs marqués d'un astérisque (*) sont obligatoires.",
+    "requiredField": "obligatoire",
+    "scrollableTable": "Tableau, défilement horizontal"
   },
   "Hero": {
     "title_part1": "Tables rivière",
@@ -48,7 +58,8 @@
     "title_part3": "faites à Marrakech.",
     "description": "Vous choisissez la planche. Nous la photographions sèche, puis humidifiée, avant la moindre découpe : celle que vous validez est celle que vous recevez. Aux dimensions de votre pièce, en huit à douze semaines.",
     "explore": "Voir la collection",
-    "custom": "Concevoir votre table"
+    "custom": "Concevoir votre table",
+    "imageAlt": "Table basse en noyer à bord naturel avec une rivière d'époxy turquoise, garnie de livres et d'une plante dans un salon lumineux"
   },
   "Featured": {
     "title": "Quelques pièces sorties de l'atelier",
@@ -61,21 +72,20 @@
     "items": [
       {
         "title": "Vous choisissez la planche",
-        "description": "Dès que votre acompte est encaissé, nous cherchons trois à cinq planches correspondant à vos mesures. Chacune est photographiée sèche, puis humidifiée pour que le fil apparaisse tel qu'il sera vraiment. Vous choisissez. Rien ne passe à la scie avant.",
-        "imageAlt": "Planches de noyer brutes stockées dans l'atelier de Marrakech, photographiées avant toute découpe pour que le client choisisse la sienne"
+        "description": "Dès que votre acompte est encaissé, nous cherchons trois à cinq planches correspondant à vos mesures. Chacune est photographiée sèche, puis humidifiée pour que le fil apparaisse tel qu'il sera vraiment. Vous choisissez. Rien ne passe à la scie avant."
       },
       {
         "title": "Aux dimensions de votre pièce",
-        "description": "Décrivez-nous la pièce, pas la table. Nous vous dirons ce qui rentre vraiment, ce qui devient à l'étroit dès qu'on recule les chaises, et ce qui ne franchira jamais votre porte.",
-        "imageAlt": "Détail rapproché d'un chant de table montrant la transition entre le bois et la résine coulée sur toute l'épaisseur"
+        "description": "Décrivez-nous la pièce, pas la table. Nous vous dirons ce qui rentre vraiment, ce qui devient à l'étroit dès qu'on recule les chaises, et ce qui ne franchira jamais votre porte."
       },
       {
         "title": "Finie à la main",
-        "description": "Les machines aplanissent le plateau. Les mains font le reste. Le bois et la résine s'abrasent à des vitesses différentes : la jonction se juge du bout des doigts, pas à l'œil.",
-        "imageAlt": "Artisan ponçant à la main la jonction entre bois et résine jusqu'à une finition homogène à l'établi"
+        "description": "Les machines aplanissent le plateau. Les mains font le reste. Le bois et la résine s'abrasent à des vitesses différentes : la jonction se juge du bout des doigts, pas à l'œil."
       }
     ],
-    "stageLabel": "Étape"
+    "videoTitle": "Benzart Resin — une table sur mesure prend forme à l'atelier",
+    "videoPause": "Mettre la vidéo en pause",
+    "videoPlay": "Lire la vidéo"
   },
   "InquiryCTA": {
     "eyebrow": "Tables sur mesure",
@@ -83,7 +93,7 @@
     "title_highlight": "pièce maîtresse.",
     "description": "Envoyez-nous les mesures de la pièce et une fourchette de budget. Avant tout engagement, nous vous dirons ce qui est réaliste, et le prix est bloqué avant la première découpe.",
     "cta": "Concevoir votre table",
-    "imageAlt": "Table en bois d'olivier avec résine dorée métallisée, photographiée dans un intérieur"
+    "imageAlt": "Table basse en noyer à bord naturel encastrée dans un entourage en acier brossé, à côté d'un canapé en cuir foncé"
   },
   "Testimonials": {
     "title": "Ce que disent nos clients.",
@@ -118,6 +128,7 @@
     "dimensions": "Dimensions",
     "shape": "Forme",
     "priceFrom": "Tables sur mesure à partir de",
+    "priceFromShort": "À partir de",
     "priceNote": "Le montant final dépend de la planche choisie, des dimensions, du piètement et de la destination. Votre prix est bloqué avant le début du travail.",
     "cta": "Demander cette pièce",
     "availability": "Disponibilité",
@@ -126,58 +137,190 @@
     "shapes": {
       "rectangular": "Rectangulaire",
       "organic": "Organique",
-      "round": "Ronde"
-    }
+      "round": "Ronde",
+      "oval": "Ovale"
+    },
+    "materials": "Matériaux"
   },
   "Tables": {
-    "atlas-walnut-river": {
-      "name": "L'Atlas Walnut River",
-      "wood": "Noyer de l'Atlas marocain",
-      "resinColor": "Vert émeraude profond",
-      "story": "Issu des contreforts de l'Atlas marocain, ce rare plateau de noyer présente des grains denses et imprévisibles. La rivière est coulée en couches d'époxy vert émeraude pour créer une profondeur authentique, puis finie à l'huile de finition cireuse qui peut être réparée localement des années plus tard.",
-      "imageAlt": "Table à manger rectangulaire en noyer de l'Atlas marocain avec une rivière de résine époxy vert émeraude"
+    "walnut-berber-resin-coffee-table": {
+      "name": "Table basse en noyer, rivière de résine à motif berbère",
+      "resinColor": "Noir opaque, panneau berbère brodé",
+      "story": "Une table basse à bord naturel en noyer massif, fendue sur sa longueur par un canal d'époxy noir qui retient un panneau berbère brodé main. Losanges, chevrons et croix au point de croix, en blanc, or, vert, rouille et violet, restent suspendus sous une coulée miroir : le motif se lit nettement depuis la hauteur d'homme. Les deux plateaux de noyer gardent leur bord naturel et la ligne claire d'aubier qui le suit. Le socle est tiré du même bois : deux planches massives, à bord naturel, portant le plateau sans ceinture. Finie en 120 x 75 cm.",
+      "dimensions": "120 x 75 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "Table basse en noyer à bord naturel, rivière de résine noire à motif berbère, sur un tapis crème devant un canapé d'angle gris",
+      "alt": {
+        "0": "Table basse en noyer à bord naturel, rivière de résine noire à motif berbère, sur un tapis crème devant un canapé d'angle gris",
+        "1": "Table basse en noyer vue de biais en hauteur, le canal de résine noire révélant des losanges berbères brodés en blanc et or",
+        "2": "Vue de dessus de la table basse en noyer, le grain figuré des deux plateaux encadrant le centre de résine noire brodée",
+        "3": "Table basse en noyer et résine noire dans un salon marocain, canapé d'angle gris aux coussins orange et bleu pâle derrière",
+        "4": "Vue rapprochée du canal de résine, losanges et chevrons berbères en blanc, or, vert, rouille et violet sous l'époxy brillant",
+        "5": "La table basse en noyer de côté, socle à deux planches à bord naturel visible, jardin et piscine derrière les portes vitrées"
+      }
     },
-    "obsidian-grain": {
-      "name": "Obsidian Grain",
-      "wood": "Frêne carbonisé (Shou Sugi Ban)",
-      "resinColor": "Noir opaque",
-      "story": "La technique japonaise Shou Sugi Ban rencontre une coulée profonde moderne. Le frêne est carbonisé, brossé et scellé, et son grain noirci contraste avec un canal de résine obsidienne qui absorbe la lumière. Le contraste est textural plutôt que chromatique — les deux surfaces sont noires, et une seule reflète.",
-      "imageAlt": "Table à manger rectangulaire en frêne carbonisé Shou Sugi Ban avec un canal de résine époxy noire opaque et grain brossé visible"
+    "oval-walnut-navy-resin-dining-table": {
+      "name": "Table de repas ovale en noyer, rivière de résine bleu nuit",
+      "resinColor": "Bleu nuit profond, marbrures nacrées et grises",
+      "story": "Une table de repas ovale en noyer massif, aux extrémités entièrement arrondies pour que rien n'accroche quand on tire les chaises. Deux plateaux de noyer appariés sont maintenus écartés par une rivière d'époxy bleu nuit, marbrée de nacre et de gris là où la coulée a pris la lumière. Elle paraît presque noire à l'intérieur et se révèle franchement bleu nuit à la lumière du jour. Les bords intérieurs sont ceux de l'arbre, laissés tels que la planche les a donnés. Le noyer porte un grain figuré et des loupes marquées sur les deux moitiés, et le plateau entier est fini en miroir sur des pieds de noyer évasés. Six couverts en 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "Table de repas ovale en noyer, rivière de résine bleu nuit, fauteuils en bouclette bleu-vert autour, en showroom",
+      "alt": {
+        "0": "Table de repas ovale en noyer, rivière de résine bleu nuit, fauteuils en bouclette bleu-vert autour, en showroom",
+        "1": "Le plateau ovale en noyer photographié dehors au bord d'une piscine, résine bleu nuit et veines nacrées sur toute la longueur"
+      }
     },
-    "golden-current": {
-      "name": "Golden Current",
-      "wood": "Bois d'olivier",
-      "resinColor": "Or métallisé",
-      "story": "Des nœuds d'olivier anciens suspendus dans une résine dorée métallisée tourbillonnante. Les vides naturels du bois ont dicté où la résine pouvait aller, donc la composition a été définie par l'arbre plutôt que par nous. Le métallisé change selon l'angle de vue et se lit complètement différemment sous une lumière directionnelle.",
-      "imageAlt": "Table ronde en bois d'olivier à bord organique avec résine époxy dorée métallisée remplissant les vides naturels"
+    "walnut-3d-textured-clear-resin-dining-table": {
+      "name": "Table de repas en noyer et résine claire texturée 3D",
+      "resinColor": "Transparente à vert sauge fumé, relief cellulaire 3D",
+      "story": "Une table de repas rectangulaire construite à l'inverse : un large plateau de noyer massif court au centre, et l'époxy se place de part et d'autre plutôt qu'entre deux planches, formant les chants extérieurs finis. La résine est coulée presque transparente, teintée d'un vert sauge fumé, et porte un relief cellulaire tridimensionnel profond — des cellules bombées en saillie qui renvoient la lumière autrement selon l'endroit où l'on se place. Le noyer est la raison de la pièce : une seule planche à loupe brun-rouge marquée, bord naturel conservé sur les deux flancs. Poli en miroir et posé sur un piètement trapèze en acier noir. Six à huit couverts en 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "La table de noyer sur une pelouse au bord d'une piscine, bandes de résine cellulaire 3D de part et d'autre du plateau central, piètement trapèze en acier noir",
+      "alt": {
+        "0": "La table de noyer sur une pelouse au bord d'une piscine, bandes de résine cellulaire 3D de part et d'autre du plateau central, piètement trapèze en acier noir",
+        "1": "Table de repas en noyer, plateau central figuré et résine claire à texture 3D de chaque côté, chaises en bouclette bleu-vert autour",
+        "2": "Vue rasante sur le plateau de noyer en extérieur, la finition miroir reflétant palmiers et ciel",
+        "3": "Vue de dessus du plateau entier, loupe de noyer brun-rouge entre deux bandes de résine à relief 3D",
+        "4": "La table de repas en noyer installée dans un salon, lampadaires et canapés capitonnés derrière",
+        "5": "La table de noyer sous une lumière plus chaude, trois chaises en bouclette bleu-vert de chaque côté et la bande de résine 3D accrochant la pièce"
+      }
     },
-    "cedar-tide": {
-      "name": "Cedar Tide",
-      "wood": "Cèdre du Moyen Atlas",
-      "resinColor": "Turquoise translucide",
-      "story": "Une longue planche de cèdre fendue et recollée autour d'un canal turquoise translucide. La coulée est peu profonde sur les bords et s'approfondit vers le centre, donc la couleur paraît presque claire sur le pourtour et saturée au milieu.",
-      "imageAlt": "Table à manger rectangulaire en cèdre avec un canal de résine époxy turquoise translucide"
+    "walnut-smoke-resin-dining-table": {
+      "name": "Table de repas en noyer, rivière de résine fumée",
+      "resinColor": "Fumée anthracite translucide",
+      "story": "Une table de repas rectangulaire en noyer massif, plus claire et plus dorée que la plupart des planches qui passent à l'atelier, avec la ligne d'aubier clair laissée intacte le long des deux bords de la rivière. Entre les deux plateaux court une rivière d'époxy anthracite translucide, qui se lit comme de la fumée dans les hauts-fonds et presque noire au plus profond — assez claire pour que le sol et ce qui repose sur la table s'y devinent — : le noyer garde ainsi toute l'attention. Le plateau est poli en miroir et porté par un piètement traîneau fermé en acier noir qui dégage les genoux. Six couverts en 175 x 85 cm.",
+      "dimensions": "175 x 85 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "Table de repas en noyer aux tons miel, rivière de résine anthracite fumée, six chaises en bouclette autour et canapés capitonnés derrière",
+      "alt": {
+        "0": "Table de repas en noyer aux tons miel, rivière de résine anthracite fumée, six chaises en bouclette autour et canapés capitonnés derrière",
+        "1": "Vue de côté de la table de repas en noyer devant un mur à panneaux en relief blanc où sont accrochées deux toiles rouges",
+        "2": "La table de repas en noyer vue de face depuis la cuisine, tajine sur le plan de travail et carreaux de ciment à motifs à côté",
+        "3": "Vue d'angle de la table en noyer montrant la large bande d'aubier clair le long de chaque bord de la rivière, buffet en noyer et miroirs ronds derrière",
+        "4": "Vue plongeante dans la longueur de la table de repas en noyer, la résine fumée virant au gris argent sous la lumière rasante",
+        "5": "Vue de dessus du plateau de noyer, deux plateaux appariés encadrant une large rivière de résine anthracite sinueuse"
+      }
     },
-    "saffron-basin": {
-      "name": "Saffron Basin",
-      "wood": "Érable échauffé",
-      "resinColor": "Safran ambré",
-      "story": "Un érable échauffé dont les veines noires de champignon restent entièrement visibles, noyées dans une coulée ambrée chaleureuse. Le plateau rond est taillé dans une seule planche large, ce qui rend la pièce très difficile à refaire.",
-      "imageAlt": "Table ronde en érable échauffé avec une coulée de résine époxy safran ambré"
+    "walnut-turquoise-resin-dining-table": {
+      "name": "Table de repas en noyer et rivière d'époxy turquoise",
+      "resinColor": "Turquoise translucide, manques comblés en noir",
+      "story": "Une table de repas rectangulaire en noyer massif, ouverte en son milieu par une coulée profonde d'époxy turquoise translucide qui s'assombrit en émeraude dans ses plus grandes épaisseurs. La rivière conserve la structure cellulaire arrondie prise par la résine en durcissant, en saillie sur la surface : elle se lit comme de l'eau en mouvement plutôt que comme une couleur plate. Les lignes d'écorce et les manques le long des deux bords naturels sont comblés en noir opaque — un contraste voulu qui tient le tracé plutôt qu'il ne masque un défaut. Les deux chants extérieurs suivent l'arbre, leurs échancrures comblées à fleur pour que le pourtour finisse droit. Le noyer, dense et fortement figuré, a été poncé et poli en miroir avant d'être posé sur un piètement trapèze en acier noir. Six à huit couverts en 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "Plateau de table de repas en noyer, rivière de résine turquoise translucide et manques d'écorce comblés en noir, photographié à plat à l'atelier",
+      "alt": {
+        "0": "Plateau de table de repas en noyer, rivière de résine turquoise translucide et manques d'écorce comblés en noir, photographié à plat à l'atelier",
+        "1": "Vue rapprochée le long du chant de la table en noyer montrant la finition miroir et un pied trapèze en acier noir sur un sol en travertin",
+        "2": "Le plateau de noyer entier vu d'un bout, rivière d'époxy turquoise à texture cellulaire arrondie en relief entre deux plateaux à bord naturel"
+      }
     },
-    "quarry-edge": {
-      "name": "Quarry Edge",
-      "wood": "Chêne européen",
-      "resinColor": "Gris ardoise",
-      "story": "Un chêne au bord naturel exceptionnellement accidenté, comblé d'une résine ardoise opaque pour que le contour se lise comme de la pierre plutôt que comme de l'eau. Livrée à un client privé, elle est montrée ici comme référence de l'effet à grande échelle.",
-      "imageAlt": "Table à manger en chêne européen à bord naturel avec résine époxy gris ardoise opaque"
+    "walnut-emerald-resin-geometric-lattice-table": {
+      "name": "Table en noyer, résine verte sur treillis géométrique",
+      "resinColor": "Vert bouteille à sauge sur un treillis géométrique 3D",
+      "story": "La pièce la plus technique de la collection. Sous la résine se trouve un treillis géométrique tessellé — un champ de triangles imbriqués formant des étoiles à six branches — et il n'est ni imprimé ni plat : chaque facette est en relief pyramidal, si bien que le motif a une véritable profondeur alors que la surface au-dessus reste un verre parfaitement lisse. Le vert bouge avec l'épaisseur et la lumière : vert bouteille là où la coulée enrobe les bords naturels extérieurs, émeraude marbré de crème dans les marges, vert sauge pâle au-dessus du treillis lui-même. Le noyer est chaud et doré, strié de veines minérales sombres et parsemé de manques naturels, bord naturel conservé des deux côtés et figé dans la résine pour que le pourtour finisse droit. Poli en miroir et monté sur un piètement en acier noir en U. 150 x 75 cm, quatre couverts.",
+      "dimensions": "150 x 75 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "Table en noyer, résine verte sur un treillis géométrique tessellé, sur une terrasse en travertin au bord d'une pelouse",
+      "alt": {
+        "0": "Table en noyer, résine verte sur un treillis géométrique tessellé, sur une terrasse en travertin au bord d'une pelouse",
+        "1": "Vue rasante le long du chant, résine vert bouteille enrobant le bord naturel du noyer sous un poli miroir",
+        "2": "La table en noyer vue en longueur depuis un bout, les marges de résine verte encadrant le canal central à motif",
+        "3": "Vue rapprochée de la résine révélant le treillis tridimensionnel de triangles et d'étoiles à six branches, loupe de noyer à côté",
+        "4": "Vue de biais depuis l'autre long côté, résine émeraude marbrée de crème dans la marge et vert sauge pâle sur le treillis",
+        "5": "Balayage rapproché en biais sur le plateau, grain de noyer miel et caramel se fondant en veines sombres près du treillis émeraude",
+        "6": "Détail d'angle et de pied de la table en noyer sur la terrasse, montrant le piètement en U en acier noir et sa barre de pied plate"
+      }
     },
-    "nomad-console": {
-      "name": "Nomad Console",
-      "wood": "Loupe de thuya récupérée",
-      "resinColor": "Clair fumé",
-      "story": "Une console étroite en loupe de thuya récupérée, stabilisée puis comblée d'une résine claire légèrement fumée. Prix sur demande : une loupe de ce madrage se trouve pièce par pièce, et aucune ne coûte le même prix.",
-      "imageAlt": "Console étroite en loupe de thuya récupérée avec résine époxy claire fumée"
+    "round-walnut-emerald-resin-coffee-table": {
+      "name": "Table basse ronde en noyer, rivière de résine émeraude",
+      "resinColor": "Émeraude à turquoise, translucide",
+      "story": "Une table basse ronde taillée dans du noyer massif, un mètre de diamètre, traversée hors axe par une rivière d'époxy vert : le cercle ne se lit jamais comme symétrique. La couleur n'est pas un seul vert : elle est émeraude dans le corps de la rivière, s'élève en turquoise vif là où la coulée est mince et laisse passer la lumière, et descend en vert bouteille presque noir dans les zones profondes. Le noyer porte un grain flammé et cathédrale dense, avec une zone d'aubier miel contre la résine, et ses petits manques naturels ont été stabilisés et comblés avant que le plateau soit poli en miroir. Posée sur un piètement en acier noir pour que le disque semble flotter. 100 cm de diamètre, à hauteur de table basse.",
+      "dimensions": "100 cm de diamètre",
+      "wood": "Noyer massif",
+      "imageAlt": "La table basse ronde en noyer dans un salon au mur à panneaux blancs, son piètement tripode en acier noir entièrement visible",
+      "alt": {
+        "0": "La table basse ronde en noyer dans un salon au mur à panneaux blancs, son piètement tripode en acier noir entièrement visible",
+        "1": "Table basse ronde en noyer, rivière de résine émeraude et bande effet onyx clair, sur un tapis crème côtelé près d'un canapé gris, portes de jardin ouvertes derrière",
+        "2": "Vue basse de la table basse ronde en noyer montrant son piètement en acier noir à trois pieds réunis par une platine triangulaire",
+        "3": "Vue plongeante du plateau rond en noyer, grain flammé sombre traversé hors axe par la rivière de résine émeraude",
+        "4": "Vue quasi verticale du plateau rond entier, la résine s'éclaircissant en turquoise vif où elle s'amincit et s'accumulant en vert profond sur un bord",
+        "5": "La table basse ronde en noyer sur un pied à lames, bande effet onyx clair derrière le vase et la terrasse au-delà des portes coulissantes"
+      }
+    },
+    "solid-walnut-live-edge-dining-table-220": {
+      "name": "Table de repas en noyer massif à bord naturel, 220 cm",
+      "resinColor": "Aucune — comblement de stabilisation seul",
+      "story": "Pas de rivière de résine sur celle-ci, et elle n'en a pas besoin. C'est une seule longue planche de noyer massif, 220 cm, laissée à faire tout le travail : un grain fortement ondé au centre, des veines minérales sombres, et le bord naturel conservé des deux côtés tel que l'arbre l'a fait pousser — le contour n'est donc rectangulaire qu'au sens large. Les gerces et les manques ont été stabilisés et comblés pour rendre la surface saine, et ces comblements se lisent comme des flaques sombres et vitreuses plutôt que de disparaître : ils font partie de l'aspect de la pièce, ce ne sont pas des réparations dissimulées. Le plateau a reçu une finition satinée plutôt que brillante, ce qui est le choix honnête pour une planche au grain aussi mouvant. Posée sur un piètement en acier noir aux pieds rentrés, si bien que les deux bouts sont utilisables. Huit couverts en 220 x 85 cm.",
+      "dimensions": "220 x 85 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "Longue table de repas en noyer massif à bord naturel dans un hall au sol de marbre, balustrade en bois sculpté et panneau de zellige noir et blanc derrière",
+      "alt": {
+        "0": "Longue table de repas en noyer massif à bord naturel dans un hall au sol de marbre, balustrade en bois sculpté et panneau de zellige noir et blanc derrière",
+        "1": "Une table de repas en noyer massif à bord naturel du même modèle dans une véranda, huit chaises tapissées khaki et pieds trapèzes en acier noir",
+        "2": "Vue plongeante dans la longueur du plateau de noyer, grain ondé et loupé courant sans interruption entre deux bords naturels sinueux",
+        "3": "Vue large de la table de repas en noyer montrant tout le piètement en acier noir, pieds trapèzes en fer plat rentrés à chaque bout et longeron central",
+        "4": "Vue oblique rapprochée du plateau de noyer, bande d'aubier crème le long du bord naturel et deux manques comblés de résine sombre et vitreuse près du centre"
+      }
+    },
+    "walnut-woven-carpet-resin-dining-table": {
+      "name": "Table de repas en noyer et tapis tissé sous résine",
+      "resinColor": "Blanc laiteux sauge sur un panneau de tapis tissé",
+      "story": "Une table de repas rectangulaire où un panneau de tapis tissé main est scellé sous un époxy laiteux et posé contre un plateau de noyer clair. Le tissage garde ses reliefs et ses rayures en bandes — ivoire et crème alternant avec taupe et brun doux, certaines bandes portant de petits losanges — visibles à travers la résine mais protégés de tout ce qu'une table de repas doit endurer. La résine n'est que semi-translucide, d'un léger voile sauge-gris : elle estompe doucement le textile plutôt que de le présenter sous verre. C'est une planche exceptionnellement claire et blonde, striée de noir violacé, loin du bois de cœur sombre des autres pièces, et son bord naturel suit l'arbre sur toute la longueur. Finition satinée, non brillante, sur un piètement en bois assemblé à la main. Six couverts en 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Noyer massif clair",
+      "imageAlt": "Table de repas en noyer, panneau de tapis tissé sous résine laiteuse, sur une pelouse au bord d'une piscine en mosaïque bleue, terrasse carrelée derrière",
+      "alt": {
+        "0": "Table de repas en noyer, panneau de tapis tissé sous résine laiteuse, sur une pelouse au bord d'une piscine en mosaïque bleue, terrasse carrelée derrière",
+        "1": "La table vue en longueur, tissage kilim à bandes ivoire et taupe suspendu sous la résine, six chaises cannées et piètement en bois"
+      }
+    },
+    "resin-oval-dining-table": {
+      "name": "Table de repas ovale en résine effet marbre",
+      "resinColor": "Effet marbre brun chocolat et ivoire",
+      "story": "Une table de repas ovale finie en une seule coulée de résine effet marbre. Un brun chocolat profond, traversé de sang-de-bœuf et de fauve chaud, est écarté par une veine ivoire qui serpente sur toute la longueur et s'ouvre en larges champs crème d'un côté et aux extrémités. De fines veines blanches et des éclaboussures blanches distinctes se logent dans le fond sombre, là où les pigments ont été laissés se rompre plutôt que se mêler. Chacune est différente, car la coulée ne se répète pas. Le marbrage se poursuit par-dessus le bord sur le chant vertical : le plateau se lit comme un seul matériau massif et non comme une surface posée sur autre chose. Côtés droits et extrémités entièrement arrondies, poli en haute brillance et porté par un piètement en acier noir. Six couverts en 160 x 80 cm.",
+      "dimensions": "160 x 80 cm",
+      "material": "Résine époxy effet marbre sur piètement en acier noir",
+      "imageAlt": "Table de repas ovale au plateau de résine effet marbre chocolat et ivoire, six fauteuils tapissés crème autour, sur carrelage gris",
+      "alt": {
+        "0": "Table de repas ovale au plateau de résine effet marbre chocolat et ivoire, six fauteuils tapissés crème autour, sur carrelage gris",
+        "1": "La table ovale depuis l'autre extrémité, veine ivoire serpentant dans la résine sombre, buffet en marqueterie et miroirs organiques derrière",
+        "2": "Vue de trois quarts de la table ovale effet marbre dans un salon, le motif coulé se poursuivant par-dessus le bord sur le chant vertical, au-dessus d'un piètement en acier noir"
+      }
+    },
+    "walnut-resin-coffee-table-set": {
+      "name": "Ensemble table basse et table d'appoint en noyer, résine magenta",
+      "resinColor": "Fuchsia à cramoisi, translucide",
+      "story": "Deux pièces tirées du même noyer et finies ensemble. La plus grande adopte une forme libre en haricot, son contour suivant la planche plutôt qu'un dessin, avec une large rivière en S d'époxy rose-rouge translucide sur toute la longueur. La même couleur a été coulée jusqu'au pourtour fini : elle apparaît donc au chant comme au milieu du plateau — mais elle s'interrompt là où le bord naturel rejoint le contour, ce qui donne au profil son rythme plutôt qu'un anneau continu. La couleur elle-même bouge avec la lumière : fuchsia sous une lumière du jour diffuse, cramoisie et framboise au soleil chaud. La table d'appoint ronde reprend l'idée en 50 cm de diamètre, une seule bande posée sur un grain de loupe dense, et se tient légèrement plus haute que la table basse : c'est une compagne, non une table gigogne. Les deux plateaux sont polis en miroir sur acier noir. Table basse 120 x 75 cm, table d'appoint 50 cm de diamètre.",
+      "dimensions": "table basse 120 x 75 cm, table d'appoint 50 cm de diamètre",
+      "wood": "Noyer massif",
+      "imageAlt": "Vue de dessus des deux pièces en noyer sur un patio carrelé, la table basse en haricot avec sa rivière de résine fuchsia et la table d'appoint ronde nichée dans son échancrure",
+      "alt": {
+        "0": "Vue de dessus des deux pièces en noyer sur un patio carrelé, la table basse en haricot avec sa rivière de résine fuchsia et la table d'appoint ronde nichée dans son échancrure",
+        "1": "La table basse en noyer et la table d'appoint ronde sur une allée pavée, la résine virant au cramoisi dans la lumière chaude, tréteaux en acier noir dessous",
+        "2": "Vue rapprochée du lobe droit de la table basse, œil de loupe de noyer concentrique et aubier clair suivant le bord naturel jusqu'à la résine magenta",
+        "3": "Vue macro sur le plateau de noyer vers la table d'appoint ronde, la bande de résine magenta enveloppant le chant de la table sur toute son épaisseur",
+        "4": "La table d'appoint ronde en noyer avec une bande magenta sur le plateau et un piètement évasé à trois pieds en acier noir, la moitié droite de la table basse à côté",
+        "5": "Les deux tables en noyer sur la terrasse près d'une borne lumineuse et d'oiseaux de paradis, la rivière magenta suivant tout le S du plateau en haricot",
+        "6": "Vue large de l'ensemble de tables en noyer dans le jardin, marches carrelées et jardinières derrière, les deux plateaux bordés de magenta sur leurs piètements en acier noir"
+      }
+    },
+    "solid-walnut-live-edge-dining-table-180": {
+      "name": "Table de repas en noyer massif à bord naturel, 180 cm",
+      "resinColor": "Aucune — comblement de stabilisation seul",
+      "story": "Une table de repas pour six, sans rien d'ajouté. Un plateau de noyer massif, brun chocolat au centre, avec une large bande d'aubier clair suivant un chant, les deux longs côtés laissés naturels tels que la planche est sortie de la scierie — y compris une échancrure marquée sur un côté que personne n'a redressée. Le grain est dense et fortement ondé, avec un œil de fourche vers le milieu et une gerce fine qui le traverse, comblée à fleur. Il n'y a pas de rivière de résine ici, et il n'en fallait pas. La surface est finie satinée plutôt que brillante : elle s'essuie et s'utilise, et ne vous renvoie jamais l'image de la pièce. Portée par des pieds de noyer évasés et une traverse en bois. 180 x 80 cm.",
+      "dimensions": "180 x 80 cm",
+      "wood": "Noyer massif",
+      "imageAlt": "Table de repas en noyer massif à bord naturel pour six, sur un sol en carreaux de marbre, chaises en bouclette crème à structure noyer autour",
+      "alt": {
+        "0": "Table de repas en noyer massif à bord naturel pour six, sur un sol en carreaux de marbre, chaises en bouclette crème à structure noyer autour",
+        "1": "La table en noyer vue presque en bout, larges bandes d'aubier clair encadrant le bois de cœur figuré presque noir au centre",
+        "2": "Vue en biais serrée remplie par le plateau de noyer, grain ondé et de fourche avec un nœud sombre sur un bord naturel",
+        "3": "Vue quasi verticale du plateau de noyer entier, extrémités coupées droites et deux bords naturels sinueux avec une échancrure à mi-longueur",
+        "4": "La table de repas en noyer vue d'un angle avec le séjour ouvert au-delà, ses pieds de noyer évasés et sa traverse en bois visibles",
+        "5": "Vue surélevée depuis le bout de la table en noyer et de ses six chaises, la finition satinée retenant doucement la lumière sans refléter la pièce"
+      }
     }
   },
   "OurCraft": {
@@ -191,35 +334,35 @@
     "studioBody2": "Nous ne sous-traitons ni la menuiserie ni la finition. Si la pièce porte notre marque, elle est sortie de notre établi.",
     "processHeading": "Comment une table est fabriquée",
     "phaseLabel": "Phase",
-    "artisanAlt": "Artisan sélectionnant une planche de noyer dans l'atelier",
-    "workshopAlt": "Atelier avec coulée de résine en cours",
-    "workshopCaption": "La salle de coulée, où la profondeur se construit en couches.",
+    "leadImageAlt": "Table en noyer terminée, traversée d'une rivière d'époxy bleu vif, posée sur des tréteaux à l'atelier",
+    "workshopAlt": "Résine époxy verte versée d'un seau dans le moule autour d'un plateau de noyer",
+    "workshopCaption": "La coulée en cours",
     "heroAlt": "Artisan ponçant à la main une table finie",
     "phases": [
       {
         "title": "Consultation",
         "body": "Nous parlons de la pièce, de la table, des matériaux et du budget. À la fin de l'appel, vous saurez si nous sommes le bon atelier pour ce projet — y compris si la réponse est non.",
-        "alt": "Appel de consultation avec un client"
+        "alt": "Table de repas en noyer terminée, rivière de résine noire et six chaises crème dans la salle à manger d’un client"
       },
       {
         "title": "Design",
         "body": "Vous recevez un plan coté et un échantillon de matériaux. Pas de rendu 3D : la planche est le design, et aucun rendu ne dira ce que le fil va faire. Vous validez avant la moindre découpe.",
-        "alt": "Plan coté et échantillon de matériaux"
+        "alt": "Table en noyer achevée, rivière de résine noire et piètement en bois sculpté, à l’atelier"
       },
       {
         "title": "Sélection",
         "body": "Dès l'acompte encaissé, nous cherchons trois à cinq planches correspondant à vos dimensions et photographions chacune sèche, puis humidifiée. Vous choisissez sur ces photos. Rien ne passe à la scie avant.",
-        "alt": "Client choisissant une planche de noyer parmi des photographies"
+        "alt": "Artisan guidant un plateau de noyer brut, écorce intacte, à travers la scie à ruban de l’atelier"
       },
       {
         "title": "Production",
         "body": "Huit à douze semaines, selon la saison et la complexité de la coulée. Les photos d'avancement arrivent à trois moments : la coulée, l'équerrage et la première couche de ponçage.",
-        "alt": "Résine en cours de coulée dans un moule"
+        "alt": "Artisan délignant le chant d’un plateau de noyer et résine durci à la scie circulaire"
       },
       {
         "title": "Livraison",
         "body": "À Marrakech, nous livrons et installons nous-mêmes. Partout ailleurs, nous fabriquons la caisse en interne et la confions à un transitaire spécialisé dans les œuvres d'art et le mobilier.",
-        "alt": "Table en cours d'installation chez un client"
+        "alt": "Deux membres de l’équipe Benzart Resin portant une table emballée dans l’entrée d’une villa cliente"
       }
     ],
     "subtitle": "L'atelier"
@@ -233,7 +376,6 @@
     "description": "Donnez-nous les mesures de la pièce et une fourchette de budget. Avant tout engagement, nous vous dirons ce qui est réaliste, et votre prix est bloqué avant la première découpe.",
     "steps": {
       "client": "Client",
-      "vision": "Votre vision",
       "details": "Détails"
     },
     "stepOf": "Étape {current} sur {total}",
@@ -244,65 +386,27 @@
       "emailPlaceholder": "Adresse e-mail",
       "phone": "Numéro de téléphone",
       "phonePlaceholder": "Numéro de téléphone",
-      "wood": "Préférence de bois",
-      "woodOther": "Autre bois",
-      "resin": "Préférence de résine",
-      "resinOther": "Autre résine",
       "dimensions": "Dimensions",
       "dimensionsPlaceholder": "ex. 240cm x 100cm",
       "shape": "Forme",
       "shapeOther": "Autre forme",
-      "spaceType": "Quel type d'espace ?",
-      "spaceTypeOther": "Autre",
       "shippingCountry": "Pays",
       "shippingCountryPlaceholder": "Où livrons-nous ?",
-      "budget": "Fourchette budgétaire",
-      "location": "Où vivra la table ?",
-      "locationPlaceholder": "Pièce, ville ou pays",
       "message": "Parlez-nous du projet",
       "messagePlaceholder": "Tout ce qui peut nous aider : mobilier existant, éclairage, usage de l'espace...",
       "optional": "Facultatif"
     },
     "placeholders": {
-      "selectOption": "Sélectionner une option",
       "selectShape": "Sélectionner une forme",
-      "selectRange": "Sélectionner une fourchette",
       "otherSpecify": "Veuillez préciser"
-    },
-    "woodOptions": {
-      "walnut": "Noyer",
-      "maple": "Érable",
-      "olive": "Olivier",
-      "open": "Pores ouverts",
-      "other": "Autre"
-    },
-    "resinOptions": {
-      "clear": "Transparent",
-      "obsidian": "Obsidienne",
-      "amber": "Ambre",
-      "custom": "Sur mesure / à discuter",
-      "other": "Autre"
     },
     "shapeOptions": {
       "rectangular": "Rectangulaire",
       "organic": "Bord organique",
       "round": "Ronde",
+      "oval": "Ovale",
       "conference": "Table de conférence",
       "other": "Autre"
-    },
-    "spaceOptions": {
-      "privateDining": "Salle à manger privée",
-      "restaurant": "Restaurant",
-      "office": "Bureau",
-      "reception": "Réception",
-      "other": "Autre"
-    },
-    "budgetOptions": {
-      "under3000": "Moins de 3 000 €",
-      "3000to5000": "3 000 - 5 000 €",
-      "5000to8000": "5 000 - 8 000 €",
-      "8000to15000": "8 000 - 15 000 €",
-      "over15000": "Plus de 15 000 €"
     },
     "buttons": {
       "next": "Suivant",
@@ -336,7 +440,7 @@
         "browse": "Découvrir la collection",
         "again": "Envoyer une autre demande"
       },
-      "imageAlt": "Planches de noyer brut sélectionnées à l'atelier avant la découpe"
+      "imageAlt": "Table de repas en noyer terminée, rivière de résine émeraude, dans la salle à manger d’un client, six chaises crème autour"
     },
     "reassurance": {
       "title": "Aucun engagement financier tant que le design n'est pas accepté",
@@ -373,6 +477,7 @@
       }
     ],
     "errors": {
+      "summaryTitle": "Veuillez corriger les points suivants avant de continuer :",
       "generic": "Une erreur s'est produite. Veuillez réessayer ou nous écrire directement.",
       "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez."
     },
@@ -485,7 +590,7 @@
       "locality": "Marrakech",
       "country": "Maroc"
     },
-    "workshopAlt": "Vue large de l'atelier Benzart Resin près de Marrakech, avec les planches rangées le long du mur",
+    "workshopAlt": "Table basse ronde en noyer, rivière de résine sombre sur piètement en acier noir, posée sur un plan de travail de l'atelier Benzart Resin, plateaux rangés derrière",
     "workshopCaption": "L'atelier Benzart Resin à Tasseltant, Route de l'Ourika, Marrakech."
   },
   "Metadata": {

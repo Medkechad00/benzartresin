@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify-build-output.mjs && node scripts/verify-links.mjs",
+    "verify:live": "node scripts/verify-live.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.11",

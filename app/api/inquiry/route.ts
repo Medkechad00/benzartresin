@@ -1,19 +1,26 @@
 import { NextResponse } from "next/server";
 import {
+  addressNameSafe,
   clientKey,
   createRateLimiter,
   createTransport,
   describeSmtpError,
-  escapeHtml,
   getSmtpConfig,
   headerSafe,
   isValidEmail,
+  readJsonBody,
+  redactEmail,
+  redactPhone,
+  rejectUnsafeRequest,
+  str,
 } from "@/lib/mail";
 import {
   OTHER_OPTION_ID,
   optionLabel,
   type InquiryOptionField,
 } from "@/lib/inquiry-schema";
+import { buildInquiryEmail } from "@/lib/inquiry-email";
+import { BASE_URL, SITE } from "@/lib/site-config";
 
 /**
  * Commission inquiry handler.
@@ -24,7 +31,10 @@ import {
  * mail block commented out and returned `{ success: true }` unconditionally.)
  *
  * SMTP setup, sanitising, and rate limiting live in `lib/mail.ts`, shared with
- * the newsletter route so the two can never drift apart.
+ * the newsletter route so the two can never drift apart. The notification's
+ * subject, HTML and plain-text bodies are built together in
+ * `lib/inquiry-email.ts` — previously they were assembled separately here, which
+ * is how a field gets added to one and forgotten in the others.
  */
 
 export const runtime = "nodejs";
@@ -45,30 +55,28 @@ export const maxDuration = 30;
  */
 export const dynamic = "force-dynamic";
 
-type InquiryPayload = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  wood?: string;
-  woodOther?: string;
-  resin?: string;
-  resinOther?: string;
-  dimensions?: string;
-  shape?: string;
-  shapeOther?: string;
-  spaceType?: string;
-  spaceTypeOther?: string;
-  shippingCountry?: string;
-  budget?: string;
-  location?: string;
-  message?: string;
-  /** Locale the form was submitted from, so replies can match the language. */
-  locale?: string;
-  /** Slug of the piece the visitor came from, via /inquiry?ref=<slug>. */
-  ref?: string;
-  /** Honeypot — must stay empty. Not rendered to real users. */
-  extraNotes?: string;
-};
+/**
+ * Field length caps.
+ *
+ * Every field the studio ever reads is bounded, not just the three that were.
+ * `phone`, `dimensions`, `shippingCountry`, `locale`, `ref`, `shape` and
+ * `shapeOther` previously had no maximum at all, and all of them are
+ * interpolated into the notification email — so a multi-megabyte `dimensions`
+ * value went straight into the studio's inbox.
+ */
+const LIMITS = {
+  name: 200,
+  email: 320,
+  phone: 40,
+  dimensions: 300,
+  shape: 60,
+  shapeOther: 200,
+  shippingCountry: 100,
+  message: 5000,
+  locale: 10,
+  ref: 120,
+  honeypot: 200,
+} as const;
 
 /* ────────────────────────────── rate limiting ───────────────────────────── */
 
@@ -98,6 +106,17 @@ function formatSelection(
 }
 
 export async function POST(req: Request) {
+  /**
+   * Origin, content type and size, before anything else.
+   *
+   * See `rejectUnsafeRequest`: without a `Content-Type` requirement both routes
+   * were callable cross-origin with no preflight, which let any third-party page
+   * make its visitors send mail to the studio from their own IPs — bypassing the
+   * rate limiter below, since it keys on the client address.
+   */
+  const unsafe = rejectUnsafeRequest(req);
+  if (unsafe) return unsafe;
+
   const limit = rateLimit(clientKey(req));
   if (!limit.ok) {
     return NextResponse.json(
@@ -106,10 +125,8 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: InquiryPayload;
-  try {
-    body = await req.json();
-  } catch {
+  const body = await readJsonBody(req);
+  if (!body) {
     return NextResponse.json({ success: false, message: "Invalid request body." }, { status: 400 });
   }
 
@@ -133,21 +150,29 @@ export async function POST(req: Request) {
    * stops delivery. The flag travels in the subject line so the studio can
    * filter on it.
    */
-  const honeypot = (body.extraNotes ?? "").trim();
+  const honeypot = str(body.extraNotes, LIMITS.honeypot);
   const flaggedAsSpam = honeypot !== "";
 
   if (flaggedAsSpam) {
+    /**
+     * The value itself is no longer logged.
+     *
+     * The comment above explains that password managers autofill this field —
+     * which means whatever they filled it with came out of the visitor's
+     * credential store. Writing that to a log is the one thing this field must
+     * never do. Its length is enough to tell autofill from a bot.
+     */
     console.warn(
-      "[inquiry] honeypot filled — delivering anyway, flagged as suspected spam. " +
-        `value=${JSON.stringify(honeypot.slice(0, 120))} ` +
-        "(a URL or an email address here almost always means autofill, not a bot)"
+      `[inquiry] honeypot filled (${honeypot.length} chars) — delivering anyway, ` +
+        "flagged as suspected spam. A filled value here is almost always password-" +
+        "manager autofill rather than a bot."
     );
   }
 
-  const name = (body.name ?? "").trim();
-  const email = (body.email ?? "").trim();
-  const phone = (body.phone ?? "").trim();
-  const message = (body.message ?? "").trim();
+  const name = str(body.name, LIMITS.name);
+  const email = str(body.email, LIMITS.email);
+  const phone = str(body.phone, LIMITS.phone);
+  const message = str(body.message, LIMITS.message);
 
   if (!name || !email || !phone || !message) {
     return NextResponse.json(
@@ -172,10 +197,6 @@ export async function POST(req: Request) {
     );
   }
 
-  if (name.length > 200 || email.length > 320 || message.length > 5000) {
-    return NextResponse.json({ success: false, message: "Submission too large." }, { status: 413 });
-  }
-
   const smtp = getSmtpConfig();
 
   if (!smtp) {
@@ -190,55 +211,67 @@ export async function POST(req: Request) {
 
   const transporter = createTransport(smtp);
 
-  const rows: [string, string][] = [
-    ["Name", name],
-    ["Email", email],
-    ["Phone", phone],
-    ["Referring piece", body.ref ?? ""],
-    ["Wood preference", formatSelection("wood", body.wood, body.woodOther)],
-    ["Resin style", formatSelection("resin", body.resin, body.resinOther)],
-    ["Dimensions", body.dimensions ?? ""],
-    ["Shape", formatSelection("shape", body.shape, body.shapeOther)],
-    ["Space type", formatSelection("spaceType", body.spaceType, body.spaceTypeOther)],
-    ["Shipping country", body.shippingCountry ?? ""],
-    ["Budget range", formatSelection("budget", body.budget, undefined)],
-    ["City", body.location ?? ""],
-    ["Site language", body.locale ?? ""],
-  ].filter(([, v]) => v.trim().length > 0) as [string, string][];
+  /**
+   * Specification rows for the notification.
+   *
+   * Contact details are no longer in this list — they are rendered as a
+   * dedicated panel at the top of the email, because replying is the only action
+   * the message exists to prompt and burying the address in a table of eleven
+   * grey rows worked against that.
+   *
+   * Empty answers are dropped rather than rendered blank, so a visitor who
+   * skipped the optional fields produces a short email instead of a page of
+   * labels with nothing beside them.
+   */
+  const rows = (
+    [
+      ["Dimensions", str(body.dimensions, LIMITS.dimensions)],
+      [
+        "Shape",
+        formatSelection(
+          "shape",
+          str(body.shape, LIMITS.shape) || undefined,
+          str(body.shapeOther, LIMITS.shapeOther) || undefined
+        ),
+      ],
+      ["Shipping country", str(body.shippingCountry, LIMITS.shippingCountry)],
+      ["Site language", str(body.locale, LIMITS.locale)],
+    ] as [string, string][]
+  )
+    .filter(([, v]) => v.trim().length > 0)
+    .map(([label, value]) => ({ label, value }));
 
-  const htmlRows = rows
-    .map(
-      ([label, value]) =>
-        `<tr><td style="padding:4px 12px 4px 0;color:#666;">${escapeHtml(label)}</td><td style="padding:4px 0;"><strong>${escapeHtml(value)}</strong></td></tr>`
-    )
-    .join("");
+  const ref = str(body.ref, LIMITS.ref) || undefined;
+
+  const { subject, html, text } = buildInquiryEmail({
+    name,
+    email,
+    phone,
+    message,
+    rows,
+    ref,
+    flaggedAsSpam,
+    baseUrl: BASE_URL,
+  });
 
   try {
     await transporter.sendMail({
       from: smtp.from,
       to: smtp.to,
-      replyTo: `${headerSafe(name)} <${headerSafe(email)}>`,
-      subject: `${flaggedAsSpam ? "[SUSPECTED SPAM] " : ""}New table enquiry — ${headerSafe(name)}${body.ref ? ` (${headerSafe(body.ref)})` : ""}`,
-      text: [
-        ...(flaggedAsSpam
-          ? ["NOTE: the hidden anti-spam field was filled. Usually browser autofill on a genuine enquiry — check before discarding.", ""]
-          : []),
-        ...rows.map(([l, v]) => `${l}: ${v}`),
-        "",
-        "Details:",
-        message,
-      ].join("\n"),
-      html: `
-        ${
-          flaggedAsSpam
-            ? `<p style="font-family:sans-serif;font-size:13px;background:#FFF4D6;border-left:3px solid #E4B028;padding:10px 12px;margin:0 0 16px;">The hidden anti-spam field was filled on this submission. That is usually browser autofill on a genuine enquiry rather than a bot — read it before discarding.</p>`
-            : ""
-        }
-        <h2 style="font-family:sans-serif;">New table enquiry</h2>
-        <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse;">${htmlRows}</table>
-        <h3 style="font-family:sans-serif;">Details</h3>
-        <p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap;">${escapeHtml(message)}</p>
-      `,
+      /**
+       * Structured, not a concatenated string.
+       *
+       * This was `` `${headerSafe(name)} <${headerSafe(email)}>` ``. `headerSafe`
+       * strips CR/LF but not commas or angle brackets, and nodemailer parses
+       * `replyTo` as an address LIST — so a visitor named
+       * `attacker@evil.com, X` silently added themselves as a second recipient
+       * of the studio's reply. Passing the parts separately lets nodemailer do
+       * the quoting, and `addressNameSafe` removes the delimiters as well.
+       */
+      replyTo: { name: addressNameSafe(name), address: email },
+      subject: headerSafe(subject),
+      text,
+      html,
     });
 
     return NextResponse.json({ success: true, message: "Inquiry sent successfully." });
@@ -248,29 +281,48 @@ export async function POST(req: Request) {
     console.error(`[inquiry] SMTP send failed: ${describeSmtpError(error, smtp)}`);
 
     /**
-     * Preserve the lead.
+     * Preserve the lead, without copying the visitor's personal data into the
+     * log store.
      *
-     * Previously the catch block logged the transport error and nothing else, so
-     * a failed send destroyed the submission: the visitor was told to email us
-     * instead, most never do, and the studio had no record that anyone tried.
-     * This log line is the only remaining copy of the enquiry, so it is written
-     * in full and in one piece, ready to be recovered by hand.
+     * The catch block originally logged nothing but the transport error, so a
+     * failed send destroyed the submission outright. The fix for that was to log
+     * the whole enquiry — which swapped a lead-loss bug for a privacy one: name,
+     * email, phone and the full free-text message went into Vercel's runtime log
+     * and any drain attached to it, under retention the form never disclosed and
+     * outside any deletion workflow.
+     *
+     * This keeps what the studio needs to notice a lost lead and reconcile it
+     * against a later enquiry — a timestamp, the field shape, the referenced
+     * piece, and enough of the contact details to match — without the log
+     * becoming the personal data itself.
      */
     console.error(
-      `[inquiry] UNSENT LEAD — recover manually: ${JSON.stringify({
+      `[inquiry] UNSENT LEAD — a submission was lost. ${JSON.stringify({
         receivedAt: new Date().toISOString(),
-        ...Object.fromEntries(rows),
-        details: message,
+        emailHint: redactEmail(email),
+        phoneHint: redactPhone(phone),
+        ref: ref ?? "",
+        fieldsProvided: rows.map(({ label }) => label),
+        messageLength: message.length,
       })}`
     );
 
+    /**
+     * The recipient address is no longer echoed back.
+     *
+     * Both 502 branches interpolated `smtp.to` into the client-visible message,
+     * so anyone who could make the send fail learned `CONTACT_EMAIL` — which by
+     * design is NOT the public brand address but the private inbox the studio
+     * actually reads. `SITE.email` is the address already published on the
+     * contact page, which is what a visitor should be told to write to.
+     */
     return NextResponse.json(
       {
         success: false,
         message:
           err.code === "ECONNECTION"
-            ? "Our mail server is unreachable. Please try again or email us directly at " + smtp.to + "."
-            : "We could not send your enquiry. Please try again or email us directly at " + smtp.to + ".",
+            ? `Our mail server is unreachable. Please try again or email us directly at ${SITE.email}.`
+            : `We could not send your enquiry. Please try again or email us directly at ${SITE.email}.`,
       },
       { status: 502 }
     );

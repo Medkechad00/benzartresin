@@ -6,7 +6,13 @@
     "customOrder": "Custom Order",
     "menu": "Menu",
     "language": "Language",
-    "socials": "Socials"
+    "socials": "Socials",
+    "primaryLabel": "Primary",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "changeLanguage": "Change language",
+    "languageList": "Choose a language",
+    "mobileMenuLabel": "Site menu"
   },
   "Footer": {
     "tagline": "One table at a time, handcrafted to order in Marrakech. You choose the slab before anything is cut.",
@@ -40,7 +46,11 @@
     "error": "Something went wrong",
     "backToHome": "Back to home",
     "notFound": "Page not found",
-    "notFoundDescription": "The page you are looking for does not exist or has been moved."
+    "notFoundDescription": "The page you are looking for does not exist or has been moved.",
+    "skipToContent": "Skip to main content",
+    "requiredFieldsNote": "Fields marked with an asterisk (*) are required.",
+    "requiredField": "required",
+    "scrollableTable": "Table, scrollable sideways"
   },
   "Hero": {
     "title_part1": "Epoxy River",
@@ -48,7 +58,8 @@
     "title_part3": "Made in Marrakech.",
     "description": "You pick the slab. We photograph it dry, then wetted, before a single cut is made, so the board you approve is the board you get. Sized to your room, ready in eight to twelve weeks.",
     "explore": "See the collection",
-    "custom": "Design your table"
+    "custom": "Design your table",
+    "imageAlt": "Walnut live-edge coffee table with a turquoise epoxy river, styled with books and a plant in a sunlit living room"
   },
   "Featured": {
     "title": "Some of what we've built",
@@ -61,21 +72,20 @@
     "items": [
       {
         "title": "You choose the actual slab",
-        "description": "Once your deposit clears we go looking for three to five boards that suit your measurements. Each is photographed dry, then wetted so the grain reads the way it finally will. You choose from those. Nothing meets a saw before you do.",
-        "imageAlt": "Raw walnut slabs racked in the Marrakech workshop, photographed before any cutting so the client can choose the board"
+        "description": "Once your deposit clears we go looking for three to five boards that suit your measurements. Each is photographed dry, then wetted so the grain reads the way it finally will. You choose from those. Nothing meets a saw before you do."
       },
       {
         "title": "Built to your dimensions",
-        "description": "Describe the room to us, not the table. We will tell you what genuinely fits, what turns cramped the moment chairs are pulled out, and what is never getting through your doorway.",
-        "imageAlt": "Close detail of a table edge showing the transition between timber and poured resin at full thickness"
+        "description": "Describe the room to us, not the table. We will tell you what genuinely fits, what turns cramped the moment chairs are pulled out, and what is never getting through your doorway."
       },
       {
         "title": "Finished by hand",
-        "description": "Machines get the top flat. Hands take it the rest of the way. Wood and resin abrade at different rates, so the seam between them is judged with fingertips rather than eyes.",
-        "imageAlt": "Artisan hand-sanding the wood and resin interface to an even finish at the bench"
+        "description": "Machines get the top flat. Hands take it the rest of the way. Wood and resin abrade at different rates, so the seam between them is judged with fingertips rather than eyes."
       }
     ],
-    "stageLabel": "Stage"
+    "videoTitle": "Benzart Resin — a commissioned table taking shape in the workshop",
+    "videoPause": "Pause video",
+    "videoPlay": "Play video"
   },
   "InquiryCTA": {
     "eyebrow": "Made-to-order tables",
@@ -83,7 +93,7 @@
     "title_highlight": "centrepiece.",
     "description": "Send us the room's measurements and a budget range. We will tell you what is realistic before you commit to anything, and the price is locked before we start cutting.",
     "cta": "Design your table",
-    "imageAlt": "Olive wood table with metallic gold resin, photographed in a styled interior"
+    "imageAlt": "Live-edge walnut coffee table set into a brushed steel surround, beside a dark leather sofa"
   },
   "Testimonials": {
     "title": "What our clients say.",
@@ -118,6 +128,7 @@
     "dimensions": "Dimensions",
     "shape": "Shape",
     "priceFrom": "Made-to-order tables from",
+    "priceFromShort": "From",
     "priceNote": "The final figure depends on the slab you choose, the dimensions, the base, and where it ships. Your price is locked before work starts.",
     "cta": "Enquire about this piece",
     "availability": "Availability",
@@ -126,30 +137,190 @@
     "shapes": {
       "rectangular": "Rectangular",
       "organic": "Organic",
-      "round": "Round"
-    }
+      "round": "Round",
+      "oval": "Oval"
+    },
+    "materials": "Materials"
   },
   "Tables": {
-    "atlas-walnut-river": {
-      "name": "The Atlas Walnut River",
-      "wood": "Moroccan Atlas Walnut",
-      "resinColor": "Deep Emerald Green",
-      "story": "Sourced from the foothills of the Atlas Mountains, this slab of Moroccan walnut carries dense, unpredictable grain. The river is poured in layers of deep emerald epoxy to build genuine depth rather than flat colour, then finished with a hard-wax oil that can be spot-repaired years from now.",
-      "imageAlt": "Rectangular Moroccan Atlas walnut dining table with a deep emerald green epoxy resin river running its full length"
+    "walnut-berber-resin-coffee-table": {
+      "name": "Walnut Coffee Table with Berber Motif Resin River",
+      "resinColor": "Opaque black with embroidered Berber panel",
+      "story": "A live-edge coffee table in solid walnut, split down its length by a channel of black epoxy that holds a hand-embroidered Berber panel. Cross-stitch diamonds, chevrons and X-forms in white, gold, green, rust and violet sit suspended under a mirror-gloss pour, so the pattern reads clearly from standing height. Both walnut slabs keep their natural edge and the pale sapwood line that runs with it. The base is cut from the same timber: two solid planks, live-edged, carrying the top without an apron. Finished at 120 x 75 cm.",
+      "dimensions": "120 x 75 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "Live-edge walnut coffee table with a black resin river holding a Berber motif, on a cream rug before a grey corner sofa",
+      "alt": {
+        "0": "Live-edge walnut coffee table with a black resin river holding a Berber motif, on a cream rug before a grey corner sofa",
+        "1": "Walnut coffee table seen from above at an angle, the black resin channel showing white and gold cross-stitch Berber diamonds",
+        "2": "Overhead view of the walnut coffee table, figured grain on both slabs framing the embroidered black resin centre",
+        "3": "Walnut and black resin coffee table in a Moroccan salon, grey corner sofa with orange and pale blue cushions behind",
+        "4": "Close view of the resin channel, Berber cross-stitch diamonds and chevrons in white, gold, green, rust and violet under gloss epoxy",
+        "5": "The walnut coffee table from the side, twin live-edge plank base visible, garden and pool through glass doors beyond"
+      }
     },
-    "obsidian-grain": {
-      "name": "Obsidian Grain",
-      "wood": "Charred Ash (Shou Sugi Ban)",
-      "resinColor": "Opaque Black",
-      "story": "The Japanese Shou Sugi Ban charring technique meets a modern deep pour. The ash is charred, brushed, and sealed, and its blackened grain sits against a light-absorbing obsidian channel. The contrast is textural rather than chromatic — both surfaces are black, and only one reflects.",
-      "imageAlt": "Rectangular charred ash Shou Sugi Ban dining table with an opaque black epoxy resin channel and visible brushed grain"
+    "oval-walnut-navy-resin-dining-table": {
+      "name": "Oval Walnut Dining Table with Navy Resin River",
+      "resinColor": "Deep navy with pearl and grey marbling",
+      "story": "An oval dining table in solid walnut, its ends fully radiused so nothing catches as chairs are pulled out. Two book-matched walnut slabs are held apart by a river of deep navy epoxy, marbled with pearl and grey where the pour caught the light. It reads almost black indoors and resolves to true navy in daylight. The inner edges are the tree's own, left exactly as the slab gave them. The walnut carries heavy figure and burl through both halves, and the whole top is finished to a mirror gloss on splayed walnut legs. Seats six at 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "Oval walnut dining table with a deep navy resin river, teal bouclé armchairs around it in a showroom",
+      "alt": {
+        "0": "Oval walnut dining table with a deep navy resin river, teal bouclé armchairs around it in a showroom",
+        "1": "The oval walnut top photographed outdoors beside a pool, navy resin and pearl veining running the full length"
+      }
     },
-    "golden-current": {
-      "name": "Golden Current",
-      "wood": "Olive Wood",
-      "resinColor": "Metallic Gold",
-      "story": "Ancient olive burls suspended in swirling metallic gold resin. The natural voids in the wood dictated where the resin could go, so the composition was set by the tree rather than by us. The metallic shifts as you move around it and reads completely differently under directional light.",
-      "imageAlt": "Round organic-edge olive wood table with metallic gold epoxy resin filling the natural burl voids"
+    "walnut-3d-textured-clear-resin-dining-table": {
+      "name": "Walnut Dining Table with 3D-Textured Clear Resin",
+      "resinColor": "Clear to smoky sage green, 3D cellular relief",
+      "story": "A rectangular dining table built the other way round: one broad slab of solid walnut runs down the centre, and the epoxy sits to either side of it rather than between two boards, forming the finished outer edges. The resin is poured almost clear, tinted a pale smoky sage, and carries a deep three-dimensional cell relief — domed cells standing proud of the surface that throw light differently as you move around the table. The walnut is the reason for the piece, a single board of heavy red-brown burl figure with its live edge kept on both flanks. Polished to a mirror and set on a black steel trapezoid frame. Seats six to eight at 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "The walnut table on a lawn beside a pool, 3D cellular resin bands either side of the central slab, black steel trapezoid frame beneath",
+      "alt": {
+        "0": "The walnut table on a lawn beside a pool, 3D cellular resin bands either side of the central slab, black steel trapezoid frame beneath",
+        "1": "Walnut dining table with a single figured slab and clear 3D-textured resin along both sides, teal bouclé chairs around it",
+        "2": "Low angle along the walnut table top outdoors, the mirror finish reflecting palms and sky",
+        "3": "Overhead view of the full top, deep red-brown walnut burl figure between two bands of 3D-relief resin",
+        "4": "The walnut dining table set in a salon, floor lamps and buttoned sofas behind it",
+        "5": "The walnut table under warmer light, three teal bouclé chairs along each long side and the 3D resin band catching the room"
+      }
+    },
+    "walnut-smoke-resin-dining-table": {
+      "name": "Walnut Dining Table with Smoke Resin River",
+      "resinColor": "Translucent charcoal smoke",
+      "story": "A rectangular dining table in solid walnut, lighter and more golden than most of the boards that come through the workshop, with the pale sapwood line left intact along both river edges. Between the two slabs runs a river of translucent charcoal epoxy that reads as smoke in the shallows and near black where it is deepest — clear enough that the floor and whatever stands on the table show through it — so the walnut either side keeps all the attention. The top is polished to a mirror and carried on a black steel closed-loop sled frame that keeps the legs clear of knees. Seats six at 175 x 85 cm.",
+      "dimensions": "175 x 85 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "Honey-toned walnut dining table with a smoky charcoal resin river, six bouclé chairs around it and tufted sofas behind",
+      "alt": {
+        "0": "Honey-toned walnut dining table with a smoky charcoal resin river, six bouclé chairs around it and tufted sofas behind",
+        "1": "Side view of the walnut dining table against a white relief-panelled wall hung with two red canvases",
+        "2": "The walnut dining table seen front-on from the kitchen side, tagine on the counter and patterned cement floor tile alongside",
+        "3": "Corner view of the walnut table showing the wide pale sapwood stripe along each river edge, walnut sideboard and round mirrors behind",
+        "4": "High angled view down the length of the walnut dining table, smoky resin turning silver-grey where the light rakes it",
+        "5": "Overhead view of the walnut top, two matched slabs flanking a wide serpentine charcoal resin river"
+      }
+    },
+    "walnut-turquoise-resin-dining-table": {
+      "name": "Walnut Dining Table with Turquoise Epoxy River",
+      "resinColor": "Translucent turquoise with black-filled voids",
+      "story": "A rectangular dining table in solid walnut, opened down the middle by a deep pour of translucent turquoise epoxy that deepens to emerald where it is thickest. The river keeps the rounded cell structure the resin took as it set, standing proud of the surface, so it reads as moving water rather than flat colour. The bark lines and voids along both live edges are filled opaque black — a deliberate contrast that holds the outline rather than hiding a fault. Both outer edges follow the tree, their notches filled flush so the perimeter finishes straight. The walnut is dense and strongly figured, sanded and polished to a mirror before it was set on a black steel trapezoid frame. Seats six to eight at 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "Walnut dining table top with a translucent turquoise resin river and black-filled bark voids, photographed flat in the workshop",
+      "alt": {
+        "0": "Walnut dining table top with a translucent turquoise resin river and black-filled bark voids, photographed flat in the workshop",
+        "1": "Close view along the walnut table edge showing the mirror gloss and one black steel trapezoid leg on a travertine floor",
+        "2": "The full walnut top from one end, turquoise epoxy river with raised rounded cell texture between two live-edge slabs"
+      }
+    },
+    "walnut-emerald-resin-geometric-lattice-table": {
+      "name": "Walnut Table with Green Resin over a Geometric Lattice",
+      "resinColor": "Bottle green to sage over a 3D geometric lattice",
+      "story": "The most technical piece in the collection. Set beneath the resin is a tessellated geometric lattice — a field of interlocking triangles resolving into six-pointed stars — and it is not printed or flat: each facet is raised in pyramidal relief, so the pattern has real depth while the surface above it stays perfectly flat glass. The green shifts with thickness and light, from bottle green where the pour encapsulates the outer live edges, through emerald with cream marbling in the margins, to a pale sage over the lattice itself. The walnut runs warm and golden with dark mineral streaks and natural voids, its live edge kept on both sides and frozen inside the resin so the perimeter finishes straight. Mirror polished and mounted on a black steel U-frame. 150 x 75 cm, seating four.",
+      "dimensions": "150 x 75 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "Walnut table with green resin over a tessellated geometric lattice, standing on a travertine terrace beside a lawn",
+      "alt": {
+        "0": "Walnut table with green resin over a tessellated geometric lattice, standing on a travertine terrace beside a lawn",
+        "1": "Raking close view down the long edge, bottle-green resin encapsulating the walnut live edge under a mirror polish",
+        "2": "The walnut table seen down its length from one end, green resin margins framing the patterned central channel",
+        "3": "Close view of the resin showing the three-dimensional triangle and six-pointed star lattice beneath, walnut burl alongside",
+        "4": "Angled view from the far long side, emerald resin marbled with cream in the margin and pale sage over the lattice",
+        "5": "Tight angled sweep across the top, honey and caramel walnut figure grading into dark streaks beside the emerald lattice",
+        "6": "Corner and leg detail of the walnut table on the terrace, showing the black steel U-frame with its flat foot rail"
+      }
+    },
+    "round-walnut-emerald-resin-coffee-table": {
+      "name": "Round Walnut Coffee Table with Emerald Resin River",
+      "resinColor": "Emerald to turquoise, translucent",
+      "story": "A round coffee table cut from solid walnut, one metre across, with a river of green epoxy crossing it off-centre so the circle never reads as symmetrical. The colour is not one green: it runs emerald through the body of the river, lifts to a bright turquoise where the pour is thin and light passes through it, and sinks to near-black bottle green in the deeper pools. The walnut carries dense flame and cathedral figure with a pale honey sapwood zone against the resin, and its small natural voids were stabilised and filled before the top was polished to a mirror. Raised on a black steel base so the whole disc appears to float. 100 cm diameter, at coffee-table height.",
+      "dimensions": "100 cm diameter",
+      "wood": "Solid walnut",
+      "imageAlt": "The round walnut coffee table in a living room with a white panelled wall, its black steel tripod base fully visible",
+      "alt": {
+        "0": "The round walnut coffee table in a living room with a white panelled wall, its black steel tripod base fully visible",
+        "1": "Round walnut coffee table with an emerald resin river and a pale onyx-effect band, on a cream ribbed rug beside a grey sofa with garden doors open behind",
+        "2": "Low view of the round walnut coffee table showing its black steel three-leg base meeting in a triangular floor hub",
+        "3": "High-angle view of the round walnut top, dark flame figure crossed off-centre by the emerald resin river",
+        "4": "Near-overhead view of the whole round top, the resin lifting to bright turquoise where it thins and pooling deep green at one rim",
+        "5": "The round walnut coffee table on a blade pedestal base, pale onyx-effect band behind the vase and the garden terrace beyond the sliding doors"
+      }
+    },
+    "solid-walnut-live-edge-dining-table-220": {
+      "name": "Solid Walnut Live-Edge Dining Table, 220 cm",
+      "resinColor": "None — clear stabilising fill only",
+      "story": "No resin river on this one, and it does not need one. This is a single long board of solid walnut, 220 cm, left to do all the work itself: heavy rippled figure through the centre, dark mineral streaking, and the natural edge kept on both sides exactly as the tree grew it, so the outline is a rectangle only in the general sense. The checks and voids were stabilised and filled to make the surface sound, and those fills read as dark glassy pools rather than disappearing — they are part of how the piece looks, not hidden repairs. The top was finished to a low sheen rather than a gloss, which is the honest choice for a board with this much movement in the grain. Set on a black steel base with the legs inset, so both ends are usable. Seats eight at 220 x 85 cm.",
+      "dimensions": "220 x 85 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "Long solid walnut live-edge dining table in a marble-floored hall, carved wood balustrade and a black and white zellige panel behind",
+      "alt": {
+        "0": "Long solid walnut live-edge dining table in a marble-floored hall, carved wood balustrade and a black and white zellige panel behind",
+        "1": "A solid walnut live-edge dining table of the same design in a glazed garden room, eight khaki upholstered chairs and black steel trapezoid legs",
+        "2": "High view down the length of the walnut slab, rippled and burl figure running unbroken between two undulating natural edges",
+        "3": "Wide view of the walnut dining table showing the full black steel base, flat-bar trapezoid legs inset at each end with a lengthwise spine",
+        "4": "Close oblique view of the walnut top, pale cream sapwood stripe along the natural edge and two dark glassy resin-filled voids near the centre"
+      }
+    },
+    "walnut-woven-carpet-resin-dining-table": {
+      "name": "Walnut Dining Table with Woven Carpet Under Resin",
+      "resinColor": "Milky sage-white over a woven carpet panel",
+      "story": "A rectangular dining table where a hand-woven carpet panel is sealed under milky epoxy and set against a slab of pale walnut. The weave keeps its ridges and its banded stripes — ivory and cream alternating with taupe and soft brown, some bands carrying small diamond motifs — visible through the resin but protected from everything a dining table has to survive. The resin is only semi-translucent, with a faint sage-grey cast, so it veils the textile softly rather than showing it under glass. This is an unusually pale, blonde board with dark purple-black streaking rather than the dark heartwood of the other pieces, and its live edge follows the tree along the whole length. Finished satin, not gloss, and carried on a hand-built wooden trestle frame. Seats six at 180 x 90 cm.",
+      "dimensions": "180 x 90 cm",
+      "wood": "Pale solid walnut",
+      "imageAlt": "Walnut dining table with a woven carpet panel set under milky resin, on a lawn beside a blue mosaic pool with a tiled terrace behind",
+      "alt": {
+        "0": "Walnut dining table with a woven carpet panel set under milky resin, on a lawn beside a blue mosaic pool with a tiled terrace behind",
+        "1": "The table seen down its length, banded kilim weave in ivory and taupe suspended under the resin, six cane-back chairs and a wooden trestle base"
+      }
+    },
+    "resin-oval-dining-table": {
+      "name": "Oval Marble-Effect Resin Dining Table",
+      "resinColor": "Chocolate brown and ivory marble effect",
+      "story": "An oval dining table finished as a single sweep of marble-effect resin. Deep chocolate brown, shot through with oxblood and warm tan, is pulled apart by an ivory vein that meanders the length of the table and breaks out into broad cream fields at one side and around the ends. Fine white veining and discrete white spatter sit inside the dark ground, where the pigments were allowed to break rather than blend. Every one is different because the pour cannot be repeated. The marbling continues over the rim onto the vertical edge, so the top reads as one solid material rather than a surface laid on something else. Straight sides with fully radiused ends, polished to a high gloss and carried on a black steel base. Seats six at 160 x 80 cm.",
+      "dimensions": "160 x 80 cm",
+      "material": "Marble-effect epoxy resin on a black steel base",
+      "imageAlt": "Oval dining table with a chocolate and ivory marble-effect resin top, six cream upholstered armchairs around it on grey tiles",
+      "alt": {
+        "0": "Oval dining table with a chocolate and ivory marble-effect resin top, six cream upholstered armchairs around it on grey tiles",
+        "1": "The oval table from the opposite end, ivory vein meandering through the dark resin, marquetry sideboard and organic mirrors behind",
+        "2": "Three-quarter view of the marble-effect oval table in a salon, the poured pattern continuing over the rim onto the vertical edge above a black steel base"
+      }
+    },
+    "walnut-resin-coffee-table-set": {
+      "name": "Walnut Coffee Table and Side Table Set with Magenta Resin",
+      "resinColor": "Fuchsia to crimson, translucent",
+      "story": "Two pieces cut from the same walnut and finished together. The larger table takes a freeform kidney shape, its outline following the board rather than a drawing, with a wide S-curve river of translucent pink-red epoxy running the full length. The same colour was poured out to the finished perimeter, so it appears at the rim as well as mid-slab — though it breaks wherever the live edge reaches the outline, which is what gives the profile its rhythm rather than a continuous ring. The colour itself moves with the light: fuchsia under flat overhead daylight, crimson and raspberry in warm sun. The round side table repeats the idea at 50 cm across, a single band laid over dense burl figure, and stands slightly taller than the coffee table as a companion rather than a nesting piece. Both tops are mirror polished on black steel. Coffee table 120 x 75 cm, side table 50 cm diameter.",
+      "dimensions": "coffee table 120 x 75 cm, side table 50 cm diameter",
+      "wood": "Solid walnut",
+      "imageAlt": "Overhead view of both walnut pieces on a tiled patio, the kidney-shaped coffee table with its fuchsia resin river and the round side table nested in its concave notch",
+      "alt": {
+        "0": "Overhead view of both walnut pieces on a tiled patio, the kidney-shaped coffee table with its fuchsia resin river and the round side table nested in its concave notch",
+        "1": "The walnut coffee table and round side table on a paved garden path, the resin reading crimson in warm light, black steel trestles beneath",
+        "2": "Close view of the coffee table's right lobe, concentric walnut burl eye figure and pale sapwood tracing the live edge into the magenta resin",
+        "3": "Macro view across the walnut top toward the round side table, the magenta resin band wrapping the side table's rim through the full thickness",
+        "4": "The round walnut side table complete with a magenta stripe across its top and a three-leg splayed black steel frame, the coffee table's right half alongside",
+        "5": "Both walnut tables on the terrace beside a bollard light and bird-of-paradise planting, the magenta river running the full S-curve of the kidney top",
+        "6": "Wide view of the walnut table set in the garden, tiled steps and planters behind, both magenta-edged tops on their black steel bases"
+      }
+    },
+    "solid-walnut-live-edge-dining-table-180": {
+      "name": "Solid Walnut Live-Edge Dining Table, 180 cm",
+      "resinColor": "None — clear stabilising fill only",
+      "story": "A dining table for six with nothing added to it. One slab of solid walnut, chocolate brown through the centre with a broad band of pale sapwood following one edge, both long sides left live exactly as the board came off the mill — including a waisted notch on one side that no one straightened out. The figure is dense and strongly rippled, with a crotch eye near the middle and a hairline check running through it, filled flush. There is no resin river here and none was needed. The surface is finished satin rather than gloss, so it can be wiped down and used, and it never mirrors the room back at you. Carried on splayed walnut legs with a wooden cross member. 180 x 80 cm.",
+      "dimensions": "180 x 80 cm",
+      "wood": "Solid walnut",
+      "imageAlt": "Solid walnut live-edge dining table for six on a marble tile floor, cream bouclé chairs with walnut frames around it",
+      "alt": {
+        "0": "Solid walnut live-edge dining table for six on a marble tile floor, cream bouclé chairs with walnut frames around it",
+        "1": "The walnut table seen near end-on, broad pale sapwood bands framing the near-black figured heartwood down the centre",
+        "2": "Steep angled view filling the frame with the walnut top, rippled fiddleback and crotch figure with a dark knot at one live edge",
+        "3": "Near-overhead view of the whole walnut top, straight crosscut ends and two undulating natural edges with a waisted notch mid-length",
+        "4": "The walnut dining table from a corner with the open-plan living area beyond, its splayed walnut legs and wooden cross member visible",
+        "5": "Elevated near-end view of the walnut table and its six chairs, the satin finish holding light softly without mirroring the room"
+      }
     }
   },
   "OurCraft": {
@@ -163,35 +334,35 @@
     "studioBody2": "We do not subcontract the joinery and we do not subcontract the finishing. If it carries our mark, it left our bench.",
     "processHeading": "How a table is made",
     "phaseLabel": "Phase",
-    "artisanAlt": "Artisan selecting a walnut board in the workshop",
-    "workshopAlt": "Resin being poured into a mould",
+    "leadImageAlt": "Finished walnut table with a vivid blue epoxy river, resting on trestles in the workshop",
+    "workshopAlt": "Green epoxy resin being poured from a bucket into the mould around a walnut slab",
     "workshopCaption": "The pour in progress",
     "heroAlt": "Finished table on location",
     "phases": [
       {
         "title": "Consultation",
         "body": "We talk through the room, the table, the materials and the budget. By the time the call ends you should know whether we are the right workshop for the piece — including if the answer is no.",
-        "alt": "Consultation call with a client"
+        "alt": "Finished walnut dining table with a black resin river and six cream chairs in a client dining room"
       },
       {
         "title": "Design",
         "body": "You get one measured drawing and a material board. No three-dimensional render, because the slab is the design and no render can tell you what the grain will do. You approve it before anything is cut.",
-        "alt": "Measured drawing and material board"
+        "alt": "Completed walnut table with a black resin river and a sculpted timber base, in the workshop"
       },
       {
         "title": "Selection",
         "body": "Once your deposit clears we source three to five boards matching your dimensions and photograph each one dry, then wetted. You choose from those photographs. Nothing meets a saw until you have.",
-        "alt": "Client choosing a walnut board from photographs"
+        "alt": "Craftsman guiding a rough walnut slab with its bark edge intact through a workshop bandsaw"
       },
       {
         "title": "Production",
         "body": "Eight to twelve weeks, depending on the season and how complex the pour is. Progress photographs come at three points: the pour, the flatten, and the first sanding coat.",
-        "alt": "Resin being poured into a mould"
+        "alt": "Craftsman trimming the edge of a cured walnut and resin table top with a circular saw"
       },
       {
         "title": "Delivery",
         "body": "In Marrakech we deliver and install ourselves. For everywhere else we crate the table in-house and hand it to a freight forwarder who specialises in fine art and furniture.",
-        "alt": "Table being installed in a client's home"
+        "alt": "Two Benzart Resin staff carrying a wrapped table through the doorway of a client villa"
       }
     ],
     "subtitle": "The studio"
@@ -210,7 +381,7 @@
       "locality": "Marrakech",
       "country": "Morocco"
     },
-    "workshopAlt": "Wide view of the Benzart Resin workshop outside Marrakech, with slabs racked along the wall",
+    "workshopAlt": "Round walnut coffee table with a dark resin river on a black steel base, on a workbench in the Benzart Resin workshop with slabs racked behind it",
     "workshopCaption": "The Benzart Resin atelier at Tasseltant, Ourika Road, Marrakech."
   },
   "Inquiry": {
@@ -222,7 +393,6 @@
     "description": "Give us the room's measurements and a budget range. Before you commit to anything we will tell you what is realistic, and your price is locked before we start cutting.",
     "steps": {
       "client": "Client",
-      "vision": "Your vision",
       "details": "Details"
     },
     "stepOf": "Step {current} of {total}",
@@ -233,65 +403,27 @@
       "emailPlaceholder": "Email address",
       "phone": "Phone number",
       "phonePlaceholder": "Phone number",
-      "wood": "Wood preference",
-      "woodOther": "Other wood",
-      "resin": "Resin preference",
-      "resinOther": "Other resin",
       "dimensions": "Dimensions",
       "dimensionsPlaceholder": "e.g. 240cm x 100cm",
       "shape": "Shape",
       "shapeOther": "Other shape",
-      "spaceType": "What kind of space?",
-      "spaceTypeOther": "Other",
       "shippingCountry": "Country",
       "shippingCountryPlaceholder": "Where should we ship?",
-      "budget": "Budget range",
-      "location": "Where will the table live?",
-      "locationPlaceholder": "Room, city, or country",
       "message": "Tell us about the project",
       "messagePlaceholder": "Anything else we should know: existing furniture, lighting, how the space is used...",
       "optional": "Optional"
     },
     "placeholders": {
-      "selectOption": "Select an option",
       "selectShape": "Select a shape",
-      "selectRange": "Select a range",
       "otherSpecify": "Please specify"
-    },
-    "woodOptions": {
-      "walnut": "Walnut",
-      "maple": "Maple",
-      "olive": "Olive",
-      "open": "Open pore",
-      "other": "Other"
-    },
-    "resinOptions": {
-      "clear": "Clear",
-      "obsidian": "Obsidian",
-      "amber": "Amber",
-      "custom": "Custom / discuss with us",
-      "other": "Other"
     },
     "shapeOptions": {
       "rectangular": "Rectangular",
       "organic": "Organic edge",
       "round": "Round",
+      "oval": "Oval",
       "conference": "Conference table",
       "other": "Other"
-    },
-    "spaceOptions": {
-      "privateDining": "Private dining",
-      "restaurant": "Restaurant",
-      "office": "Office",
-      "reception": "Reception",
-      "other": "Other"
-    },
-    "budgetOptions": {
-      "under3000": "Under 3,000 USD",
-      "3000to5000": "3,000 - 5,000 USD",
-      "5000to8000": "5,000 - 8,000 USD",
-      "8000to15000": "8,000 - 15,000 USD",
-      "over15000": "Over 15,000 USD"
     },
     "buttons": {
       "next": "Next",
@@ -325,7 +457,7 @@
         "browse": "Browse the collection",
         "again": "Send another enquiry"
       },
-      "imageAlt": "Raw walnut boards selected in the workshop before cutting"
+      "imageAlt": "Finished walnut dining table with an emerald resin river in a client dining room, six cream chairs around it"
     },
     "reassurance": {
       "title": "No obligation until we agree on the design",
@@ -362,6 +494,7 @@
       }
     ],
     "errors": {
+      "summaryTitle": "Please check the following before continuing:",
       "generic": "Something went wrong. Please try again or email us directly.",
       "network": "Could not reach the server. Please check your connection and try again."
     },

@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { blogSlug } from "@/lib/urls";
+import { blogHref, toHref } from "@/lib/urls";
 
 export type PillarPost = {
   slug: string;
@@ -35,7 +35,6 @@ export type PillarPost = {
  * and room for the description that the old secondary cards dropped.
  */
 export function BlogTopicGuides({ pillars }: { pillars: PillarPost[] }) {
-  const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("Blog");
 
@@ -60,7 +59,7 @@ export function BlogTopicGuides({ pillars }: { pillars: PillarPost[] }) {
           heading level is, and that is preserved.
         */}
         <motion.h2
-          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -71,7 +70,7 @@ export function BlogTopicGuides({ pillars }: { pillars: PillarPost[] }) {
 
         {/* ── Featured pillar ──────────────────────────────────────────── */}
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -87,15 +86,36 @@ export function BlogTopicGuides({ pillars }: { pillars: PillarPost[] }) {
             deterministic and reserves its exact space before the image loads.
           */}
           <Link
-            href={`/blog/${blogSlug(featured.slug, locale)}` as never}
+            href={toHref(blogHref(featured.slug, locale))}
             className="group block relative w-full aspect-[4/3] md:aspect-[2/1] overflow-hidden bg-gray-100"
           >
             <Image
               src={featured.frontmatter.heroImage}
               alt={featured.frontmatter.heroAlt}
               fill
+              /*
+                This is the LCP element on /blog and it was lazy-loaded.
+
+                The card is roughly 1280x640 directly under a `pt-40` header, so
+                it is in the first viewport on every desktop size — and with no
+                `loading`, no `fetchPriority` and no `priority`, next/image
+                defaults to `loading="lazy"`. The image therefore waited for the
+                lazy-load observer before the fetch even started, on the one
+                element the page's LCP is measured against, and showed an empty
+                grey box in the meantime.
+
+                Every other page in the codebase gets this right; /blog was the
+                gap. There is exactly one eager image per page here, so there is
+                no priority contention.
+              */
+              loading="eager"
+              fetchPriority="high"
               className="object-cover transition-transform duration-1000 group-hover:scale-105"
-              sizes="100vw"
+              /*
+                `100vw` was over-declaring: the card lives inside `max-w-7xl`
+                with `px-12`, so above 1280px it never exceeds 1184px.
+              */
+              sizes="(max-width: 1280px) 100vw, 1184px"
             />
 
             {/*
@@ -133,14 +153,14 @@ export function BlogTopicGuides({ pillars }: { pillars: PillarPost[] }) {
             {rest.map((pillar, index) => (
               <motion.div
                 key={pillar.slug}
-                initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.7, delay: (index + 1) * 0.1, ease: [0.16, 1, 0.3, 1] }}
                 className="h-full"
               >
                 <Link
-                  href={`/blog/${blogSlug(pillar.slug, locale)}` as never}
+                  href={toHref(blogHref(pillar.slug, locale))}
                   className="group flex h-full flex-col"
                 >
                   {/*
@@ -168,11 +188,11 @@ export function BlogTopicGuides({ pillars }: { pillars: PillarPost[] }) {
                     lines at `leading-relaxed` (1.625), giving 3.25em.
                   */}
                   <div className="flex flex-col flex-grow">
-                    <p className="font-sans text-[11px] uppercase tracking-[0.25em] text-gold-dark mb-3">
+                    <p className="font-sans text-[11px] uppercase tracking-[0.25em] text-gold-ink mb-3">
                       {pillar.frontmatter.cluster}
                     </p>
 
-                    <h3 className="font-display text-2xl md:text-3xl text-black tracking-tight leading-snug line-clamp-2 min-h-[2.75em] group-hover:text-gold-dark transition-colors">
+                    <h3 className="font-display text-2xl md:text-3xl text-black tracking-tight leading-snug line-clamp-2 min-h-[2.75em] group-hover:text-gold-ink transition-colors">
                       {pillar.frontmatter.title}
                     </h3>
 

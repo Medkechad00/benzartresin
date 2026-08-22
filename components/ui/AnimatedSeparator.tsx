@@ -1,9 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 
 export function AnimatedSeparator() {
-  const reduceMotion = useReducedMotion();
   
   return (
     /*
@@ -16,7 +15,7 @@ export function AnimatedSeparator() {
     <div className="w-full px-6 md:px-12 bg-white flex justify-center">
       <div className="w-full max-w-7xl">
         <motion.div
-          initial={reduceMotion ? false : { scaleX: 0 }}
+          initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true, amount: 1 }}
           transition={{ duration: 1.5, ease: [0.77, 0, 0.175, 1] }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useRef, useCallback } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
@@ -9,7 +9,7 @@ import { SITE } from "@/lib/site-config";
 import { Logo } from "@/components/layout/Logo";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { cn } from "@/lib/utils";
-import { localizedPath, blogSlug, englishBlogSlug, tableSlug, englishTableSlug } from "@/lib/urls";
+import { localizedPath, blogSlug, englishBlogSlug, tableSlug, englishTableSlug, toHref } from "@/lib/urls";
 
 /**
  * "Atelier" (→/craftsmanship) and "Studio" (→/about) were two labels for two
@@ -21,6 +21,8 @@ const NAV_KEYS = [
   { key: "ourCraft", path: "/our-craft" },
   { key: "journal", path: "/blog" },
 ] as const;
+
+const MOBILE_MENU_ID = "mobile-menu";
 
 interface NavbarProps {
   theme?: "light" | "dark";
@@ -34,6 +36,16 @@ export function Navbar({ theme = "light" }: NavbarProps) {
   const t = useTranslations("Navbar");
   const dir = getTextDirection(locale);
   const isRtl = dir === 'rtl';
+
+  const headerRef = useRef<HTMLElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const firstMenuLinkRef = useRef<HTMLAnchorElement>(null);
+
+  const closeMenu = useCallback((restoreFocus = true) => {
+    setIsMobileMenuOpen(false);
+    if (restoreFocus) toggleRef.current?.focus();
+  }, []);
+
 
   /**
    * Locale switching via next-intl's router.
@@ -78,7 +90,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
         }
       }
 
-      router.replace(`${targetPath}${search}${hash}` as any, { locale: next });
+      router.replace(toHref(`${targetPath}${search}${hash}`), { locale: next });
     });
   };
 
@@ -89,21 +101,92 @@ export function Navbar({ theme = "light" }: NavbarProps) {
   // Determine if text should be dark based on scroll or page theme
   const isDarkText = theme === "dark" || isScrolled || isMobileMenuOpen;
 
-  // Lock body scroll when mobile menu is open
+  /**
+   * Body scroll lock while the overlay is open.
+   *
+   * Restores the previous inline value rather than hard-coding "unset", so this
+   * cannot clobber an overflow set by something else.
+   */
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    if (!isMobileMenuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = previous;
     };
   }, [isMobileMenuOpen]);
 
+  /**
+   * Escape closes the menu.
+   *
+   * There was no key handling at all: the only ways out were tapping a link or
+   * the toggle, which fails 2.1.1 for a keyboard user who opened it and wants
+   * out without navigating.
+   */
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMenu();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isMobileMenuOpen, closeMenu]);
+
+  /**
+   * Take the page behind the overlay out of the tab order and the a11y tree.
+   *
+   * The overlay is `fixed inset-0 z-40` and the page it covers stayed fully
+   * focusable underneath it, so Tab walked straight off the menu and into
+   * content the user could not see. `inert` is the platform primitive for
+   * exactly this and it handles focus, pointer events and the accessibility
+   * tree in one attribute.
+   *
+   * Applied to the header's SIBLINGS, not to a wrapper. `<header>` is a child of
+   * <main id="main-content"> here (each page renders <Navbar/> inside it), so
+   * marking main inert would make the navbar — and the menu itself — inert too.
+   * The siblings are the page sections, which is precisely the set that should
+   * be unreachable.
+   */
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const header = headerRef.current;
+    const parent = header?.parentElement;
+    if (!header || !parent) return;
+
+    const siblings = Array.from(parent.children).filter(
+      (el): el is HTMLElement => el !== header && el instanceof HTMLElement
+    );
+    const previouslyInert = siblings.map((el) => el.hasAttribute("inert"));
+    siblings.forEach((el) => el.setAttribute("inert", ""));
+
+    return () => {
+      siblings.forEach((el, i) => {
+        if (!previouslyInert[i]) el.removeAttribute("inert");
+      });
+    };
+  }, [isMobileMenuOpen]);
+
+  /** Move focus into the menu when it opens. WCAG 2.4.3. */
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    // One frame, so the element exists after AnimatePresence mounts it.
+    const id = requestAnimationFrame(() => firstMenuLinkRef.current?.focus());
+    return () => cancelAnimationFrame(id);
+  }, [isMobileMenuOpen]);
+
   return (
-    <>
+    /*
+      A real <header>.
+
+      The component previously rendered <motion.nav> as its outermost element,
+      so the site had no `banner` landmark on any page — and the mobile menu,
+      being a sibling of that nav, sat in no landmark at all. The header also
+      gives the inert effect above a stable node whose siblings are the page
+      content.
+    */
+    <header ref={headerRef}>
       <motion.nav
+        aria-label={t('primaryLabel')}
         initial={{ y: -50, opacity: 0, backgroundColor: "rgba(245, 241, 232, 0)", borderBottomColor: "rgba(245, 241, 232, 0)" }}
         animate={{
           y: 0,
@@ -124,7 +207,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
             {NAV_KEYS.map((link) => (
               <Link
                 key={link.key}
-                href={localizedPath(link.path, locale) as any}
+                href={toHref(localizedPath(link.path, locale))}
                 className={cn(
                   "text-[11px] tracking-[0.2em] uppercase font-bold relative group transition-colors duration-500",
                   isDarkText ? "text-black/70 hover:text-black" : "text-white/70 hover:text-white"
@@ -150,7 +233,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
                 "transition-colors duration-500 z-50",
                 isDarkText ? "text-black" : "text-white"
               )}
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMenu(false)}
             >
               <Logo decorative className="h-7 md:h-8" />
             </Link>
@@ -159,7 +242,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
           {/* Right: CTA & Mobile Toggle */}
           <div className="flex justify-end items-center gap-4">
              <Link
-               href={localizedPath('/inquiry', locale) as any}
+               href={toHref(localizedPath('/inquiry', locale))}
                className={cn(
                  "hidden md:flex px-6 py-3 text-[10px] uppercase tracking-[0.25em] font-bold transition-all duration-500",
                  isDarkText
@@ -179,9 +262,23 @@ export function Navbar({ theme = "light" }: NavbarProps) {
 
             {/* Mobile Menu Toggle - Creative Animated Hamburger */}
             <button
+              ref={toggleRef}
+              type="button"
               className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-[5px] relative z-50 group"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle menu"
+              onClick={() => (isMobileMenuOpen ? closeMenu(false) : setIsMobileMenuOpen(true))}
+              /*
+                `aria-expanded` and `aria-controls` state the relationship the
+                button previously only implied. Without them the control
+                announced as "Toggle menu, button" whether the menu was open or
+                closed, so the one thing a screen-reader user needed to know was
+                the one thing it never said.
+
+                The label is also translated now. It was the hardcoded English
+                string "Toggle menu", rendered on /fr and /ar alike.
+              */
+              aria-expanded={isMobileMenuOpen}
+              aria-controls={MOBILE_MENU_ID}
+              aria-label={isMobileMenuOpen ? t('closeMenu') : t('openMenu')}
             >
               <motion.span
                 animate={{ 
@@ -220,6 +317,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
+            id={MOBILE_MENU_ID}
             initial={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" }}
             animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
             exit={{ clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" }}
@@ -228,7 +326,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
           >
             
             {/* Links List */}
-            <div className="flex flex-col gap-2 mt-12">
+            <nav aria-label={t('mobileMenuLabel')} className="flex flex-col gap-2 mt-12">
               {NAV_KEYS.map((link, i) => (
                 <motion.div
                   key={link.key}
@@ -238,9 +336,10 @@ export function Navbar({ theme = "light" }: NavbarProps) {
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1, ease: [0.23, 1, 0.32, 1] }}
                 >
                   <Link
-                    href={localizedPath(link.path, locale) as any}
+                    ref={i === 0 ? firstMenuLinkRef : undefined}
+                    href={toHref(localizedPath(link.path, locale))}
                     className="text-6xl sm:text-7xl font-display tracking-tight text-black hover:text-[#DFAB2E] transition-colors inline-block pb-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => closeMenu(false)}
                   >
                     {t(link.key)}
                   </Link>
@@ -255,14 +354,14 @@ export function Navbar({ theme = "light" }: NavbarProps) {
                 className="mt-12"
               >
                  <Link
-                   href={localizedPath('/inquiry', locale) as any}
+                   href={toHref(localizedPath('/inquiry', locale))}
                    className="inline-block bg-[#DFAB2E] text-black px-12 py-5 uppercase tracking-widest text-xs font-bold active:scale-[0.98] transition-transform w-full text-center sm:w-auto"
-                   onClick={() => setIsMobileMenuOpen(false)}
+                   onClick={() => closeMenu(false)}
                  >
                    {t('customOrder')}
                  </Link>
               </motion.div>
-            </div>
+            </nav>
 
             {/* Socials & Contact */}
             <motion.div
@@ -273,7 +372,7 @@ export function Navbar({ theme = "light" }: NavbarProps) {
               className="flex justify-between items-end border-t border-black/10 pt-8"
             >
               <div className="flex flex-col gap-3">
-                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-gray-500">{t('socials')}</p>
+                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-gray-600">{t('socials')}</p>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
                   {/*
                     Was two dead `href="#"` anchors. They now point at the real
@@ -287,7 +386,14 @@ export function Navbar({ theme = "light" }: NavbarProps) {
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-black font-bold uppercase text-[11px] tracking-[0.2em] hover:text-[#DFAB2E] transition-colors"
+                      /*
+                        `py-1.5` takes each target to ~26px tall. At 11px with
+                        no padding they were ~14px, stacked in a `gap-2` column
+                        — 22px centre to centre, so the 24px target circles
+                        required by WCAG 2.5.8 overlapped and the spacing
+                        exception did not apply.
+                      */
+                      className="text-black font-bold uppercase text-[11px] tracking-[0.2em] py-1.5 hover:text-gold-ink transition-colors"
                     >
                       {name}
                     </a>
@@ -296,12 +402,12 @@ export function Navbar({ theme = "light" }: NavbarProps) {
               </div>
               
               <div className="flex flex-col gap-3 text-end">
-                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-gray-500">{t('language')}</p>
+                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-gray-600">{t('language')}</p>
                 <LanguageSwitcher
                   isDarkText={true}
                   isPending={isPending}
                   onSelect={(loc) => {
-                    setIsMobileMenuOpen(false);
+                    closeMenu(false);
                     switchLocale(loc);
                   }}
                 />
@@ -311,6 +417,6 @@ export function Navbar({ theme = "light" }: NavbarProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </header>
   );
 }

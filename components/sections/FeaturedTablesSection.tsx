@@ -2,81 +2,55 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowRight } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRef } from "react";
-import { tables } from "@/content/tables/tables";
+import { tables, coverImage } from "@/content/tables/tables";
 import { localizeTable } from "@/lib/tables-i18n";
 import { getTextDirection } from "@/lib/i18n/direction";
+import { useSafeReducedMotion } from "@/lib/hooks/use-safe-reduced-motion";
 import { rtlIconClass } from "@/lib/i18n/motion";
-import { tableSlug, localizedPath } from "@/lib/urls";
+import { tableHref, localizedPath, toHref } from "@/lib/urls";
+import {
+  balanceColumns,
+  cardBucket,
+  CARD_ASPECT,
+  CARD_ASPECT_RATIO,
+  SECOND_COLUMN_OFFSET,
+} from "@/lib/masonry";
 
 /**
- * Signature commissions on the homepage.
+ * Signature commissions on the homepage, as a two-column masonry board.
  *
- * THE BUG THIS REPLACES. The previous layout was `flex flex-wrap
- * justify-between` with children alternating `md:w-[60%]` and `md:w-[35%]`, and
- * a `gap-x-24`. At the container's real width that is 710 + 414 + 96 = 1220px
- * against 1184px available, so no pair ever fit on a row. Every card wrapped to
- * its own line and the intended two-column rhythm collapsed into a ragged
- * single column separated by 10rem gaps. Adding tables made it worse, not
- * better, because each new card inherited another orphaned row.
+ * HISTORY, because two earlier layouts failed here for different reasons:
  *
- * THE REPLACEMENT. A 12-column CSS grid with explicit spans. Grid cannot
- * silently reflow the way flex-wrap does: a 7 + 5 pair always occupies one row
- * because the columns are declared, not inferred from pixel widths.
+ * 1. `flex flex-wrap justify-between` with children alternating `md:w-[60%]` and
+ *    `md:w-[35%]` plus `gap-x-24`. At the container's real width that is
+ *    710 + 414 + 96 = 1220px against 1184px available, so no pair ever fit on a
+ *    row. Every card wrapped to its own line and the intended two-column rhythm
+ *    collapsed into a ragged single column separated by 10rem gaps.
  *
- * Two further corrections:
+ * 2. A 12-column grid with a repeating 5/5/7 span rhythm and alternating
+ *    `mt-20` offsets. That fixed the reflow, but it deliberately rendered cards
+ *    at three different widths and three different crops, which reads as an
+ *    editorial magazine grid rather than a Pinterest board — and it meant the
+ *    same photograph appeared at a different aspect ratio depending on its index.
  *
- * - ASPECT RATIO IS NOW A LAYOUT DECISION, NOT A DATA ONE. The cards were
- *   rendering `cover.aspect` straight from the content file, which mixes 4/5,
- *   square, 16/9 and 3/4. Mixed ratios across a grid read as an accident. The
- *   ratio is now assigned by grid role, so the wide card is always wide and the
- *   tall card is always tall regardless of what the content file says.
- *
- * - THE STAGGER IS BOUNDED. `md:mt-32` on every second card pushed the offset
- *   further down the page with each row. The offset now applies only within a
- *   pair, via grid row alignment, so the rhythm repeats instead of drifting.
+ * Now every card is exactly 50% of the container in a portrait frame, and the
+ * offset between the two columns comes from packing rather than from hardcoded
+ * margins, so it cannot drift down the page as rows accumulate. The distribution
+ * is computed in `lib/masonry.ts` — see the note there on why this is not
+ * `columns-2` and not a JS measuring pass.
  */
 
 /**
- * Repeating 4-card rhythm across a 12-column grid.
- *
- * The cycle is: tall-wide, tall-narrow (dropped), narrow, wide. That gives two
- * visually distinct rows per cycle and avoids the "two equal columns" default
- * without letting any card become an orphan — 12 divides evenly at every step.
+ * Caption band height as a fraction of column width, used ONLY to predict card
+ * height when balancing the columns. It does not constrain the rendered band.
  */
-const RHYTHM = [
-  {
-    span: "md:col-span-7",
-    ratio: "aspect-[4/5]",
-    heading: "text-2xl md:text-3xl lg:text-4xl",
-    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 58vw, 700px",
-    offset: "",
-  },
-  {
-    span: "md:col-span-5",
-    ratio: "aspect-[3/4]",
-    heading: "text-xl md:text-2xl lg:text-3xl",
-    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 40vw, 480px",
-    offset: "md:mt-20 lg:mt-28",
-  },
-  {
-    span: "md:col-span-5",
-    ratio: "aspect-[4/5]",
-    heading: "text-xl md:text-2xl lg:text-3xl",
-    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 40vw, 480px",
-    offset: "",
-  },
-  {
-    span: "md:col-span-7",
-    ratio: "aspect-[16/11]",
-    heading: "text-2xl md:text-3xl lg:text-4xl",
-    sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 58vw, 700px",
-    offset: "md:mt-20 lg:mt-28",
-  },
-] as const;
+const CAPTION_RATIO = 0.3;
+
+const CARD_SIZES = "(max-width: 768px) 50vw, (max-width: 1376px) 46vw, 610px";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -91,15 +65,30 @@ function ParallaxImage({
   src,
   alt,
   sizes,
-  priority,
+  blurDataURL,
 }: {
   src: string;
   alt: string;
   sizes: string;
-  priority?: boolean;
+  blurDataURL: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
+  /*
+    THIS WAS THE HYDRATION BUG.
+
+    `useReducedMotion()` returns `null` on the server and the real media-query
+    result on the very first client render, so for anyone with reduced motion
+    enabled `y` resolved to a parallax MotionValue on the server and to `0` on the
+    client. The wrapping div's `transform` therefore differed between the two
+    renders, and React reported the mismatch against the deepest node it reached
+    while walking the subtree — the `loading` attribute on the `<img>` below,
+    which was never actually the problem.
+
+    `useSafeReducedMotion()` returns `false` on the server and on the hydrating
+    render, then adopts the real preference once mounted. Parallax is a
+    scroll-driven effect, so nothing is lost by resolving it one tick late.
+  */
+  const reduceMotion = useSafeReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -118,7 +107,25 @@ function ParallaxImage({
           src={src}
           alt={alt}
           fill
-          priority={priority}
+          /*
+            Every card here loads lazily, including the first.
+
+            This section sits below the hero, so none of its images can be the
+            LCP element — but the first card used to carry `priority`, which in
+            Next 16 still injects a `<link rel="preload" as="image">` into the
+            head. That put a 700px table photograph in direct contention with
+            the hero image for early bandwidth, on a page where it is offscreen.
+          */
+          loading="lazy"
+          /*
+            These are 300-800KB photographs. The frame never reflows — its
+            aspect ratio is fixed in CSS — but without a placeholder it sits
+            empty until the image lands. The blur is a 16px inline WebP,
+            ~155 bytes, so it costs nothing and paints with the image's real
+            colours immediately.
+          */
+          placeholder="blur"
+          blurDataURL={blurDataURL}
           className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
           sizes={sizes}
         />
@@ -141,15 +148,27 @@ function ParallaxImage({
 const HOMEPAGE_LIMIT = 6;
 
 export function FeaturedTablesSection() {
-  const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("Featured");
   const tTables = useTranslations("Tables");
-  const tCard = useTranslations("TableCard");
   const localized = tables
     .slice(0, HOMEPAGE_LIMIT)
     .map((table) => localizeTable(table, tTables));
   const isRtl = getTextDirection(locale) === "rtl";
+
+  const cards = localized.map((table) => {
+    const cover = coverImage(table);
+    const bucket = cardBucket(cover);
+    return {
+      table,
+      cover,
+      aspectClass: CARD_ASPECT[bucket],
+      aspectRatio: CARD_ASPECT_RATIO[bucket],
+      captionRatio: CAPTION_RATIO,
+    };
+  });
+
+  const columns = balanceColumns(cards, 2);
 
   return (
     <section className="relative bg-white overflow-x-clip">
@@ -191,109 +210,121 @@ export function FeaturedTablesSection() {
           </div>
 
           <Link
-            href={localizedPath('/tables', locale) as any}
-            className="group flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-gold hover:border-gold transition-colors w-fit shrink-0"
+            href={toHref(localizedPath('/tables', locale))}
+            className="group flex items-center gap-3 font-sans uppercase tracking-wider text-sm font-bold text-black border-b border-black pb-1 hover:text-gold-ink hover:border-gold-ink transition-colors w-fit shrink-0"
           >
             {t("viewAll")}
             <ArrowRight
               size={16}
+              aria-hidden="true"
               className={`transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 ${rtlIconClass(isRtl)}`}
             />
           </Link>
         </div>
 
         {/*
-          `items-start` so each card keeps its own height instead of stretching
-          to the tallest in the row — the varied heights are what produce the
-          editorial rhythm.
+          Two-column masonry, matching the collection page.
+
+          This replaces a four-step twelve-column rhythm (5/5/7 spans with
+          alternating `mt-20` offsets) that produced deliberately mismatched card
+          widths. That reads as an editorial grid, not as the Pinterest board the
+          brief asks for, and it meant the same piece rendered at three different
+          crops depending on its index. Every card is now exactly 50% wide, in a
+          portrait frame, packed shortest-column-first so the columns stagger.
+
+          `items-start` so a column never stretches to match its sibling.
         */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-6 lg:gap-x-10 gap-y-14 md:gap-y-20 items-start">
-          {localized.map((table, index) => {
-            const layout = RHYTHM[index % RHYTHM.length];
-            const cover = table.images[0];
-            const isSold = table.availability === "sold";
+        <div className="grid grid-cols-2 gap-x-3 md:gap-x-6 lg:gap-x-10 items-start">
+          {columns.map((indices, columnIndex) => (
+            <div
+              key={columnIndex}
+              className={`flex flex-col gap-3 md:gap-6 lg:gap-10 min-w-0 ${
+                columnIndex === 1 ? SECOND_COLUMN_OFFSET : ""
+              }`}
+            >
+              {indices.map((i) => {
+                const { table, cover, aspectClass } = cards[i]!;
 
-            return (
-              <motion.article
-                key={table.slug}
-                initial={reduceMotion ? false : { opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.9,
-                  delay: (index % 2) * 0.08,
-                  ease: EASE,
-                }}
-                className={`group ${layout.span} ${layout.offset}`}
-              >
-                <Link href={`/tables/${tableSlug(table.slug, locale)}` as any} className="block">
-                  {/* Cover */}
-                  <div className={`relative w-full ${layout.ratio} overflow-hidden bg-ivory-dark`}>
-                    <ParallaxImage
-                      src={cover.src}
-                      alt={cover.alt}
-                      sizes={layout.sizes}
-                      priority={index === 0}
-                    />
-
+                return (
+                  <motion.article
+                    key={table.slug}
+                    /*
+                      Unconditional. The root `MotionConfig reducedMotion="user"`
+                      suppresses the `y` transform for reduced-motion users while
+                      still fading opacity, so branching here is unnecessary — and
+                      branching was what broke hydration.
+                    */
+                    initial={{ opacity: 0, y: 32 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{
+                      duration: 0.9,
+                      delay: (i % 2) * 0.08,
+                      ease: EASE,
+                    }}
+                    className="group"
+                  >
                     {/*
-                      Availability chip. Only rendered for sold pieces — an
-                      "available" chip on everything else would be noise, and
-                      the enquiry CTA already implies availability.
+                      The card is the control. There is no separate arrow
+                      affordance any more, so the focus ring has to live here or
+                      keyboard users get no indication of where they are.
                     */}
-                    {isSold ? (
-                      <span className="absolute top-4 start-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 font-sans text-[10px] uppercase tracking-[0.2em] text-black">
-                        {tCard("sold")}
-                      </span>
-                    ) : null}
+                    <Link
+                      href={toHref(tableHref(table.slug, locale))}
+                      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    >
+                      {/* Cover */}
+                      <div
+                        className={`relative w-full ${aspectClass} overflow-hidden bg-ivory-dark`}
+                      >
+                        <ParallaxImage
+                          src={cover.src}
+                          alt={cover.alt}
+                          sizes={CARD_SIZES}
+                          blurDataURL={cover.blurDataURL}
+                        />
 
-                    {/*
-                      Hover scrim. Sits above the image and below the caption,
-                      so the caption text stays fully opaque while the image
-                      dims slightly behind it.
-                    */}
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700"
-                    />
-                  </div>
-
-                  {/* Caption */}
-                  <div className="pt-5 flex items-start justify-between gap-6">
-                    <div className="min-w-0">
-                      <div className="flex items-baseline gap-3 mb-2">
+                        {/*
+                          Hover scrim. Sits above the image and below the caption,
+                          so the caption text stays fully opaque while the image
+                          dims slightly behind it.
+                        */}
                         <span
                           aria-hidden="true"
-                          className="font-sans text-[10px] text-gold tabular-nums tracking-[0.2em] shrink-0"
-                        >
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <span
-                          aria-hidden="true"
-                          className="h-px flex-1 bg-black/10 group-hover:bg-gold/50 transition-colors duration-500"
+                          className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700"
                         />
                       </div>
 
-                      <h3
-                        className={`font-display ${layout.heading} text-black tracking-tight leading-[1.15] pb-0.5 mb-2 group-hover:text-gold transition-colors duration-300`}
-                      >
-                        {table.name}
-                      </h3>
-                      <p className="font-sans text-xs md:text-sm text-gray-500 uppercase tracking-[0.15em]">
-                        {table.wood} &middot; {table.resinColor}
-                      </p>
-                    </div>
+                      {/*
+                        Caption band: name over subtitle, on gold.
 
-                    <ArrowRight
-                      size={18}
-                      aria-hidden="true"
-                      className={`shrink-0 mt-8 text-black/25 group-hover:text-gold transition-all duration-500 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 ${rtlIconClass(isRtl)}`}
-                    />
-                  </div>
-                </Link>
-              </motion.article>
-            );
-          })}
+                        `mt-2` rather than flush to the image. Butted directly
+                        against the photograph the gold read as part of the
+                        picture — a colour block cropping the bottom of the table
+                        — instead of as a label belonging to it.
+
+                        The index number and the per-card arrow are gone: the
+                        number was decorative ordering that carried no meaning,
+                        and the arrow duplicated a link the whole card provides.
+                      */}
+                      <div className="mt-2 bg-[#DFAB2E] group-hover:bg-[#d3a02a] transition-colors duration-500 px-3 py-3 md:px-5 md:py-4 lg:px-6 lg:py-5">
+                        <h3 className="font-display text-base md:text-2xl lg:text-3xl text-black tracking-tight leading-[1.15] pb-0.5">
+                          {table.name}
+                        </h3>
+                        {/*
+                          black/75 rather than a grey: grey-on-gold drops under
+                          4.5:1 at this size, and this line is already small caps.
+                        */}
+                        <p className="font-sans text-[10px] md:text-sm lg:text-base text-black/75 uppercase tracking-[0.15em] mt-1 md:mt-2">
+                          {[table.wood, table.resinColor].filter(Boolean).join(" · ")}
+                        </p>
+                      </div>
+                    </Link>
+                  </motion.article>
+                );
+              })}
+            </div>
+          ))}
         </div>
         </div>
       </div>

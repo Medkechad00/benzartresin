@@ -92,6 +92,26 @@
   --color-gold-dark: #C49A1F;
   --color-ivory-dark: #EDE8DB;
 
+  /*
+    Gold, dark enough to be read.
+
+    The brand gold is a background colour. #E4B028 on white is 1.99:1 and
+    #C49A1F is 2.63:1 — both far under the 4.5:1 that body text needs and under
+    the 3:1 that large text and UI boundaries need. Black on gold, which is how
+    every button and heading slab on this site is built, is 10:1 and is fine;
+    the failures were all gold used AS text or as a border on a light surface,
+    mostly in hover states, which are in scope for 1.4.3 like any other state.
+
+    This token is the same hue, taken down until it passes on both light
+    surfaces the site uses:
+      #7E600A on white  #FFFFFF -> 5.89:1
+      #7E600A on ivory  #F5F1E8 -> 5.23:1
+    It is only ever used for gold-coloured TEXT, links, markers and focus
+    borders on light backgrounds. On black, `--color-gold` already gives 10.5:1
+    and is left exactly as it was.
+  */
+  --color-gold-ink: #7E600A;
+
   --font-display: 'Modern Romance', serif;
   --font-sans: 'Louis George Cafe', sans-serif;
 
@@ -182,4 +202,112 @@ html[lang="ar"] body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/*
+  Visually hidden, still announced.
+
+  Tailwind ships `sr-only`, but this file is imported by a v4 build with no
+  plugin config and the class is only generated when it is detected in source —
+  which is fragile for a utility that exists precisely to hold text nobody
+  looks at. Declaring it here makes it unconditional.
+
+  `clip-path` plus 1px box rather than `display:none` or `width:0`: both of
+  those remove the element from the accessibility tree, which defeats the point.
+*/
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/*
+  The skip link.
+
+  Hidden until focused, then pinned to the top of the viewport. It must sit
+  above the navbar (`z-50`) or it lands underneath the very chrome it exists to
+  skip, so `z-index` is 100.
+
+  `inset-inline-start` rather than `left` so it appears at the leading edge in
+  Arabic too.
+*/
+.skip-link {
+  position: absolute;
+  inset-inline-start: 0.75rem;
+  top: -100vh;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 0.75rem;
+  outline: 3px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/*
+  Focus baseline.
+
+  Several components set `outline-none` and replace it with a `focus-visible`
+  ring, which is correct. Several others set `outline-none` and replaced it with
+  a 1px colour change on a hairline border — around 1.2:1 against the unfocused
+  state, which is not a focus indicator. Rather than audit every call site
+  forever, this guarantees a floor: anything focused by keyboard that has not
+  drawn its own ring gets a visible one.
+
+  `:focus-visible` only, so a mouse click on a button does not leave a ring
+  behind. The `:where()` wrapper keeps specificity at zero so any component that
+  does define its own ring still wins.
+*/
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-black);
+  outline-offset: 2px;
+}
+
+/*
+  Reduced motion.
+
+  Nothing here honoured `prefers-reduced-motion` in CSS. `MotionProvider` sets
+  `reducedMotion="user"`, which covers every `motion.*` component — but it
+  cannot touch the ~95 Tailwind `transition-*` declarations, the
+  `group-hover:scale-105` image zooms, `animate-spin`, or `scroll-smooth` on
+  <html>. Those are author CSS and they override the OS preference silently.
+
+  `scroll-behavior: auto` is the important line: `scroll-smooth` on <html>
+  turns every in-page anchor (the article table of contents, the footer's
+  /#testimonials link, the legal page section links) into a long animated
+  scroll, which is a vestibular trigger and is exactly what this media query
+  exists to prevent.
+
+  Durations are set to 0.01ms rather than 0 so `transitionend`/`animationend`
+  still fire; a handler waiting on one of those would otherwise never run.
+  `animation-iteration-count: 1` stops infinite spinners without hiding them.
+*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
 }

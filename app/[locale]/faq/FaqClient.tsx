@@ -8,7 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildFAQPageSchema } from "@/lib/seo/schema";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
 
 type FaqItem = { question: string; answer: string };
 
@@ -57,15 +57,21 @@ export default function FaqClient() {
                 transition={{ duration: 0.6, delay: index * 0.05 }}
                 className="border-b border-black/10"
               >
-                <h3>
+                {/*
+                  `h2`, not `h3`. The page heading is the `h1` above, so `h3`
+                  skipped a level on every question — and with 8+ items that was
+                  8+ breaks in the outline on one page.
+                */}
+                <h2>
                   <button
                     id={buttonId}
+                    type="button"
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     onClick={() => setOpenIndex(isOpen ? null : index)}
                     className="w-full flex items-center justify-between gap-8 py-8 text-start group"
                   >
-                    <span className="font-display text-2xl group-hover:text-gold transition-colors">
+                    <span className="font-display text-2xl group-hover:text-gold-ink transition-colors">
                       {faq.question}
                     </span>
                     <CaretDown
@@ -75,25 +81,35 @@ export default function FaqClient() {
                       className={`shrink-0 transform transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
                     />
                   </button>
-                </h3>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      id={panelId}
-                      role="region"
-                      aria-labelledby={buttonId}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <p className="font-sans text-gray-600 leading-relaxed pb-8 max-w-3xl">
-                        {faq.answer}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                </h2>
+                {/*
+                  The panel container is always in the DOM, so `aria-controls`
+                  above always resolves.
+
+                  Previously `AnimatePresence` unmounted the whole panel when
+                  closed, which left `aria-controls="faq-panel-N"` pointing at a
+                  non-existent element on every collapsed item — an invalid ARIA
+                  reference on all but one question at any moment. The wrapper
+                  now persists and only its contents animate in and out, which
+                  keeps the exit transition and makes the reference honest.
+                */}
+                <div id={panelId} role="region" aria-labelledby={buttonId}>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="font-sans text-gray-600 leading-relaxed pb-8 max-w-3xl">
+                          {faq.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </motion.div>
             );
           })}
@@ -102,7 +118,7 @@ export default function FaqClient() {
         <div className="mt-20 border-t border-black/10 pt-12 flex flex-col sm:flex-row sm:items-center gap-6">
           <p className="font-display text-2xl text-black">{t("stillAsking")}</p>
           <Link
-            href={localizedPath('/inquiry', locale) as any}
+            href={toHref(localizedPath('/inquiry', locale))}
             className="bg-black text-white px-8 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98] w-fit"
           >
             {t("stillAskingCta")}

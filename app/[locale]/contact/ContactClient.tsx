@@ -1,6 +1,7 @@
 "use client";
 
 import { PageLayout } from "@/components/layout/PageLayout";
+import { contactImage } from "@/content/section-images";
 import { motion, useScroll, useTransform } from "motion/react";
 import Image from "next/image";
 import { useRef } from "react";
@@ -9,9 +10,19 @@ import { Link } from "@/i18n/routing";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildLocalBusinessSchema } from "@/lib/seo/schema";
 import { SITE } from "@/lib/site-config";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
 
-const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, caption: string }) => {
+const CinematicImageBreak = ({
+  src,
+  alt,
+  caption,
+  blurDataURL,
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+  blurDataURL: string;
+}) => {
   const imgRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: imgRef,
@@ -37,6 +48,9 @@ const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, 
             src={src}
             alt={alt}
             fill
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL={blurDataURL}
             className="object-cover"
             /*
               `sizes` was missing entirely, so the browser assumed 100vw and
@@ -48,7 +62,7 @@ const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, 
           />
         </motion.div>
       </div>
-      <figcaption className="text-start font-sans text-xs uppercase tracking-widest text-gray-400 mt-4">
+      <figcaption className="text-start font-sans text-xs uppercase tracking-widest text-gray-600 mt-4">
         {caption}
       </figcaption>
     </figure>
@@ -92,7 +106,7 @@ export default function ContactClient() {
                 {t("commissionNote")}
               </p>
               <Link
-                href={localizedPath('/inquiry', locale) as any}
+                href={toHref(localizedPath('/inquiry', locale))}
                 className="inline-block bg-black text-white px-6 py-4 uppercase tracking-widest text-xs font-bold hover:bg-[#DFAB2E] hover:text-black transition-colors active:scale-[0.98]"
               >
                 {t("commissionCta")}
@@ -109,25 +123,29 @@ export default function ContactClient() {
               className="grid grid-cols-1 sm:grid-cols-2 gap-16 border-t border-black/10 pt-16"
             >
               <div>
-                <h3 className="font-sans font-bold uppercase tracking-widest text-xs mb-6 text-[#DFAB2E]">{t("generalHeading")}</h3>
-                <a href={`mailto:${SITE.email}`} className="block font-display text-2xl md:text-3xl text-black hover:text-gray-500 transition-colors mb-2 break-words">{SITE.email}</a>
+                {/*
+                  `h2`, not `h3`. These three sit directly under the page `h1`,
+                  so `h3` skipped a level in the document outline.
+                */}
+                <h2 className="font-sans font-bold uppercase tracking-widest text-xs mb-6 text-[#DFAB2E]">{t("generalHeading")}</h2>
+                <a href={`mailto:${SITE.email}`} className="block font-display text-2xl md:text-3xl text-black hover:text-gray-600 transition-colors mb-2 break-words">{SITE.email}</a>
                 {SITE.telephone ? (
                   <a href={`tel:${SITE.telephone}`} className="block font-sans text-gray-600 hover:text-black transition-colors text-end" dir="ltr">{SITE.telephoneDisplay}</a>
                 ) : null}
               </div>
 
               <div>
-                <h3 className="font-sans font-bold uppercase tracking-widest text-xs mb-6 text-[#DFAB2E]">{t("atelierHeading")}</h3>
+                <h2 className="font-sans font-bold uppercase tracking-widest text-xs mb-6 text-[#DFAB2E]">{t("atelierHeading")}</h2>
                 <p className="font-display text-2xl md:text-3xl text-black mb-2">{t("address.street")}</p>
                 <p className="font-sans text-gray-600">{t("address.locality")}, {t("address.country")}</p>
               </div>
 
               <div>
-                <h3 className="font-sans font-bold uppercase tracking-widest text-xs mb-6 text-[#DFAB2E]">{t("socialHeading")}</h3>
+                <h2 className="font-sans font-bold uppercase tracking-widest text-xs mb-6 text-[#DFAB2E]">{t("socialHeading")}</h2>
                 {SITE.socialLinks.length > 0 ? (
                   <div className="flex flex-col gap-2">
                     {SITE.socialLinks.map(({ name, url }) => (
-                      <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="font-display text-2xl md:text-3xl text-black hover:text-gray-500 transition-colors">
+                      <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="font-display text-2xl md:text-3xl text-black hover:text-gray-600 transition-colors">
                         {name}
                       </a>
                     ))}
@@ -140,9 +158,10 @@ export default function ContactClient() {
 
             <div className="mt-8">
               <CinematicImageBreak
-                src="/images/workshop_wide.png"
+                src={contactImage.src}
                 alt={t("workshopAlt")}
                 caption={t("workshopCaption")}
+                blurDataURL={contactImage.blurDataURL}
               />
             </div>
 

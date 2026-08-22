@@ -5,6 +5,7 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
+import { craftLeadImage, craftPourImage, craftPhaseImages } from "@/content/section-images";
 
 const RevealParagraph = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
@@ -18,7 +19,17 @@ const RevealParagraph = ({ children, delay = 0 }: { children: React.ReactNode, d
   </motion.div>
 );
 
-const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, caption: string }) => {
+const CinematicImageBreak = ({
+  src,
+  alt,
+  caption,
+  blurDataURL,
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+  blurDataURL: string;
+}) => {
   const imgRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: imgRef,
@@ -41,12 +52,15 @@ const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, 
             src={src}
             alt={alt}
             fill
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL={blurDataURL}
             className="object-cover"
             sizes="(max-width: 1280px) 100vw, 1280px"
           />
         </motion.div>
       </div>
-      <figcaption className="text-start font-sans text-xs uppercase tracking-widest text-gray-400 mt-4">
+      <figcaption className="text-start font-sans text-xs uppercase tracking-widest text-gray-600 mt-4">
         {caption}
       </figcaption>
     </figure>
@@ -56,37 +70,21 @@ const CinematicImageBreak = ({ src, alt, caption }: { src: string, alt: string, 
 type Phase = { title: string; body: string; alt: string };
 
 /**
- * One photograph per phase, index-matched to `OurCraft.phases` in the message
- * files. The order is load-bearing, so it is paired with each phase's authored
- * alt text below:
+ * The phase photographs now live in `content/section-images.ts` as
+ * `craftPhaseImages`, index-matched to `OurCraft.phases` in the message files.
  *
- *   0 Consultation  "Consultation call with a client"
- *   1 Design        "Measured drawing and material board"
- *   2 Selection     "Client choosing a walnut board from photographs"
- *   3 Production    "Resin being poured into a mould"
- *   4 Delivery      "Table being installed in a client's home"
+ * WHAT THIS REPLACES. A local array of five `/images/*.png` paths — placeholders,
+ * three of which were also used elsewhere on this same page, so the route showed
+ * the same photograph three times. It has been swapped for the five supplied
+ * `phase1`..`phase5` assets, mapped to steps 1-5 in filename order.
  *
- * This array held three entries against five phases, so `PHASE_IMAGES[3]` and
- * `[4]` were `undefined`. next/image renders an undefined src as `src=""`, which
- * makes the browser re-request the current document: two broken images and two
- * wasted page loads on every visit to this route, in all three locales.
- *
- * Filling it in also corrects two mismatches that existed among the three that
- * were present: index 0 showed wood selection under the consultation alt, and
- * index 2 showed the final finish under the board-selection alt. Alt text that
- * describes something the image does not show is worse than no alt at all.
- *
- * Phase 0 is the one honest compromise: there is no consultation photograph in
- * the library, so it uses the workshop establishing shot. That alt string should
- * be rewritten to match, or a real photograph supplied.
+ * Phases 3, 4 and 5 depict their step literally: a slab being milled, a cured top
+ * being trimmed, a wrapped table carried into a villa. Phases 1 and 2 are both
+ * finished tables standing in for "Consultation" and "Design", which are not
+ * things the studio has photographed. The alt text in the message files describes
+ * what is actually in each frame rather than repeating the step name, so the page
+ * never claims to show a consultation that is not there.
  */
-const PHASE_IMAGES = [
-  "/images/workshop_wide.png",
-  "/images/material_detail.png",
-  "/images/process_wood_selection.png",
-  "/images/process_resin_pour.png",
-  "/images/hero_lifestyle.png",
-] as const;
 
 export default function OurCraftClient() {
   const t = useTranslations("OurCraft");
@@ -94,7 +92,14 @@ export default function OurCraftClient() {
   const { scrollY } = useScroll();
   const [isInProcessSection, setIsInProcessSection] = useState(false);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
+  /**
+   * The callback takes no argument on purpose.
+   *
+   * `useMotionValueEvent` supplies the latest scroll offset, but this handler
+   * needs the section's position relative to the viewport, not the document, so
+   * it reads `getBoundingClientRect()` instead and the argument was unused.
+   */
+  useMotionValueEvent(scrollY, "change", () => {
     if (!processSectionRef.current) return;
     const rect = processSectionRef.current.getBoundingClientRect();
     setIsInProcessSection(rect.top < window.innerHeight * 0.4);
@@ -104,9 +109,10 @@ export default function OurCraftClient() {
     ...phase,
     /*
       Never `undefined`. The phase list is authored content and can grow, so a
-      sixth phase must degrade to a real photograph rather than to `src=""`.
+      sixth phase must degrade to a real photograph rather than to `src=""`,
+      which next/image renders as a re-request of the current document.
     */
-    image: PHASE_IMAGES[i] ?? PHASE_IMAGES[PHASE_IMAGES.length - 1],
+    image: craftPhaseImages[i] ?? craftPhaseImages[craftPhaseImages.length - 1]!,
   }));
 
   return (
@@ -114,49 +120,39 @@ export default function OurCraftClient() {
       <div className="w-full px-6 md:px-12 py-16 md:py-24">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
 
-          {/* Sticky sidebar — switches content when process section is in view */}
+          {/* Sticky sidebar — heading swaps when the process section is in view */}
           <div className="lg:w-1/3 lg:sticky lg:top-40 shrink-0">
-            {isInProcessSection ? (
-              <>
-                <motion.h1
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="font-display text-5xl md:text-7xl lg:text-8xl text-black tracking-tight leading-[0.9] mb-8"
-                >
-                  <span className="bg-[#DFAB2E] box-decoration-clone px-[0.12em] pt-[0.02em] pb-[0.06em]">
-                    {t("processHeading")}
-                  </span>
-                </motion.h1>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className="font-sans text-gray-600 text-lg leading-relaxed mb-8 pe-8"
-                >
-                  {t("description")}
-                </motion.p>
-              </>
-            ) : (
-              <>
-                <motion.h1
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="font-display text-5xl md:text-7xl lg:text-8xl text-black tracking-tight leading-[0.9] mb-8"
-                >
-                  <span className="bg-[#DFAB2E]">{t("title")}</span>
-                </motion.h1>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className="font-sans text-gray-600 text-lg leading-relaxed mb-8 pe-8"
-                >
-                  {t("description")}
-                </motion.p>
-              </>
-            )}
+            {/*
+              One <h1> and one <p>, not two copies of both.
+
+              These were two sibling branches whose only difference was the
+              heading key — `processHeading` versus `title` — with a byte-identical
+              paragraph duplicated in each. Because the branches were separate
+              elements, crossing the section boundary UNMOUNTED one subtree and
+              mounted the other, which replayed both entry animations every single
+              time the visitor scrolled across the threshold. Switching the text
+              inside stable elements keeps the intended swap, animates once, and
+              guarantees the page has exactly one h1 element rather than two that
+              alternate.
+            */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="font-display text-5xl md:text-7xl lg:text-8xl text-black tracking-tight leading-[0.9] mb-8"
+            >
+              <span className="bg-[#DFAB2E] box-decoration-clone px-[0.12em] pt-[0.02em] pb-[0.06em]">
+                {isInProcessSection ? t("processHeading") : t("title")}
+              </span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="font-sans text-gray-600 text-lg leading-relaxed mb-8 pe-8"
+            >
+              {t("description")}
+            </motion.p>
           </div>
 
           <div className="lg:w-2/3 flex flex-col min-w-0">
@@ -167,12 +163,19 @@ export default function OurCraftClient() {
               className="relative w-full aspect-[3/4] md:aspect-[4/5] bg-gray-100 mb-16"
             >
               <Image
-                src="/images/about_artisan.png"
-                alt={t("artisanAlt")}
+                src={craftLeadImage.src}
+                alt={t("leadImageAlt")}
                 fill
+                /*
+                  Lead image of the route and its LCP element. `priority` was
+                  deprecated in Next 16 in favour of stating the intent directly.
+                */
+                loading="eager"
+                fetchPriority="high"
+                placeholder="blur"
+                blurDataURL={craftLeadImage.blurDataURL}
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 60vw"
-                priority
               />
             </motion.div>
 
@@ -193,9 +196,10 @@ export default function OurCraftClient() {
             </div>
 
             <CinematicImageBreak
-              src="/images/workshop_wide.png"
+              src={craftPourImage.src}
               alt={t("workshopAlt")}
               caption={t("workshopCaption")}
+              blurDataURL={craftPourImage.blurDataURL}
             />
 
             <motion.h2
@@ -236,17 +240,20 @@ export default function OurCraftClient() {
                     transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
                     className="flex flex-col gap-6"
                   >
-                    <div className="relative aspect-[16/9] bg-gray-100">
+                    <div className="relative aspect-[16/9] bg-ivory-dark">
                       <Image
-                        src={phase.image}
+                        src={phase.image.src}
                         alt={phase.alt}
                         fill
+                        loading="lazy"
+                        placeholder="blur"
+                        blurDataURL={phase.image.blurDataURL}
                         className="object-cover"
                         sizes="(max-width: 1024px) 100vw, 60vw"
                       />
                     </div>
                     <div>
-                      <span className="font-sans text-xs text-gray-400 uppercase tracking-widest block mb-3">
+                      <span className="font-sans text-xs text-gray-600 uppercase tracking-widest block mb-3">
                         {t("phaseLabel")} {String(index + 1).padStart(2, "0")}
                       </span>
                       <h3 className="font-display text-2xl md:text-3xl text-black mb-4">

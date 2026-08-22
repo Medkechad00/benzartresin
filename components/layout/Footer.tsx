@@ -2,12 +2,11 @@
 
 import { Link } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { ArrowRight, CircleNotch, InstagramLogo, PinterestLogo, type Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { SITE } from "@/lib/site-config";
 import { Logo } from "@/components/layout/Logo";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
 
 /** Maps the platform names in SITE.socialLinks onto their Phosphor icons. */
 const SOCIAL_ICONS: Record<string, PhosphorIcon | undefined> = {
@@ -18,19 +17,9 @@ const SOCIAL_ICONS: Record<string, PhosphorIcon | undefined> = {
 type SubscribeStatus = "idle" | "submitting" | "success" | "error";
 
 export function Footer() {
-  const containerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end end"]
-  });
-  
   const navT = useTranslations("Navbar");
   const footerT = useTranslations("Footer");
   const locale = useLocale();
-
-  const textScale = useTransform(scrollYProgress, [0.5, 1], [0.9, 1]);
-  const textOpacity = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
-  const textBlur = useTransform(scrollYProgress, [0.5, 1], ["blur(10px)", "blur(0px)"]);
 
   /**
    * Newsletter sign-up.
@@ -79,7 +68,7 @@ export function Footer() {
   };
 
   return (
-    <footer ref={containerRef} className="bg-black text-white pt-24 md:pt-32 pb-8 px-6 md:px-12 relative overflow-hidden">
+    <footer className="bg-black text-white pt-24 md:pt-32 pb-8 px-6 md:px-12 relative overflow-hidden">
       {/* Top Grid */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 relative z-10">
         
@@ -93,10 +82,25 @@ export function Footer() {
           </p>
           
           <div className="mt-auto">
-            <h4 className="font-sans text-white text-sm font-bold uppercase tracking-widest mb-4">{footerT('newsletter')}</h4>
+            <h2 className="font-sans text-white text-sm font-bold uppercase tracking-widest mb-4">{footerT('newsletter')}</h2>
             <form className="max-w-sm" onSubmit={handleSubscribe} noValidate>
-              <div className="flex items-end border-b border-white/20 pb-2 group focus-within:border-white/50 transition-colors">
+              <div className="flex items-end border-b border-white/40 pb-2 group focus-within:border-[#DFAB2E] transition-colors">
+                {/*
+                  A real <label>, visually hidden.
+
+                  The field previously had no `<label>` at all: its accessible
+                  name came from `aria-label`, set to the same string as the
+                  `placeholder`. That satisfies 4.1.2 but not 3.3.2 — the only
+                  visible labelling was placeholder text, which disappears the
+                  moment anything is typed, leaving no way to tell what the field
+                  wanted. `sr-only` keeps the layout identical and gives the
+                  input a permanent, programmatically associated name.
+                */}
+                <label htmlFor="newsletter-email" className="sr-only">
+                  {footerT('newsletterPlaceholder')}
+                </label>
                 <input
+                  id="newsletter-email"
                   type="email"
                   name="email"
                   required
@@ -112,10 +116,11 @@ export function Footer() {
                   }}
                   disabled={status === "submitting"}
                   placeholder={footerT('newsletterPlaceholder')}
-                  aria-label={footerT('newsletterPlaceholder')}
+                  /* 1.3.5 Identify Input Purpose — this was missing. */
+                  autoComplete="email"
                   aria-describedby="newsletter-feedback"
                   aria-invalid={status === "error" || undefined}
-                  className="bg-transparent border-none outline-none text-white placeholder:text-gray-600 font-sans text-sm w-full focus:ring-0 px-0 disabled:opacity-50"
+                  className="bg-transparent border-none outline-none text-white placeholder:text-gray-400 font-sans text-sm w-full focus:ring-0 px-0 disabled:opacity-50"
                 />
 
                 {/*
@@ -143,13 +148,29 @@ export function Footer() {
                   data-form-type="other"
                   data-bwignore="true"
                   aria-hidden="true"
-                  className="absolute -left-[9999px] w-px h-px opacity-0"
+                  /*
+                    `start-[-9999px]`, not `-left-[9999px]`. The physical form
+                    pushes the field off the *left* edge, which under dir="rtl"
+                    is the overflow side rather than the leading side — the
+                    classic RTL horizontal-scrollbar bug. It only stayed
+                    invisible here because <footer> happens to carry
+                    `overflow-hidden`. The logical property is correct in both
+                    directions and does not depend on that.
+                  */
+                  className="absolute start-[-9999px] w-px h-px opacity-0"
                 />
 
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="text-gray-400 group-hover:text-[#DFAB2E] transition-colors pb-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  /*
+                    `p-1` takes the hit area from 20x24 to 28x32. WCAG 2.5.8
+                    wants 24x24, and the icon alone was 20px wide with the email
+                    input as an immediately adjacent sibling in the same flex row
+                    — so the spacing exception was unavailable and this was a
+                    genuine failure.
+                  */
+                  className="p-1 -me-1 text-gray-400 group-hover:text-[#DFAB2E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label={footerT('newsletterCta')}
                 >
                   {status === "submitting" ? (
@@ -181,33 +202,51 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Navigation Columns */}
-        <div className="md:col-span-3 md:col-start-7 flex flex-col gap-6">
-          <h4 className="font-sans text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">{footerT('explore')}</h4>
-          <Link href={localizedPath('/tables', locale) as any} className="group w-fit">
+        {/*
+          Navigation Columns.
+
+          `<nav>` with `aria-labelledby`, not a bare `<div>`. Three named
+          navigation landmarks (primary, footer-explore, footer-connect) is what
+          lets a screen-reader user jump straight to the link group they want;
+          previously the footer's twelve links were in no landmark at all.
+        */}
+        <nav aria-labelledby="footer-explore" className="md:col-span-3 md:col-start-7 flex flex-col gap-6">
+          <h2 id="footer-explore" className="font-sans text-gray-300 text-xs font-bold uppercase tracking-widest mb-2">{footerT('explore')}</h2>
+          <Link href={toHref(localizedPath('/tables', locale))} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('collection')}</span>
           </Link>
-          <Link href={localizedPath('/our-craft', locale) as any} className="group w-fit">
+          <Link href={toHref(localizedPath('/our-craft', locale))} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('ourCraft')}</span>
           </Link>
-          <Link href={localizedPath('/blog', locale) as any} className="group w-fit">
+          <Link href={toHref(localizedPath('/blog', locale))} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('journal')}</span>
           </Link>
-        </div>
+        </nav>
 
         {/* Contact Column */}
-        <div className="md:col-span-3 md:col-start-10 flex flex-col gap-6">
-          <h4 className="font-sans text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">{footerT('connect')}</h4>
-          <Link href={localizedPath('/inquiry', locale) as any} className="group w-fit">
+        <nav aria-labelledby="footer-connect" className="md:col-span-3 md:col-start-10 flex flex-col gap-6">
+          <h2 id="footer-connect" className="font-sans text-gray-300 text-xs font-bold uppercase tracking-widest mb-2">{footerT('connect')}</h2>
+          <Link href={toHref(localizedPath('/inquiry', locale))} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{navT('customOrder')}</span>
           </Link>
-          <Link href={"/#testimonials" as any} className="group w-fit">
+          {/*
+            `/` plus a hash, not `"/#testimonials"`.
+
+            next-intl looks an href up as a key in the `pathnames` map;
+            `/#testimonials` is not a key, so it was passed through verbatim and
+            prefixed, producing `/en/#testimonials`. next-intl's trailing-slash
+            guard matches `/` and `/?query` but not `/#hash`, so the slash
+            survived and Next then 308-redirected to `/en#testimonials`. Passing
+            the pathname and the hash as separate fields lets `Link` build the
+            URL correctly and skips the redirect.
+          */}
+          <Link href={toHref({ pathname: '/', hash: 'testimonials' })} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{footerT('clientele')}</span>
           </Link>
-          <Link href={localizedPath('/contact', locale) as any} className="group w-fit">
+          <Link href={toHref(localizedPath('/contact', locale))} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{footerT('contact')}</span>
           </Link>
-          <Link href={localizedPath('/faq', locale) as any} className="group w-fit">
+          <Link href={toHref(localizedPath('/faq', locale))} className="group w-fit">
             <span className="font-sans text-sm text-gray-300 group-hover:text-white transition-colors relative after:absolute after:bottom-0 after:start-0 after:h-[1px] after:w-0 after:bg-[#DFAB2E] after:transition-all after:duration-300 group-hover:after:w-full pb-1">{footerT('faq')}</span>
           </Link>
           
@@ -234,48 +273,34 @@ export function Footer() {
               );
             })}
           </div>
-        </div>
+        </nav>
 
       </div>
 
-      {/* Massive Graphic Typography */}
-      <div className="max-w-7xl mx-auto mt-24 md:mt-32 relative z-0 flex items-center justify-center overflow-hidden">
-        <motion.div 
-          style={{ 
-            scale: textScale, 
-            opacity: textOpacity,
-            filter: textBlur
-          }}
-          className="w-full flex justify-center"
-        >
-          {/*
-            Decorative wordmark. Sized down from 15vw when the brand went from
-            "Benzart" (7 characters) to the full "Benzart Resin" (13), which
-            overflowed the viewport at the old size. `whitespace-nowrap` keeps
-            it on one line rather than breaking mid-brand.
-          */}
-          <h2 className="font-display text-[8vw] leading-[0.8] text-center text-white/5 uppercase tracking-tighter select-none pointer-events-none whitespace-nowrap">
-            {SITE.name}
-          </h2>
-        </motion.div>
-      </div>
+      {/*
+        Bottom Bar.
 
-      {/* Bottom Bar */}
-      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+        `mt-16 md:mt-20` rather than `mt-12`. The decorative wordmark that used to
+        sit above this carried `mt-24 md:mt-32` plus its own height, so removing
+        it took roughly 130px out of the footer and left the link columns sitting
+        close on top of the copyright rule. This restores proportion without
+        reintroducing that bulk.
+      */}
+      <div className="max-w-7xl mx-auto mt-16 md:mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
         
         {/* Left Side: Copyright & Legal Links */}
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-          <p className="font-sans text-gray-600 text-xs">
+          <p className="font-sans text-gray-400 text-xs">
             &copy; {new Date().getFullYear()} {SITE.name}. {footerT('rights')}
           </p>
           <div className="flex gap-6">
-            <Link href={localizedPath('/privacy', locale) as any} className="font-sans text-gray-600 text-xs hover:text-white transition-colors">{footerT('privacy')}</Link>
-            <Link href={localizedPath('/terms', locale) as any} className="font-sans text-gray-600 text-xs hover:text-white transition-colors">{footerT('terms')}</Link>
+            <Link href={toHref(localizedPath('/privacy', locale))} className="font-sans text-gray-400 text-xs hover:text-white transition-colors">{footerT('privacy')}</Link>
+            <Link href={toHref(localizedPath('/terms', locale))} className="font-sans text-gray-400 text-xs hover:text-white transition-colors">{footerT('terms')}</Link>
           </div>
         </div>
 
         {/* Right Side: Agency Tag */}
-        <a href="https://bidayalab.com" target="_blank" rel="noopener noreferrer" className="font-sans text-gray-500 text-[10px] uppercase tracking-[0.2em] hover:text-[#DFAB2E] transition-colors font-bold">
+        <a href="https://bidayalab.com" target="_blank" rel="noopener noreferrer" className="font-sans text-gray-400 text-[10px] uppercase tracking-[0.2em] hover:text-[#DFAB2E] transition-colors font-bold">
           CRAFTED IN THE LABS OF BIDAYALAB
         </a>
         

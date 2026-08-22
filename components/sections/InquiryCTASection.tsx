@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { ArrowRight } from "@phosphor-icons/react";
 import { useTranslations, useLocale } from "next-intl";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
+import { ctaImage } from "@/content/section-images";
 
 export function InquiryCTASection() {
-  const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("InquiryCTA");
 
@@ -19,12 +19,12 @@ export function InquiryCTASection() {
         {/* Left: Emotional & Collaborative Typography */}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-start py-4 md:py-0">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           >
-            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-6 block">
+            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-600 mb-6 block">
               {t("eyebrow")}
             </span>
             
@@ -38,7 +38,7 @@ export function InquiryCTASection() {
             </p>
 
             <Link
-              href={localizedPath('/inquiry', locale) as any}
+              href={toHref(localizedPath('/inquiry', locale))}
               className="group relative inline-flex items-center gap-6 pb-4 border-b-2 border-black hover:border-[#DFAB2E] transition-colors duration-500 w-max"
             >
               <span className="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-black group-hover:text-[#DFAB2E] transition-colors">
@@ -52,16 +52,19 @@ export function InquiryCTASection() {
         {/* Right: Clean Editorial Image */}
         <div className="w-full md:w-1/2 relative">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+            initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
             whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
             className="relative w-full h-full min-h-[400px] md:min-h-0 overflow-hidden shadow-2xl rounded-sm"
           >
             <Image
-              src="/images/table_golden_current.png"
+              src={ctaImage.src}
               alt={t("imageAlt")}
               fill
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL={ctaImage.blurDataURL}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />

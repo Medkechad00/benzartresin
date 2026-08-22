@@ -2,6 +2,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
 import { Link } from '@/i18n/routing';
 import { slugifyHeading } from '@/lib/blog';
+import { localizeMdxHref, toHref } from '@/lib/urls';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 
 /** Flattens a heading's children to plain text so it can be slugified. */
@@ -18,8 +19,14 @@ function textOf(node: ReactNode): string {
 /**
  * Article typography for MDX bodies. Spacing uses logical properties
  * (ms/me/ps/pe/start/end) so the whole article mirrors under dir="rtl".
+ *
+ * Built per-render rather than declared at module scope, because the anchor
+ * renderer needs the active locale to translate authored hrefs — see
+ * `localizeMdxHref`. The map is cheap to construct and MDX bodies render once
+ * per page at build time.
  */
-const components = {
+function buildComponents(locale: string, labels: { scrollableTable: string }) {
+  return {
   h2: ({ children, ...props }: ComponentPropsWithoutRef<'h2'>) => {
     // The id must match `getTableOfContents` exactly or the TOC links break.
     const id = slugifyHeading(textOf(children));
@@ -62,13 +69,13 @@ const components = {
   ),
   ul: (props: ComponentPropsWithoutRef<'ul'>) => (
     <ul
-      className="font-sans text-lg text-gray-700 leading-relaxed mb-6 ps-6 list-disc space-y-2 marker:text-gold"
+      className="font-sans text-lg text-gray-700 leading-relaxed mb-6 ps-6 list-disc space-y-2 marker:text-gold-ink"
       {...props}
     />
   ),
   ol: (props: ComponentPropsWithoutRef<'ol'>) => (
     <ol
-      className="font-sans text-lg text-gray-700 leading-relaxed mb-6 ps-6 list-decimal space-y-2 marker:text-gold"
+      className="font-sans text-lg text-gray-700 leading-relaxed mb-6 ps-6 list-decimal space-y-2 marker:text-gold-ink"
       {...props}
     />
   ),
@@ -83,7 +90,21 @@ const components = {
     />
   ),
   table: (props: ComponentPropsWithoutRef<'table'>) => (
-    <div className="overflow-x-auto my-10 no-scrollbar">
+    /*
+      A scrollable region has to be keyboard-operable and named.
+
+      This was a bare <div class="overflow-x-auto no-scrollbar">: a keyboard-only
+      user could not scroll it (2.1.1), and `no-scrollbar` removed the only
+      visual cue that it scrolled at all (1.4.10). `tabIndex={0}` makes it
+      focusable so arrow keys work, `role="region"` plus a label gives it a name
+      so focusing it announces something, and the scrollbar is no longer hidden.
+    */
+    <div
+      tabIndex={0}
+      role="region"
+      aria-label={labels.scrollableTable}
+      className="overflow-x-auto my-10"
+    >
       <table className="w-full text-start font-sans text-base border-collapse" {...props} />
     </div>
   ),
@@ -98,12 +119,18 @@ const components = {
   ),
   hr: () => <hr className="my-16 border-black/10" />,
   a: ({ href = '', ...props }: ComponentPropsWithoutRef<'a'>) => {
-    // Internal links go through next-intl's Link so they keep the active locale.
+    /*
+      Internal links go through next-intl's Link so they keep the active locale
+      — AND through `localizeMdxHref` so they keep the locale's own pathname and
+      slug. `Link` alone only prefixes; it looks an href up as a key in the
+      `pathnames` map, and a concrete `/blog/some-slug` is not a key, so it fell
+      through untranslated and every French article's body links redirected.
+    */
     if (href.startsWith('/')) {
       return (
         <Link
-          href={href as any}
-          className="text-black underline decoration-gold decoration-2 underline-offset-4 hover:text-gold-dark transition-colors"
+          href={toHref(localizeMdxHref(href, locale))}
+          className="text-black underline decoration-gold-ink decoration-2 underline-offset-4 hover:text-gold-ink transition-colors"
           {...props}
         />
       );
@@ -113,7 +140,7 @@ const components = {
         href={href}
         rel="noopener noreferrer"
         target="_blank"
-        className="text-black underline decoration-gold decoration-2 underline-offset-4 hover:text-gold-dark transition-colors"
+        className="text-black underline decoration-gold-ink decoration-2 underline-offset-4 hover:text-gold-ink transition-colors"
         {...props}
       />
     );
@@ -122,17 +149,22 @@ const components = {
   Figure: ({ src, alt, caption }: { src: string; alt: string; caption?: string }) => (
     <figure className="my-14">
       <div className="relative w-full aspect-[16/9] overflow-hidden bg-ivory-dark">
-        <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
+        <Image src={src} alt={alt} fill loading="lazy" className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
       </div>
       {caption && (
-        <figcaption className="font-sans text-xs uppercase tracking-widest text-gray-400 mt-4">
+        <figcaption className="font-sans text-xs uppercase tracking-widest text-gray-600 mt-4">
           {caption}
         </figcaption>
       )}
     </figure>
   ),
-};
+  };
+}
 
-export function MdxContent({ source }: { source: string }) {
-  return <MDXRemote source={source} components={components} />;
+export function MdxContent({ source, locale, labels }: {
+  source: string;
+  locale: string;
+  labels: { scrollableTable: string };
+}) {
+  return <MDXRemote source={source} components={buildComponents(locale, labels)} />;
 }

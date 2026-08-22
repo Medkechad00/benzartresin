@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { blogSlug } from "@/lib/urls";
+import { blogHref, toHref } from "@/lib/urls";
 
 export type BlogPostCard = {
   slug: string;
@@ -18,7 +18,6 @@ export type BlogPostCard = {
 };
 
 export function BlogAllArticles({ posts }: { posts: BlogPostCard[] }) {
-  const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("Blog");
 
@@ -35,7 +34,7 @@ export function BlogAllArticles({ posts }: { posts: BlogPostCard[] }) {
     <section className="py-16 md:py-20 px-6 md:px-12 border-t border-black/10">
       <div className="max-w-7xl mx-auto">
         <motion.h2
-          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.8 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -78,14 +77,14 @@ export function BlogAllArticles({ posts }: { posts: BlogPostCard[] }) {
           {posts.map((post, index) => (
             <motion.div
               key={post.slug}
-              initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
               className="h-full"
             >
               <Link
-                href={`/blog/${blogSlug(post.slug, locale)}` as never}
+                href={toHref(blogHref(post.slug, locale))}
                 className="group flex h-full flex-col"
               >
                 {/*
@@ -118,19 +117,27 @@ export function BlogAllArticles({ posts }: { posts: BlogPostCard[] }) {
                     src={post.frontmatter.heroImage}
                     alt={post.frontmatter.heroAlt}
                     fill
+                    loading="lazy"
                     className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
+                    /*
+                      The grid is 1 column, then 2 at `md`, then 3 at `lg`. The
+                      previous value jumped straight from 100vw to 33vw and so
+                      under-declared the whole 768-1024px band by half, which is
+                      where a tablet fetches a card image at twice the density it
+                      asked for.
+                    */
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 </div>
 
                 <div className="flex flex-col flex-grow">
-                  <div className="flex items-center gap-3 text-gray-500 font-sans text-xs uppercase tracking-widest mb-3 whitespace-nowrap min-w-0">
+                  <div className="flex items-center gap-3 text-gray-600 font-sans text-xs uppercase tracking-widest mb-3 whitespace-nowrap min-w-0">
                     <span className="text-black font-bold truncate">{post.frontmatter.cluster}</span>
                     <span aria-hidden="true" className="text-black/25">&bull;</span>
                     <span className="shrink-0">{formatDate(post.frontmatter.date)}</span>
                   </div>
 
-                  <h3 className="font-display text-2xl lg:text-3xl text-black leading-snug group-hover:text-gold transition-colors line-clamp-3 min-h-[4.125em]">
+                  <h3 className="font-display text-2xl lg:text-3xl text-black leading-snug group-hover:text-gold-ink transition-colors line-clamp-3 min-h-[4.125em]">
                     {post.frontmatter.title}
                   </h3>
 

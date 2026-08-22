@@ -53,6 +53,16 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
+    /**
+     * No `host` directive.
+     *
+     * It emitted `Host: https://benzartresin.com`, which is wrong twice over:
+     * `Host` is a Yandex-only extension that Yandex itself deprecated in 2018,
+     * and it expects a bare hostname, never a scheme-prefixed URL. Every other
+     * crawler treats an unknown directive as noise, so this was at best ignored
+     * and at worst a parse warning. The canonical host is already declared
+     * properly — by `<link rel="canonical">` on every page and by the absolute
+     * URLs in the sitemap.
+     */
   };
 }

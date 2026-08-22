@@ -8,7 +8,12 @@ import {
   getSmtpConfig,
   headerSafe,
   isValidEmail,
+  readJsonBody,
+  redactEmail,
+  rejectUnsafeRequest,
+  str,
 } from "@/lib/mail";
+import { SITE } from "@/lib/site-config";
 
 /**
  * Footer newsletter capture.
@@ -42,15 +47,13 @@ const rateLimit = createRateLimiter({
   max: 3,
 });
 
-type SubscribePayload = {
-  email?: string;
-  /** Locale the form was submitted from, so replies can match the language. */
-  locale?: string;
-  /** Honeypot — must stay empty. Not rendered to real users. */
-  extraNotes?: string;
-};
+const LIMITS = { email: 320, locale: 10, honeypot: 200 } as const;
 
 export async function POST(req: Request) {
+  // Same origin/content-type/size gate as the inquiry route. See lib/mail.ts.
+  const unsafe = rejectUnsafeRequest(req);
+  if (unsafe) return unsafe;
+
   const limit = rateLimit(clientKey(req));
   if (!limit.ok) {
     return NextResponse.json(
@@ -59,10 +62,8 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: SubscribePayload;
-  try {
-    body = await req.json();
-  } catch {
+  const body = await readJsonBody(req);
+  if (!body) {
     return NextResponse.json({ success: false, message: "Invalid request body." }, { status: 400 });
   }
 
@@ -71,18 +72,21 @@ export async function POST(req: Request) {
    * `app/api/inquiry/route.ts`: the field was named `website`, password managers
    * autofilled it despite `autocomplete="off"`, and every genuine submission was
    * being dropped behind a fake success.
+   *
+   * The value is not logged, only its length: whatever a password manager put
+   * there came out of the visitor's credential store.
    */
-  const honeypot = (body.extraNotes ?? "").trim();
+  const honeypot = str(body.extraNotes, LIMITS.honeypot);
   const flaggedAsSpam = honeypot !== "";
 
   if (flaggedAsSpam) {
     console.warn(
-      "[subscribe] honeypot filled — delivering anyway, flagged as suspected spam. " +
-        `value=${JSON.stringify(honeypot.slice(0, 120))}`
+      `[subscribe] honeypot filled (${honeypot.length} chars) — delivering anyway, ` +
+        "flagged as suspected spam."
     );
   }
 
-  const email = (body.email ?? "").trim();
+  const email = str(body.email, LIMITS.email);
 
   if (!email) {
     return NextResponse.json(
@@ -107,15 +111,18 @@ export async function POST(req: Request) {
     );
   }
 
-  const locale = (body.locale ?? "").trim();
+  const locale = str(body.locale, LIMITS.locale);
   const transporter = createTransport(smtp);
 
   try {
     await transporter.sendMail({
       from: smtp.from,
       to: smtp.to,
-      replyTo: headerSafe(email),
-      subject: `${flaggedAsSpam ? "[SUSPECTED SPAM] " : ""}New studio sign-up — ${headerSafe(email)}`,
+      // Structured address rather than a raw string, matching the inquiry route.
+      replyTo: { name: "", address: email },
+      subject: headerSafe(
+        `${flaggedAsSpam ? "[SUSPECTED SPAM] " : ""}New studio sign-up — ${email}`
+      ),
       text: [
         `Email: ${email}`,
         locale ? `Site language: ${locale}` : "",
@@ -147,23 +154,29 @@ export async function POST(req: Request) {
 
     console.error(`[subscribe] SMTP send failed: ${describeSmtpError(error, smtp)}`);
 
-    // The address is the entire submission, so losing it loses the sign-up.
-    // Same reasoning as the inquiry route: this log is the last copy.
+    /**
+     * The address is the entire submission, so losing it loses the sign-up — but
+     * the full address is personal data and the runtime log is the wrong place
+     * for it. A redacted form is enough to notice the loss and to match it
+     * against a later sign-up from the same person.
+     */
     console.error(
-      `[subscribe] UNSENT SIGN-UP — recover manually: ${JSON.stringify({
+      `[subscribe] UNSENT SIGN-UP — a submission was lost. ${JSON.stringify({
         receivedAt: new Date().toISOString(),
-        email,
+        emailHint: redactEmail(email),
         locale,
       })}`
     );
 
+    // `SITE.email` is the published brand address. `smtp.to` is the private
+    // inbox and must not be echoed to the client — see the inquiry route.
     return NextResponse.json(
       {
         success: false,
         message:
           err.code === "ECONNECTION"
-            ? "Cannot reach the mail server. Please try again or email us directly at " + smtp.to + "."
-            : "We could not complete your sign-up. Please try again or email us directly at " + smtp.to + ".",
+            ? `Cannot reach the mail server. Please try again or email us directly at ${SITE.email}.`
+            : `We could not complete your sign-up. Please try again or email us directly at ${SITE.email}.`,
       },
       { status: 502 }
     );

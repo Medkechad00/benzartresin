@@ -2,12 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
+import { enquiryReceivedImage } from "@/content/section-images";
 import { SealCheck } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { SITE } from "@/lib/site-config";
-import { localizedPath } from "@/lib/urls";
+import { localizedPath, toHref } from "@/lib/urls";
 
 /**
  * Post-submission confirmation for the commission enquiry.
@@ -57,9 +58,17 @@ const EASE_SETTLE = [0.23, 1, 0.32, 1] as const;
 const CURTAIN_HIDDEN = "polygon(-10% 100%, 110% 100%, 110% 100%, -10% 100%)";
 const CURTAIN_SHOWN = "polygon(-10% -20%, 110% -20%, 110% 120%, -10% 120%)";
 
-function settle(reduceMotion: boolean | null, delay: number) {
+/**
+ * Shared entry transition.
+ *
+ * Took a `reduceMotion` flag and returned `initial: false` when set. That read
+ * was a hydration bug — see components/providers/MotionProvider.tsx — and it is
+ * now handled by the root `MotionConfig reducedMotion="user"`, which suppresses
+ * the `y` transform while still fading opacity.
+ */
+function settle(delay: number) {
   return {
-    initial: reduceMotion ? false : { opacity: 0, y: 16 },
+    initial: { opacity: 0, y: 16 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.7, delay, ease: EASE_SETTLE },
   };
@@ -86,7 +95,6 @@ export function InquirySuccess({
   summary: SummaryEntry[];
   onReset: () => void;
 }) {
-  const reduceMotion = useReducedMotion();
   const locale = useLocale();
   const t = useTranslations("Inquiry");
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -107,7 +115,28 @@ export function InquirySuccess({
   }, []);
 
   return (
-    <section role="status" aria-live="polite" className="w-full px-6 md:px-12 bg-white">
+    /*
+      A plain <section>, not a page-sized live region.
+
+      This carried `role="status" aria-live="polite"` on the outermost element,
+      which wrapped roughly 240 lines of headings, a definition list, links and
+      two buttons. Two problems with that: `role="status"` overrides the implicit
+      `region` role, and every one of the staggered `motion` reveals inside it
+      (delays out to +0.66s) mutates the subtree, so the whole panel was queued
+      for re-announcement several times over.
+
+      The announcement now comes from one small live region below, holding just
+      the confirmation sentence — which is the part a screen-reader user needs to
+      hear. Focus still moves to the heading, so the panel is also reachable.
+    */
+    <section aria-labelledby="inquiry-success-heading" className="w-full px-6 md:px-12 bg-white">
+      {/*
+        The actual announcement: short, text-only, and not re-triggered by the
+        reveal animations because nothing inside it animates.
+      */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {t("success.eyebrow")}. {t("success.title")}
+      </p>
       <div className="max-w-7xl mx-auto border-t border-black/10 pt-12 md:pt-16 pb-24 md:pb-32">
 
         {/* ── Confirmation and photograph ──────────────────────────────── */}
@@ -126,8 +155,8 @@ export function InquirySuccess({
               label does real work.
             */}
             <motion.p
-              {...settle(reduceMotion, 0)}
-              className="flex items-center gap-2.5 font-sans text-[10px] uppercase tracking-[0.25em] text-gold-dark mb-5"
+              {...settle(0)}
+              className="flex items-center gap-2.5 font-sans text-[10px] uppercase tracking-[0.25em] text-gold-ink mb-5"
             >
               <SealCheck size={16} weight="fill" className="text-gold" aria-hidden="true" />
               {t("success.eyebrow")}
@@ -138,13 +167,22 @@ export function InquirySuccess({
               clip against, and `pb-[0.06em]` inside the band reserves the
               descender the gold rectangle would otherwise cut.
             */}
-            <h2
+            {/*
+              `h1`, not `h2`.
+
+              `InquiryClient` returns this component instead of the form, and its
+              own `<h1>` goes with it — so the success view was the one state on
+              the site with no `h1` at all, starting its outline at `h2`. This is
+              the page's heading while this state is showing.
+            */}
+            <h1
+              id="inquiry-success-heading"
               ref={headingRef}
               tabIndex={-1}
-              className="font-display text-[2.6rem] sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] text-black tracking-tight leading-[0.95] mb-6 outline-none overflow-hidden"
+              className="font-display text-[2.6rem] sm:text-5xl lg:text-[4rem] xl:text-[4.5rem] text-black tracking-tight leading-[0.95] mb-6 overflow-hidden"
             >
               <motion.span
-                initial={reduceMotion ? false : { clipPath: CURTAIN_HIDDEN, y: 30 }}
+                initial={{ clipPath: CURTAIN_HIDDEN, y: 30 }}
                 animate={{ clipPath: CURTAIN_SHOWN, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.08, ease: EASE_CURTAIN }}
                 className="block"
@@ -153,10 +191,10 @@ export function InquirySuccess({
                   {t("success.title")}
                 </span>
               </motion.span>
-            </h2>
+            </h1>
 
             <motion.p
-              {...settle(reduceMotion, 0.2)}
+              {...settle(0.2)}
               className="font-sans text-black/70 text-lg md:text-xl leading-relaxed max-w-[46ch]"
             >
               {t("success.body", { name: firstName })}
@@ -174,21 +212,30 @@ export function InquirySuccess({
             is what makes the row sit level.
           */}
           <motion.div
-            initial={reduceMotion ? false : { clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)" }}
+            initial={{ clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)" }}
             animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
             transition={{ duration: 1.1, delay: 0.15, ease: EASE_CURTAIN }}
             className="lg:col-span-5 relative w-full aspect-[4/3] overflow-hidden rounded-sm bg-ivory-dark shadow-2xl"
           >
             <motion.div
-              initial={reduceMotion ? false : { scale: 1.08 }}
+              initial={{ scale: 1.08 }}
               animate={{ scale: 1 }}
               transition={{ duration: 1.8, delay: 0.15, ease: EASE_SETTLE }}
               className="relative w-full h-full"
             >
               <Image
-                src="/images/process_wood_selection.png"
+                src={enquiryReceivedImage.src}
                 alt={t("success.imageAlt")}
                 fill
+                /*
+                  Eager: this panel replaces the form the moment it submits, so
+                  the image is the largest thing on screen at that instant and a
+                  lazy fetch shows an empty frame at the emotional high point.
+                */
+                loading="eager"
+                fetchPriority="high"
+                placeholder="blur"
+                blurDataURL={enquiryReceivedImage.blurDataURL}
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 40vw"
               />
@@ -199,7 +246,7 @@ export function InquirySuccess({
         {/* ── What happens next ────────────────────────────────────────── */}
         <div className={BAND}>
           <motion.h3
-            {...settle(reduceMotion, 0.28)}
+            {...settle(0.28)}
             className="font-display text-2xl md:text-3xl text-black tracking-tight mb-8 md:mb-10"
           >
             {t("success.nextTitle")}
@@ -223,7 +270,7 @@ export function InquirySuccess({
             {steps.map((step, i) => (
               <motion.li
                 key={step.title}
-                {...settle(reduceMotion, 0.34 + i * 0.08)}
+                {...settle(0.34 + i * 0.08)}
                 className="
                   border-t border-black/10 pt-6 mt-6 first:border-t-0 first:pt-0 first:mt-0
                   lg:border-t-0 lg:pt-0 lg:mt-0 lg:border-s lg:ps-8 lg:first:border-s-0 lg:first:ps-0 lg:pe-4
@@ -244,10 +291,10 @@ export function InquirySuccess({
         <div className={`${BAND} grid grid-cols-1 lg:grid-cols-12 gap-y-10 lg:gap-x-16`}>
 
           {shownSummary.length > 0 && (
-            <motion.div {...settle(reduceMotion, 0.5)} className="lg:col-span-7">
-              <h3 className="font-display text-xl md:text-2xl text-black tracking-tight mb-6">
+            <motion.div {...settle(0.5)} className="lg:col-span-7">
+              <h2 className="font-display text-xl md:text-2xl text-black tracking-tight mb-6">
                 {t("success.summaryTitle")}
-              </h3>
+              </h2>
 
               {/*
                 A spec strip rather than a stacked list. Four short factual
@@ -262,7 +309,7 @@ export function InquirySuccess({
               <dl className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-7 items-start">
                 {shownSummary.map(({ label, value }) => (
                   <div key={label} className="flex flex-col gap-1.5">
-                    <dt className="font-sans text-[11px] text-black/40 leading-none">{label}</dt>
+                    <dt className="font-sans text-[11px] text-black/60 leading-none">{label}</dt>
                     {/*
                       `dir="auto"` is safe on a value that always has content: the
                       first strong character is a real one, so a Latin answer
@@ -281,12 +328,12 @@ export function InquirySuccess({
           )}
 
           <motion.div
-            {...settle(reduceMotion, 0.58)}
+            {...settle(0.58)}
             className={shownSummary.length > 0 ? "lg:col-span-5" : "lg:col-span-12"}
           >
-            <h3 className="font-display text-xl md:text-2xl text-black tracking-tight mb-3">
+            <h2 className="font-display text-xl md:text-2xl text-black tracking-tight mb-3">
               {t("success.urgentTitle")}
-            </h3>
+            </h2>
             <p className="font-sans text-sm text-black/60 leading-relaxed mb-5 max-w-[44ch]">
               {t("success.urgentBody")}
             </p>
@@ -295,7 +342,7 @@ export function InquirySuccess({
             <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
               <a
                 href={`mailto:${SITE.email}`}
-                className="font-sans text-sm text-black border-b border-gold pb-0.5 hover:text-gold-dark transition-colors"
+                className="font-sans text-sm text-black border-b border-gold-ink pb-0.5 hover:text-gold-ink transition-colors"
               >
                 {SITE.email}
               </a>
@@ -303,7 +350,7 @@ export function InquirySuccess({
                 <a
                   href={`tel:${SITE.telephone}`}
                   dir="ltr"
-                  className="font-sans text-sm text-black border-b border-gold pb-0.5 hover:text-gold-dark transition-colors"
+                  className="font-sans text-sm text-black border-b border-gold-ink pb-0.5 hover:text-gold-ink transition-colors"
                 >
                   {SITE.telephoneDisplay}
                 </a>
@@ -321,11 +368,11 @@ export function InquirySuccess({
           clicked once on this site.
         */}
         <motion.div
-          {...settle(reduceMotion, 0.66)}
+          {...settle(0.66)}
           className={`${BAND} flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6`}
         >
           <Link
-            href={localizedPath("/tables", locale) as never}
+            href={toHref(localizedPath("/tables", locale))}
             className="bg-black text-white px-8 py-4 text-center uppercase tracking-widest text-xs font-bold hover:bg-black/90 transition-transform active:scale-[0.98] whitespace-nowrap"
           >
             {t("success.actions.browse")}
@@ -333,7 +380,7 @@ export function InquirySuccess({
           <button
             type="button"
             onClick={onReset}
-            className="font-sans text-xs uppercase tracking-widest text-black/50 hover:text-black transition-colors self-start sm:self-auto whitespace-nowrap"
+            className="font-sans text-xs uppercase tracking-widest text-black/60 hover:text-black transition-colors self-start sm:self-auto whitespace-nowrap"
           >
             {t("success.actions.again")}
           </button>

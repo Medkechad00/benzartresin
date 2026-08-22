@@ -33,8 +33,14 @@ export const BASE_URL = (
 /**
  * GA4 measurement ID. Empty string disables the tag entirely, which is what we
  * want on preview deploys so staging traffic never pollutes production data.
+ *
+ * `||` rather than `??` on purpose. With `??` the fallback only fired on
+ * `undefined`, so setting `NEXT_PUBLIC_GA_ID=""` — the documented way to turn
+ * the tag off — was ignored and the hardcoded production ID shipped anyway. That
+ * meant every preview branch, every CI Lighthouse run and every `next dev`
+ * session reported into live analytics. An empty string is now honoured.
  */
-export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID ?? 'G-G78WJFE4P2';
+export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-G78WJFE4P2';
 
 export const SITE = {
   /**
@@ -49,8 +55,22 @@ export const SITE = {
   description:
     'Benzart Resin builds one-off dining tables in solid wood and epoxy, cut to your room and made to order in Marrakech.',
 
-  /** TODO: add a real logo asset to /public and set this to its path. */
-  logoPath: null as string | null,
+  /**
+   * The brand wordmark, as shipped in `public/`.
+   *
+   * This was `null` with a "TODO: add a real logo asset" note, while
+   * `benzart-logo.webp` was already on disk and rendering in the navbar and
+   * footer of every page (see components/layout/Logo.tsx). The consequence was
+   * that `Organization.logo` was omitted from structured data on all 125 pages,
+   * and `BlogPosting.publisher` therefore resolved to a publisher with no logo —
+   * which is a field Google's Article guidance explicitly asks for.
+   *
+   * Dimensions are the intrinsic size of the file and are declared so the
+   * `ImageObject` node is complete.
+   */
+  logoPath: '/benzart-logo.webp' as string | null,
+  logoWidth: 4039,
+  logoHeight: 1447,
 
   /**
    * Brand email shown on the site and in structured data.

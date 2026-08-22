@@ -8,7 +8,7 @@ import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { BlogPreviewSection, type BlogPreviewPost } from "@/components/sections/BlogPreviewSection";
 import { AnimatedSeparator } from "@/components/ui/AnimatedSeparator";
 import { getAllPosts } from "@/lib/blog";
-import { buildAlternates, getLocalizedMetadata } from "@/lib/seo/metadata";
+import { staticPageMetadata } from "@/lib/seo/metadata";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildLocalBusinessSchema } from "@/lib/seo/schema";
 import { routing } from "@/i18n/routing";
@@ -23,17 +23,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const meta = await getLocalizedMetadata('home', locale);
-  return {
-    title: meta.title,
-    description: meta.description,
-    alternates: buildAlternates(locale, ''),
-    openGraph: {
-      title: meta.title || undefined,
-      description: meta.description || undefined,
-      type: "website",
-    },
-  };
+  return staticPageMetadata('home', locale, '');
 }
 
 export default async function Home({ params }: Props) {

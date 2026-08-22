@@ -11,7 +11,24 @@
  */
 
 import { getTableBySlug } from "@/content/tables/tables";
-import { getPost } from "@/lib/blog";
+
+/**
+ * Casts a runtime-computed pathname to the type next-intl's `Link` accepts.
+ *
+ * `createNavigation({ pathnames })` types `href` as a union of the literal keys
+ * in the pathnames map. That is genuinely useful for static routes, and
+ * genuinely unusable for a path built at runtime from a slug — so every call site
+ * on this site had its own `as any` or `as never` escape hatch. There were about
+ * forty of them, they were the single largest source of lint errors in the
+ * project, and each one silently opted that link out of type checking.
+ *
+ * One cast, named and explained, is better than forty anonymous ones. `never` is
+ * assignable to every type, so this satisfies the union without introducing
+ * `any` — the value still has to be a string or a URL object to get in here.
+ */
+export function toHref<T extends string | Record<string, unknown>>(path: T) {
+  return path as never;
+}
 
 /** Returns the URL slug for a table in the given locale. */
 export function tableSlug(tableSlug: string, locale: string): string {
@@ -89,4 +106,76 @@ export function localizedPath(pathname: string, locale: string): string {
   }
   return pathname;
 }
+
+/* ───────────────────────── detail-page href builders ────────────────────────
+ *
+ * Why these exist.
+ *
+ * next-intl's `Link` looks an href up as a KEY in the `pathnames` map. Keys are
+ * templates — `/blog/[slug]`, `/tables/[slug]` — so a *concrete* path like
+ * `/blog/how-to-care-for-a-resin-river-table` matches nothing, falls through
+ * untranslated, and is merely prefixed with the locale.
+ *
+ * The consequence was that eleven call sites emitting `` `/blog/${slug}` `` and
+ * `` `/tables/${slug}` `` produced `/fr/blog/...` and `/fr/tables/...` on French
+ * pages — every one of which the proxy then 307s to `/fr/journal/...` and
+ * `/fr/collection/...`. That is every table card on the homepage and the
+ * collection, every article card on the homepage and the journal, all three
+ * topic-guide cards and all four related-reading slots on every article: the
+ * entire internal link graph of the French site, one redirect deep.
+ *
+ * Nothing 404'd, which is exactly why it went unnoticed. Redirected internal
+ * links still cost a round trip per click and dilute the link signal, and four
+ * of them landed on live-but-non-canonical duplicate URLs.
+ *
+ * Use these instead of interpolating a path by hand. They translate the path
+ * segment AND the slug together, which is the pairing that has to stay atomic.
+ */
+
+/** Localised href for a blog post detail page. Takes the English slug. */
+export function blogHref(englishSlug: string, locale: string): string {
+  return `${localizedPath("/blog", locale)}/${blogSlug(englishSlug, locale)}`;
+}
+
+/** Localised href for a table detail page. Takes the English slug. */
+export function tableHref(englishSlug: string, locale: string): string {
+  return `${localizedPath("/tables", locale)}/${tableSlug(englishSlug, locale)}`;
+}
+
+/**
+ * Localises a bare internal href written by a content author.
+ *
+ * MDX bodies contain roughly 275 internal links, all authored as untranslated
+ * English paths — `/blog/<english-slug>`, `/tables`, `/inquiry` — including in
+ * the French files. `MdxContent` handed those straight to next-intl's `Link`,
+ * which prefixes but does not translate, so on French articles every one of them
+ * pointed at a URL that redirects. Nine of them were worse than that: they
+ * resolved 200 on a live URL that self-canonicalises somewhere else, because
+ * `/fr/journal/<english-slug>` renders the right article at the wrong address.
+ *
+ * Rewriting the MDX would mean maintaining translated paths and translated slugs
+ * inside 54 content files, and getting it wrong silently. Translating at the
+ * render boundary keeps authoring in one vocabulary — the English slug, which is
+ * also the filename — and makes the URL a presentation concern, which is what it
+ * is.
+ *
+ * Query strings and hashes are preserved. Anything not recognised is passed
+ * through `localizedPath`, so an unknown static path still gets translated if a
+ * mapping exists and is otherwise left alone.
+ */
+export function localizeMdxHref(href: string, locale: string): string {
+  const [pathAndQuery, ...hashParts] = href.split("#");
+  const hash = hashParts.length ? `#${hashParts.join("#")}` : "";
+  const [path, ...queryParts] = pathAndQuery.split("?");
+  const query = queryParts.length ? `?${queryParts.join("?")}` : "";
+
+  const blogMatch = path.match(/^\/blog\/([^/]+)\/?$/);
+  if (blogMatch) return `${blogHref(blogMatch[1], locale)}${query}${hash}`;
+
+  const tableMatch = path.match(/^\/tables\/([^/]+)\/?$/);
+  if (tableMatch) return `${tableHref(englishTableSlug(tableMatch[1]), locale)}${query}${hash}`;
+
+  return `${localizedPath(path, locale)}${query}${hash}`;
+}
+
 
